@@ -835,6 +835,7 @@ function oberflaecheMatches(p, o) {
   if (o === 'sehr glatt') return p.s === 'sehr glatt' || p.s === 'voll gestrichen';
   if (o === 'gepraegt') return p.n.toLowerCase().includes('emboss');
   if (o === 'leicht gestrichen') return p.s === 'leicht gestrichen';
+  if (o === 'gestrichen') return p.s === 'glatt' || p.s === 'sehr glatt' || p.s === 'leicht gestrichen' || p.s === 'voll gestrichen';
   return true;
 }
 
@@ -1370,11 +1371,13 @@ const REFINE_CATS = {
     label: 'Oberfläche',
     sub: 'Welche Papieroberfläche bevorzugst du?',
     opts: [
-      { val: 'extrem rau', label: 'Extrem rau' },
-      { val: 'rau',        label: 'Rau / Ungestrichen' },
-      { val: 'leicht gestrichen', label: 'Leicht gestrichen' },
-      { val: 'glatt',      label: 'Glatt / Smooth' },
-      { val: 'sehr glatt', label: 'Sehr glatt' }
+      { val: 'extrem rau',       label: 'Extrem rau' },
+      { val: 'rau',              label: 'Rau / Ungestrichen' },
+      { val: 'glatt',            label: 'Glatt / Smooth' },
+      { val: 'sehr glatt',       label: 'Sehr glatt' },
+      { val: 'gepraegt',         label: 'Geprägt' },
+      { val: 'leicht gestrichen',label: 'Leicht gestrichen' },
+      { val: 'gestrichen',       label: 'Gestrichen' }
     ]
   },
   farbe: {
