@@ -1865,8 +1865,14 @@ function startFromOverlay() {
     parts.push('mit einer ' + (obflOpt ? obflOpt.l : ovSel.oberflaeche) + ' Oberfläche');
   }
   if (ovSel.farbe)       parts.push('in ' + ovSel.farbe);
-  if (ovSel.gramm)       parts.push(ovSel.gramm);
-  if (ovSel.druck)       parts.push('gedruckt im ' + ovSel.druck);
+  if (ovSel.gramm) {
+    const grammOpt = OV_DATA.gramm.opts.find(o => o.v === ovSel.gramm);
+    parts.push('möglichst ' + (grammOpt ? grammOpt.l : ovSel.gramm));
+  }
+  if (ovSel.druck) {
+    const druckOpt = OV_DATA.druck.opts.find(o => o.v === ovSel.druck);
+    parts.push('gedruckt im ' + (druckOpt ? druckOpt.l : ovSel.druck));
+  }
 
   document.getElementById('queryInput').value = 'Ich suche ein Papier ' + parts.join(', ');
   document.getElementById('scenarioBar').style.display = 'none';
