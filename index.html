@@ -164,10 +164,10 @@ textarea:focus{border-bottom-color:var(--accent);}
 .upgrade-block{background:#FFF8F0;border:1px solid #FFE0C0;border-radius:2px;padding:7px 11px;font-size:.78rem;line-height:1.5;color:#7A4A10;margin-bottom:12px;}
 .card-links{display:flex;gap:7px;padding:10px 18px 14px;border-top:1px solid var(--rule);flex-wrap:wrap;}
 .link-btn{font-family:'Nunito Sans',sans-serif;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;padding:7px 14px;border-radius:2px;text-decoration:none;cursor:pointer;border:none;transition:all .15s;display:flex;align-items:center;gap:5px;}
-.link-btn.primary{background:var(--ink);color:var(--cream);}
-.link-btn.primary:hover{background:var(--accent);}
-.link-btn.secondary{background:transparent;color:var(--ink);border:1px solid var(--rule);}
-.link-btn.secondary:hover{border-color:var(--ink);}
+.link-btn.primary{background:var(--green);color:#fff;}
+.link-btn.primary:hover{background:#2A5A2A;}
+.link-btn.secondary{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.link-btn.secondary:hover{background:#D8EDD8;border-color:var(--green);}
 
 /* ── FEEDBACK PANEL ── */
 .feedback-panel{background:var(--demo-bg);border:1px solid var(--demo-border);border-radius:4px;padding:20px;margin-top:20px;}
@@ -1229,6 +1229,7 @@ function runSearch() {
   }
 
   document.getElementById('sendBtn').disabled = true;
+  document.getElementById('sendBtn').innerHTML = '<span style="font-family:\'Nunito\',sans-serif;font-style:italic;">⏱</span> Erneut suchen';
   document.getElementById('loadingBlock').style.display = 'block';
   document.getElementById('resultsSection').style.display = 'none';
   document.getElementById('queryDisplay').style.display = 'none';
@@ -1262,7 +1263,7 @@ function runSearch() {
       document.getElementById('loadingBlock').style.display = 'none';
       document.getElementById('errorBlock').style.display = 'block';
       document.getElementById('errorBlock').textContent = '⚠ Fehler: ' + err.message;
-      document.getElementById('sendBtn').disabled = false;
+      document.getElementById('sendBtn').disabled = false; document.getElementById('sendBtn').innerHTML = '<span style="font-family:\'Nunito\',sans-serif;font-style:italic;">⏱</span> Erneut suchen';
       document.getElementById('scenarioBar').style.display = 'block';
       console.error(err);
     }
@@ -1272,7 +1273,7 @@ function runSearch() {
 // ─── RENDER ───
 function renderResults(data, query) {
   document.getElementById('loadingBlock').style.display = 'none';
-  document.getElementById('sendBtn').disabled = false;
+  document.getElementById('sendBtn').disabled = false; document.getElementById('sendBtn').innerHTML = '<span style="font-family:\'Nunito\',sans-serif;font-style:italic;">⏱</span> Erneut suchen';
   document.getElementById('queryDisplay').style.display = 'block';
   document.getElementById('queryText').textContent = query;
 
@@ -1657,7 +1658,7 @@ function resetSearch() {
   ['resultsSection','queryDisplay','errorBlock'].forEach(id => document.getElementById(id).style.display = 'none');
   document.getElementById('refinementPanel').style.display = 'none';
   document.getElementById('queryInput').value = '';
-  document.getElementById('sendBtn').disabled = false;
+  document.getElementById('sendBtn').disabled = false; document.getElementById('sendBtn').innerHTML = '<span style="font-family:\'Nunito\',sans-serif;font-style:italic;">⏱</span> Erneut suchen';
   document.getElementById('scenarioBar').style.display = 'block';
   currentSearch = null;
   window.scrollTo({ top: 0, behavior: 'smooth' });
