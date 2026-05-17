@@ -1537,8 +1537,10 @@ function runSearch() {
       document.getElementById('responseBadge').textContent = 'Live Datenbank';
       renderResults(result, query);
       currentSearch = { scoredCandidates: result.scoredCandidates, parsedQuery: result.parsedQuery };
-      const missing = detectMissingCategories(result.parsedQuery);
-      if (missing.length > 0 && result.papers.length > 0) showRefinementPanel(missing, result.papers.length);
+      if (result.papers.length > 4) {
+        const questions = buildRefinementQuestions(result.parsedQuery, result.scoredCandidates);
+        showRefinementPanel(questions, result.papers.length);
+      }
     } catch(err) {
       document.getElementById('loadingBlock').style.display = 'none';
       document.getElementById('errorBlock').style.display = 'block';
@@ -1645,6 +1647,37 @@ function detectMissingCategories(p) {
   return missing;
 }
 
+// Baut eine priorisierte Liste von Verfeinerungsfragen anhand was noch nicht bekannt ist
+function buildRefinementQuestions(p, candidates) {
+  const questions = [];
+  const hasOberfl  = p.rau || p.extrarau || p.glatt || p.sehrGlatt || activeFilters.oberflaeche.length > 0;
+  const hasFarbe   = p.schwarz || p.warmweiss || p.kaltweiss || p.weiss || p.naturfarben || activeFilters.farbe.length > 0;
+  const hasGramm   = p.weights.length > 0 || p.minWeight || p.maxWeight || p.dick || p.leicht || activeFilters.gramm.length > 0;
+  const hasAnwend  = p.visitenkarte || p.broschure || p.fanzine || p.magazin || p.kunstbuch || p.einladung || p.verpackung || p.nachhaltigkeitsbericht || !!activeFilters.anwendung;
+  const hasDruck   = p.riso || p.indigo || p.offset || p.letterpress || p.scodix || p.inkjet || p.toner || p.heissfolie || activeFilters.druck.length > 0;
+  const hasNachh   = p.recycling || p.recycling100 || p.fsc || p.blauEngel || p.upcycling || p.nachhaltig || activeFilters.nachhaltig.length > 0;
+
+  if (!hasAnwend)  questions.push('anwendung');
+  if (!hasDruck)   questions.push('druck');
+  if (!hasOberfl)  questions.push('oberflaeche');
+  if (!hasFarbe)   questions.push('farbe');
+  if (!hasGramm)   questions.push('gramm');
+  if (!hasNachh)   questions.push('nachhaltigkeit');
+
+  // Wenn Hauptkategorien schon gesetzt sind, zusätzliche Unterscheidungsmerkmale fragen
+  // Prüfen ob Kandidaten variieren (z.B. verschiedene Preisklassen, Volumina)
+  const hasGuenstig = candidates.some(x => x.paper.guenstigFlag);
+  const hasTeuer    = candidates.some(x => x.paper.teuerFlag);
+  const hasVolum    = candidates.some(x => x.paper.volHoch);
+
+  if (!p.guenstig && !p.teuer && hasGuenstig && hasTeuer) questions.push('preisklasse');
+  if (!p.voluminoes && hasVolum) questions.push('volumen');
+  if (!hasNachh && !questions.includes('nachhaltigkeit')) questions.push('nachhaltigkeit');
+
+  // Maximal 3 Fragen anzeigen
+  return questions.slice(0, 3);
+}
+
 const REFINE_CATS = {
   oberflaeche: {
     label: 'Oberfläche',
@@ -1711,32 +1744,57 @@ const REFINE_CATS = {
       { val: 'Heißfolie',  label: 'Heißfolienprägung' },
       { val: 'Inkjet',     label: 'Inkjet / Großformat' }
     ]
+  },
+  nachhaltigkeit: {
+    label: 'Nachhaltigkeit',
+    sub: 'Gibt es Anforderungen an die Nachhaltigkeit des Papiers?',
+    opts: [
+      { val: 'fsc',        label: 'FSC-zertifiziert' },
+      { val: 'recycling',  label: 'Recyclingpapier' },
+      { val: 'recycling100', label: '100% Recycling' },
+      { val: 'blauEngel',  label: 'Blauer Engel' },
+      { val: 'upcycling',  label: 'Upcycling' }
+    ]
+  },
+  preisklasse: {
+    label: 'Preisklasse',
+    sub: 'Spielt der Preis eine Rolle bei der Auswahl?',
+    opts: [
+      { val: 'guenstig',   label: 'Günstig / Kosteneffizient' },
+      { val: 'premium',    label: 'Premium / Keine Einschränkung' }
+    ]
+  },
+  volumen: {
+    label: 'Volumen / Haptik',
+    sub: 'Soll das Papier besonders voluminös und griffig sein?',
+    opts: [
+      { val: 'voluminoes', label: 'Ja, möglichst voluminös' },
+      { val: 'normal',     label: 'Kein besonderes Volumen nötig' }
+    ]
   }
 };
 
-function showRefinementPanel(missing, candidateCount) {
+function showRefinementPanel(questions, candidateCount) {
   Object.keys(refinementState).forEach(k => delete refinementState[k]);
   const panel = document.getElementById('refinementPanel');
-  const missingLabel = missing.map(k => REFINE_CATS[k].label).join(', ');
 
   panel.innerHTML =
     '<div class="refine-header">' +
       '<div class="refine-icon">◎</div>' +
       '<div>' +
-        '<div class="refine-title">Jetzt auf die Top 3 eingrenzen</div>' +
+        '<div class="refine-title">Noch ' + (questions.length === 1 ? 'eine kurze Frage' : questions.length + ' kurze Fragen') + ' – dann deine Top 3</div>' +
         '<div class="refine-sub">Wir haben <strong>' + candidateCount + ' passende Papiere</strong> gefunden. ' +
-        'Um die 3 besten Empfehlungen für dich herauszufiltern, beantworte noch ein paar kurze Fragen zu: <em>' + missingLabel + '</em>.</div>' +
+        'Mit ' + (questions.length === 1 ? 'dieser Antwort' : 'diesen Antworten') + ' grenzen wir auf die 3 besten Empfehlungen ein.</div>' +
       '</div>' +
     '</div>' +
     '<div class="refine-questions" id="refinementQuestions"></div>' +
     '<div class="refine-footer">' +
       '<button class="refine-btn" id="refineBtn" onclick="applyRefinement()">▶ Beste 3 Papiere anzeigen</button>' +
-      '<button class="refine-skip-btn" onclick="skipRefinement()">Alle ' + candidateCount + ' behalten</button>' +
-      '<span class="refine-count-notice">Tipp: Wähle pro Kategorie eine Option oder „Keine Präferenz"</span>' +
+      '<button class="refine-skip-btn" onclick="skipRefinement()">Alle ' + candidateCount + ' anzeigen</button>' +
     '</div>';
 
   const qDiv = document.getElementById('refinementQuestions');
-  missing.forEach(cat => {
+  questions.forEach(cat => {
     const cfg = REFINE_CATS[cat];
     const block = document.createElement('div');
     block.className = 'refine-block';
@@ -1823,6 +1881,19 @@ function applyRefinement() {
     else if (druck === 'Heißfolie')   pEx.heissfolie = true;
   }
 
+  const nachh = refinementState.nachhaltigkeit;
+  if (nachh === 'fsc')          pEx.fsc = true;
+  else if (nachh === 'recycling') pEx.recycling = true;
+  else if (nachh === 'recycling100') pEx.recycling100 = true;
+  else if (nachh === 'blauEngel') pEx.blauEngel = true;
+  else if (nachh === 'upcycling') pEx.upcycling = true;
+
+  const preis = refinementState.preisklasse;
+  if (preis === 'guenstig')  pEx.guenstig = true;
+
+  const vol = refinementState.volumen;
+  if (vol === 'voluminoes') pEx.voluminoes = true;
+
   // Re-score all candidates with extended params
   const rescored = scoredCandidates.map(x => ({ paper: x.paper, score: scorePaper(x.paper, pEx) }));
   rescored.sort((a, b) => b.score - a.score);
@@ -1879,8 +1950,10 @@ function showAllCandidates() {
   });
 
   ['relevanz','begruendung','infos','gesamt'].forEach(k => initStars(k));
-  const missing = detectMissingCategories(parsedQuery);
-  if (missing.length > 0) showRefinementPanel(missing, scoredCandidates.length);
+  if (scoredCandidates.length > 4) {
+    const questions = buildRefinementQuestions(parsedQuery, scoredCandidates);
+    if (questions.length > 0) showRefinementPanel(questions, scoredCandidates.length);
+  }
 }
 
 // ─── CARD ELEMENT FACTORY ───
