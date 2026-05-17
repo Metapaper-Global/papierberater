@@ -750,6 +750,12 @@ async function loadDatabase() {
       console.log('Papiere mit uc=visitenkarte:', withVK.length);
       const withWt = DB.filter(p => p.wt !== '');
       console.log('Papiere mit Weißton:', withWt.length);
+      const wtDist = {};
+      DB.forEach(p => { const k = p.wt || '(leer)'; wtDist[k] = (wtDist[k]||0)+1; });
+      console.log('wt-Verteilung:', wtDist);
+      // Zeige 3 raue Papiere mit ihrem wt
+      const rauPapers = DB.filter(p => p.s === 'rau').slice(0,3);
+      rauPapers.forEach(p => console.log('Rau-Papier:', p.n, '| wt:', p.wt, '| w:', p.w));
     }
   } catch (err) {
     console.error('Supabase Fehler:', err);
