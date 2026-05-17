@@ -623,6 +623,93 @@ textarea:focus{border-bottom-color:var(--accent);}
 let DB = [];
 let DB_LOADED = false;
 
+// Hilfsfunktion: Textwert aus Supabase → boolean
+function isPos(val) {
+  if (!val || val.trim() === '') return false;
+  const v = val.trim().toLowerCase();
+  return !(
+    v.startsWith('das papier ist nicht') ||
+    v.startsWith('das papier ist leider nicht') ||
+    v.startsWith('das papier ist kein') ||
+    v.startsWith('das papier ist aus unserer sicht nicht') ||
+    v.startsWith('das papier hat keine') ||
+    v.startsWith('das papier hat keinen') ||
+    v.startsWith('das papier hat kein') ||
+    v.includes('leider nicht') ||
+    v.includes('leider kein')
+  );
+}
+
+// Mappt eine Zeile aus papier_masterliste ins interne Format
+function mapRow(r) {
+  // Gewicht
+  const wMatch = (r['Gewicht in g/m2'] || '').match(/von (\d+(?:[.,]\d+)?)/i);
+  const w = wMatch ? parseFloat(wMatch[1].replace(',', '.')) : 0;
+
+  // Oberfläche
+  const s = isPos(r['Extrem rau'])         ? 'extrarau' :
+            isPos(r['rau'])                ? 'rau' :
+            isPos(r['sehr glatt'])         ? 'sehr glatt' :
+            isPos(r['glatt (smooth)'])     ? 'glatt' :
+            isPos(r['voll gestrichen'])    ? 'voll gestrichen' :
+            isPos(r['leicht gestrichen'])  ? 'leicht gestrichen' :
+            isPos(r['Gepraegt'])           ? 'gepraegt' : 'natur';
+
+  // Farbe / Weißton
+  const schwarz = isPos(r['Schwarzes Papier']);
+  const c = schwarz ? 'schwarz' : (isPos(r['Grauton']) ? 'grau' : '');
+  const wtRaw = (r['Weisston (gelblich bis blaeulich)'] || '').toLowerCase();
+  const wt = wtRaw.includes('gelblich') ? 'warmwhite' :
+             wtRaw.includes('blaeulich') ? 'coldwhite' :
+             wtRaw.includes('neutral')   ? 'white' : '';
+
+  // Druckverfahren
+  const hiVal = (r['Eignung fuer HP Indigo'] || '').toLowerCase();
+  const hi = hiVal.includes('bedruckbar') || (hiVal.includes('zertifiziert') && !hiVal.includes('nicht zertifiziert'));
+  const r_  = isPos(r['Eignung fuer den Riso']);
+  const o   = isPos(r['Eignung fuer den Offset']);
+  const ij  = isPos(r['Eignung fuer den Inkjet']);
+  const t   = isPos(r['Eignung fuer Toner-Digitaldruck / Laser-Digitaldruck']);
+  const lp  = isPos(r['Eignung fuer den Letterpress (Praegedruck)']);
+  const lp2 = isPos(r['Fuer Heissfolie geeignet']);
+  const sc  = isPos(r['fuer die Scodix geeignet']);
+
+  // Nachhaltigkeit
+  const su = [];
+  if (isPos(r['Recycling 100%']))     su.push('100% Recycling');
+  if (isPos(r['Recycling min 30%']))  su.push('Recycling');
+  if (isPos(r['Upcycling']))          su.push('Upcycling');
+  if (isPos(r['FSC']))                su.push('FSC');
+  if (isPos(r['Blauer Engel']))       su.push('Blauer Engel');
+  if (isPos(r['Cradle to cradle']))   su.push('Cradle to cradle');
+
+  // Anwendungen
+  const uc = [];
+  if (isPos(r['Visitenkarten']))                    uc.push('visitenkarte');
+  if (isPos(r['Einladungen']))                      uc.push('einladung');
+  if (isPos(r['Softcover Inhalt']))                 uc.push('softcover_inhalt');
+  if (isPos(r['Softcover Umschlag']))               uc.push('softcover_umschlag');
+  if (isPos(r['Magazin Inhalt']))                   uc.push('magazin_inhalt');
+  if (isPos(r['Magazin Umschlag']))                 uc.push('magazin_cover');
+  if (isPos(r['Kunstbuch Inhalt']))                 uc.push('kunstbuch_inhalt');
+  if (isPos(r['Kunstbuch Umschlag']))               uc.push('kunstbuch_umschlag');
+  if (isPos(r['Nachhaltigkeitsbericht']))           uc.push('nachhaltigkeitsbericht');
+  if (isPos(r['Fanzine Inhalt']))                   uc.push('fanzine');
+  if (isPos(r['Fanzine Umschlag']))                 uc.push('fanzine_cover');
+  if (isPos(r['Faltschachtel']) || isPos(r['oekologische Verpackung inklusive ueberzugspapier'])) uc.push('verpackung');
+  if (isPos(r['Geschaeftsbericht']))                uc.push('geschaeftsbericht');
+
+  return {
+    n:    r['Brand_Identifier'] || '',
+    w, s, c, wt,
+    r: r_, hi, o, ij, t, lp, lp2, sc,
+    su, uc,
+    bs:   isPos(r['Bestseller']),
+    muster: r['Musterartikel'] || '',
+    shop:   r['Artikel im Shop'] || ''
+  };
+}
+
 async function loadDatabase() {
   const SUPABASE_URL = 'https://utpshgqhyijggfubzifp.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV0cHNoZ3FoeWlqZ2dmdWJ6aWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5Nzk4NjIsImV4cCI6MjA5MzU1NTg2Mn0.8B1Yg7rC1YTxxyrF_cT8ieeXitDbwQ_-ZHrkA_ScN2w';
@@ -641,7 +728,7 @@ async function loadDatabase() {
       if (rows.length < pageSize) break;
       from += pageSize;
     }
-    DB = allRows;
+    DB = allRows.map(mapRow);
     DB_LOADED = true;
     console.log('Datenbank geladen:', DB.length, 'Papiere');
   } catch (err) {
