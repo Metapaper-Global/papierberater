@@ -1421,23 +1421,25 @@ let timerInterval = null;
 function searchPapers(query) {
   const p = parseQuery(query);
 
-  // Druckverfahren aus Query als harter Vorfilter (Zertifizierung ist binär)
+  // Druckverfahren aus Query als harter Vorfilter — OR-Logik (Paper muss mind. eines können)
   let filtered = applyHardFilters(DB);
-  if (p.indigo && !activeFilters.druck.includes('HP Indigo')) {
-    const indigoFiltered = filtered.filter(x => x.hi);
-    if (indigoFiltered.length >= 3) filtered = indigoFiltered;
+  const druckChecks = [];
+  if (p.indigo      && !activeFilters.druck.includes('HP Indigo'))                        druckChecks.push(x => x.hi);
+  if (p.riso        && !activeFilters.druck.includes('Riso'))                             druckChecks.push(x => x.r);
+  if (p.letterpress && !activeFilters.druck.includes('Letterpress'))                      druckChecks.push(x => x.lp);
+  if (p.scodix      && !activeFilters.druck.some(d => d === 'Scodix' || d === 'MGI'))    druckChecks.push(x => x.sc);
+  if (p.heissfolie  && !activeFilters.druck.includes('Heißfolie'))                        druckChecks.push(x => x.lp2);
+  if (druckChecks.length > 0) {
+    const druckFiltered = filtered.filter(x => druckChecks.some(fn => fn(x)));
+    if (druckFiltered.length >= 3) filtered = druckFiltered;
   }
-  if (p.riso && !activeFilters.druck.includes('Riso')) {
-    const risoFiltered = filtered.filter(x => x.r);
-    if (risoFiltered.length >= 3) filtered = risoFiltered;
-  }
-  if (p.letterpress && !activeFilters.druck.includes('Letterpress')) {
-    const lpFiltered = filtered.filter(x => x.lp);
-    if (lpFiltered.length >= 3) filtered = lpFiltered;
-  }
-  if (p.scodix && !activeFilters.druck.some(d => d === 'Scodix' || d === 'MGI')) {
-    const scodixFiltered = filtered.filter(x => x.sc);
-    if (scodixFiltered.length >= 3) filtered = scodixFiltered;
+
+  // Grammatur aus Query als harter Vorfilter
+  if ((p.minWeight || p.maxWeight) && !activeFilters.gramm.length) {
+    const lo = p.minWeight || 0;
+    const hi = p.maxWeight || 9999;
+    const grammFiltered = filtered.filter(x => x.w >= lo && x.w <= hi);
+    if (grammFiltered.length >= 3) filtered = grammFiltered;
   }
   const scodixActive = p.scodix || activeFilters.druck.some(d => d === 'Scodix' || d === 'MGI');
   const hasContext = p.riso || p.indigo || p.offset || p.letterpress || p.scodix || p.inkjet || p.toner || p.heissfolie ||
