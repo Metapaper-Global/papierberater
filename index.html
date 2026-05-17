@@ -64,8 +64,8 @@ header{position:relative;z-index:1;border-bottom:1px solid var(--rule);padding:0
 .sidebar-reset-btn:hover{background:#3A2E22;}
 
 /* ── FLOATING RESET BUTTON ── */
-.floating-reset{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:200;background:var(--ink);color:var(--cream);border:none;border-radius:20px;padding:10px 22px;font-family:'Nunito Sans',sans-serif;font-size:.75rem;letter-spacing:.06em;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;transform:translateX(-50%) translateY(8px);}
-.floating-reset.visible{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0);}
+.floating-reset{position:fixed;bottom:24px;right:32px;z-index:200;background:var(--ink);color:var(--cream);border:none;border-radius:20px;padding:10px 22px;font-family:'Nunito Sans',sans-serif;font-size:.75rem;letter-spacing:.06em;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;transform:translateY(8px);}
+.floating-reset.visible{opacity:1;pointer-events:auto;transform:translateY(0);}
 .floating-reset:hover{background:#3A2E22;}
 .filter-group{margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--rule);}
 .filter-group:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
@@ -1212,7 +1212,7 @@ function scorePaper(paper, p) {
     else if (paper.s === 'rau') s += 10;
     else s -= 20;
   } else if (p.rau) {
-    if (paper.s === 'extrarau') s += 18;
+    if (paper.s === 'extrarau') s += 25;  // extrarau ist mindestens so rau wie rau
     else if (paper.s === 'rau' || paper.s === 'natur') s += 25;
     else s -= 15;
   }
@@ -1237,7 +1237,9 @@ function scorePaper(paper, p) {
   }
   if (p.warmweiss) {
     if (paper.c === 'schwarz') s -= 80;
-    else if (paper.wt === 'warmwhite') s += 20;
+    else if (paper.wt === 'warmwhite') s += 30;
+    else if (paper.wt === 'coldwhite' || paper.wt === 'white_coldwhite') s -= 15;
+    else if (paper.wt === 'white') s -= 5;
   }
   if (p.kaltweiss) {
     if (paper.c === 'schwarz') s -= 80;
