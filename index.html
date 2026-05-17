@@ -695,6 +695,7 @@ function mapRow(r) {
   // Anwendungen
   const uc = [];
   if (isPos(r['Visitenkarten']))                    uc.push('visitenkarte');
+  if (isPos(r['Briefpapier']))                      uc.push('briefpapier');
   if (isPos(r['Einladungen']))                      uc.push('einladung');
   if (isPos(r['Softcover Inhalt']))                 uc.push('softcover_inhalt');
   if (isPos(r['Softcover Umschlag']))               uc.push('softcover_umschlag');
@@ -702,11 +703,15 @@ function mapRow(r) {
   if (isPos(r['Magazin Umschlag']))                 uc.push('magazin_cover');
   if (isPos(r['Kunstbuch Inhalt']))                 uc.push('kunstbuch_inhalt');
   if (isPos(r['Kunstbuch Umschlag']))               uc.push('kunstbuch_umschlag');
+  if (isPos(r['Hardcover - Inhalt']))               uc.push('hardcover_inhalt');
   if (isPos(r['Nachhaltigkeitsbericht']))           uc.push('nachhaltigkeitsbericht');
+  if (isPos(r['Geschaeftsbericht']))                uc.push('geschaeftsbericht');
   if (isPos(r['Fanzine Inhalt']))                   uc.push('fanzine');
   if (isPos(r['Fanzine Umschlag']))                 uc.push('fanzine_cover');
+  if (isPos(r['Riso-Zine']))                        uc.push('fanzine');
+  if (isPos(r['Booklet Inhalt']))                   uc.push('booklet');
+  if (isPos(r['Notizblock']))                       uc.push('notizblock');
   if (isPos(r['Faltschachtel']) || isPos(r['oekologische Verpackung inklusive ueberzugspapier'])) uc.push('verpackung');
-  if (isPos(r['Geschaeftsbericht']))                uc.push('geschaeftsbericht');
 
   return {
     n:    r['Brand_Identifier'] || '',
