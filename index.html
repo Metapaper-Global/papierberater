@@ -921,8 +921,6 @@ function updateActiveFilterDisplay() {
   const sentence = 'Ich suche ein Papier ' + parts.join(', ') + '.';
   document.getElementById('queryInput').value = sentence;
 
-  if (_filterSearchTimer) clearTimeout(_filterSearchTimer);
-  _filterSearchTimer = setTimeout(function() { runSearch(); }, 500);
 }
 
 function removeFilter(group, value) {
@@ -959,11 +957,6 @@ function injectFiltersIntoQuery() {
 
   document.getElementById('queryInput').value = sentence;
 
-  // Suche automatisch starten (mit Debounce)
-  if (_filterSearchTimer) clearTimeout(_filterSearchTimer);
-  if (sentence) {
-    _filterSearchTimer = setTimeout(() => runSearch(), 400);
-  }
 }
 
 // ─── BEISPIELE ───
