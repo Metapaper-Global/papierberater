@@ -1421,7 +1421,7 @@ let timerInterval = null;
 function searchPapers(query) {
   const p = parseQuery(query);
 
-  // Druckverfahren aus Query als harter Vorfilter — OR-Logik (Paper muss mind. eines können)
+  // Druckverfahren aus Query als harter Vorfilter — AND-Logik (Paper muss ALLE genannten können)
   let filtered = applyHardFilters(DB);
   const druckChecks = [];
   if (p.indigo      && !activeFilters.druck.includes('HP Indigo'))                        druckChecks.push(x => x.hi);
@@ -1430,7 +1430,7 @@ function searchPapers(query) {
   if (p.scodix      && !activeFilters.druck.some(d => d === 'Scodix' || d === 'MGI'))    druckChecks.push(x => x.sc);
   if (p.heissfolie  && !activeFilters.druck.includes('Heißfolie'))                        druckChecks.push(x => x.lp2);
   if (druckChecks.length > 0) {
-    const druckFiltered = filtered.filter(x => druckChecks.some(fn => fn(x)));
+    const druckFiltered = filtered.filter(x => druckChecks.every(fn => fn(x)));
     if (druckFiltered.length >= 3) filtered = druckFiltered;
   }
 
