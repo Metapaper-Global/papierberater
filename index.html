@@ -1394,8 +1394,26 @@ function buildQueryAnalysis(p, filteredCount) {
 let timerInterval = null;
 
 function searchPapers(query) {
-  const filtered = applyHardFilters(DB);
   const p = parseQuery(query);
+
+  // Druckverfahren aus Query als harter Vorfilter (Zertifizierung ist binär)
+  let filtered = applyHardFilters(DB);
+  if (p.indigo && !activeFilters.druck.includes('HP Indigo')) {
+    const indigoFiltered = filtered.filter(x => x.hi);
+    if (indigoFiltered.length >= 3) filtered = indigoFiltered;
+  }
+  if (p.riso && !activeFilters.druck.includes('Riso')) {
+    const risoFiltered = filtered.filter(x => x.r);
+    if (risoFiltered.length >= 3) filtered = risoFiltered;
+  }
+  if (p.letterpress && !activeFilters.druck.includes('Letterpress')) {
+    const lpFiltered = filtered.filter(x => x.lp);
+    if (lpFiltered.length >= 3) filtered = lpFiltered;
+  }
+  if (p.scodix && !activeFilters.druck.some(d => d === 'Scodix' || d === 'MGI')) {
+    const scodixFiltered = filtered.filter(x => x.sc);
+    if (scodixFiltered.length >= 3) filtered = scodixFiltered;
+  }
   const scodixActive = p.scodix || activeFilters.druck.some(d => d === 'Scodix' || d === 'MGI');
   const hasContext = p.riso || p.indigo || p.offset || p.letterpress || p.scodix || p.inkjet || p.toner || p.heissfolie ||
     p.extrarau || p.rau || p.glatt || p.sehrGlatt || p.schwarz || p.warmweiss || p.kaltweiss || p.naturfarben ||
