@@ -736,11 +736,21 @@ async function loadDatabase() {
       if (rows.length < pageSize) break;
       from += pageSize;
     }
-    if (allRows.length > 0) console.log('RAW Spalten:', Object.keys(allRows[0]));
     DB = allRows.map(mapRow);
     DB_LOADED = true;
-    if (DB.length > 0) console.log('Mapped Beispiel:', DB[0]);
     console.log('Datenbank geladen:', DB.length, 'Papiere');
+    if (DB.length > 0) {
+      const ex = DB[0];
+      console.log('Beispiel Papier:', ex.n);
+      console.log('  c:', ex.c, '| wt:', ex.wt, '| w:', ex.w, '| s:', ex.s);
+      console.log('  uc:', ex.uc);
+      console.log('  su:', ex.su);
+      console.log('  hi:', ex.hi, '| sc:', ex.sc, '| r:', ex.r, '| o:', ex.o);
+      const withVK = DB.filter(p => p.uc.includes('visitenkarte'));
+      console.log('Papiere mit uc=visitenkarte:', withVK.length);
+      const withWt = DB.filter(p => p.wt !== '');
+      console.log('Papiere mit Weißton:', withWt.length);
+    }
   } catch (err) {
     console.error('Supabase Fehler:', err);
   }
