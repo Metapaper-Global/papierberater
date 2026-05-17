@@ -700,13 +700,22 @@ function mapRow(r) {
   const hiRaw = r['Eignung fuer HP Indigo'] || '';
   const hi   = hiRaw.includes('hervorragend');            // zertifiziert
   const hiOk = !hi && hiRaw.includes('bedruckbar') && isPos(hiRaw); // bedruckbar, nicht zertifiziert
-  const r_  = isPos(r['Eignung fuer den Riso']);
+  const risoRaw = r['Eignung fuer den Riso'] || '';
+  const r_      = isPos(risoRaw);
+  const rTop    = r_ && (risoRaw.includes('hervorragend') || risoRaw.includes('perfekt'));
+
+  const scRaw   = r['fuer die Scodix geeignet'] || '';
+  const sc      = isPos(scRaw);
+  const scTop   = sc && scRaw.includes('extra');
+
+  const lpRaw   = r['Eignung fuer den Letterpress (Praegedruck)'] || '';
+  const lp      = isPos(lpRaw);
+  const lpTop   = lp && (lpRaw.includes('hervorragend') || lpRaw.includes('sehr gut'));
+
   const o   = isPos(r['Eignung fuer den Offset']);
   const ij  = isPos(r['Eignung fuer den Inkjet']);
   const t   = isPos(r['Eignung fuer Toner-Digitaldruck / Laser-Digitaldruck']);
-  const lp  = isPos(r['Eignung fuer den Letterpress (Praegedruck)']);
   const lp2 = isPos(r['Fuer Heissfolie geeignet']);
-  const sc  = isPos(r['fuer die Scodix geeignet']);
 
   // Nachhaltigkeit
   const su = [];
@@ -772,7 +781,7 @@ function mapRow(r) {
   return {
     n:    r['Brand_Identifier'] || '',
     w, s, c, wt, col,
-    r: r_, hi, hiOk, o, ij, t, lp, lp2, sc, sb, uvo, uvlack,
+    r: r_, rTop, hi, hiOk, o, ij, t, lp, lpTop, lp2, sc, scTop, sb, uvo, uvlack,
     umschlag, transp, karton, volHoch,
     guenstigFlag, teuerFlag, desc,
     su, uc,
@@ -783,7 +792,7 @@ function mapRow(r) {
   };
 }
 
-const DB_CACHE_KEY = 'metapaper_db_v5';
+const DB_CACHE_KEY = 'metapaper_db_v6';
 const DB_CACHE_TTL = 12 * 60 * 60 * 1000; // 12 Stunden
 
 async function loadDatabase() {
@@ -1196,10 +1205,10 @@ function scorePaper(paper, p) {
   let s = 0;
 
   // Process match/mismatch
-  if (p.riso) { s += paper.r ? 35 : -30; }
+  if (p.riso) { s += paper.rTop ? 45 : paper.r ? 35 : -30; }
   if (p.indigo) { s += paper.hi ? 40 : paper.hiOk ? 20 : -35; }
-  if (p.letterpress) { s += paper.lp ? 35 : -25; }
-  if (p.scodix) { s += paper.sc ? 50 : -45; }
+  if (p.letterpress) { s += paper.lpTop ? 45 : paper.lp ? 35 : -25; }
+  if (p.scodix) { s += paper.scTop ? 65 : paper.sc ? 50 : -45; }
   if (p.offset) { s += paper.o ? 15 : 0; }
   if (p.inkjet) { s += paper.ij ? 15 : 0; }
   if (p.toner) { s += paper.t ? 15 : 0; }
@@ -1327,11 +1336,14 @@ function buildWhyText(paper, p) {
   };
   if (surfTxt[paper.s]) parts.push(surfTxt[paper.s]);
 
-  if (p.riso && paper.r) parts.push('Riso-geeignet: Die saugfähige Oberfläche nimmt Riso-Farben optimal auf.');
+  if (p.riso && paper.rTop) parts.push('Hervorragend für Riso geeignet – optimale Farbaufnahme und Druckqualität.');
+  else if (p.riso && paper.r) parts.push('Riso-geeignet: Die saugfähige Oberfläche nimmt Riso-Farben gut auf.');
   if (p.indigo && paper.hi) parts.push('HP Indigo garantiert zertifiziert – für optimale Farbhaftung und Reproduzierbarkeit.');
   else if (p.indigo && paper.hiOk) parts.push('HP Indigo bedruckbar – nicht offiziell zertifiziert, funktioniert aber in der Praxis.');
-  if (p.letterpress && paper.lp) parts.push('Letterpress-geeignet: Struktur und Gewicht ermöglichen tiefe, präzise Prägungen.');
-  if (p.scodix && paper.sc) parts.push('Scodix/MGI zertifiziert: Eines der wenigen Papiere das digitale Veredelung auf rauer Oberfläche ermöglicht.');
+  if (p.letterpress && paper.lpTop) parts.push('Hervorragend für Letterpress geeignet – ideale Struktur für tiefe, präzise Prägungen.');
+  else if (p.letterpress && paper.lp) parts.push('Letterpress-geeignet: Struktur und Gewicht ermöglichen präzise Prägungen.');
+  if (p.scodix && paper.scTop) parts.push('Speziell für Scodix/MGI entwickelt – maximale Veredelungsqualität auf dieser Oberfläche.');
+  else if (p.scodix && paper.sc) parts.push('Scodix/MGI geeignet: Digitale Veredelung auf dieser Oberfläche möglich.');
 
   if (p.nachhaltig || p.recycling || p.upcycling) {
     if (paper.su.includes('Upcycling')) parts.push('100% Upcycling-Material – produziert aus industriellen Abfallstoffen, mit eigenem Charakter.');
@@ -1358,11 +1370,14 @@ function buildCardData(paper, rank, p, rawScore) {
   const properties = ['Grammatur: ' + paper.w + ' g/m²', 'Oberfläche: ' + surfaceLabel(paper.s), colorPart, prints.length ? 'Druck: ' + prints.join(', ') : null].filter(Boolean).join(' | ');
 
   const tags = [paper.w + ' g/m²', surfaceLabel(paper.s)];
-  if (paper.r) tags.push('Riso');
+  if (paper.rTop) tags.push('Riso ✓');
+  else if (paper.r) tags.push('Riso');
   if (paper.hi) tags.push('HP Indigo ✓');
   else if (paper.hiOk) tags.push('HP Indigo');
-  if (paper.sc) tags.push('Scodix');
-  if (paper.lp) tags.push('Letterpress');
+  if (paper.scTop) tags.push('Scodix ✓');
+  else if (paper.sc) tags.push('Scodix');
+  if (paper.lpTop) tags.push('Letterpress ✓');
+  else if (paper.lp) tags.push('Letterpress');
   paper.su.slice(0, 2).forEach(x => tags.push(x));
   if (paper.bs) tags.push('Bestseller');
 
