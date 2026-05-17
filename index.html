@@ -800,32 +800,8 @@ async function loadDatabase() {
     }
   } catch(e) {}
 
-  // Nur benötigte Spalten abrufen
   const SUPABASE_URL = 'https://utpshgqhyijggfubzifp.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV0cHNoZ3FoeWlqZ2dmdWJ6aWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5Nzk4NjIsImV4cCI6MjA5MzU1NTg2Mn0.8B1Yg7rC1YTxxyrF_cT8ieeXitDbwQ_-ZHrkA_ScN2w';
-  const COLS = [
-    'Brand_Identifier','Gewicht in g/m2','Extrem rau','rau','sehr glatt','glatt (smooth)',
-    'voll gestrichen','leicht gestrichen','Gepraegt','Schwarzes Papier','Grauton',
-    'Weisston (gelblich bis blaeulich)','Eignung fuer HP Indigo','Eignung fuer den Riso',
-    'Eignung fuer den Offset','Eignung fuer den Inkjet',
-    'Eignung fuer Toner-Digitaldruck / Laser-Digitaldruck',
-    'Eignung fuer den Letterpress (Praegedruck)','Fuer Heissfolie geeignet',
-    'fuer die Scodix geeignet','Eignung fuer den Siebdruck',
-    'Eignung fuer den Offset mit UV-Trocknung','Fuer UV-Lack geeignet',
-    'Recycling 100%','Recycling min 30%','Upcycling','FSC','Blauer Engel','Cradle to cradle',
-    'Visitenkarten','Briefpapier','Rechnungen','Briefpapier mit passendem Briefumschlag',
-    'Einladungen','Softcover Inhalt','Softcover Umschlag','Magazin Inhalt','Magazin Umschlag',
-    'Kunstbuch Inhalt','Kunstbuch Umschlag','Hardcover - Inhalt','Nachhaltigkeitsbericht',
-    'Geschaeftsbericht','Fanzine Inhalt','Fanzine Umschlag','Riso-Zine','Booklet Inhalt',
-    'Notizblock','Faltschachtel','oekologische Verpackung inklusive ueberzugspapier',
-    'Flyer','Karten','Broschuere mit Selfcover','Zeitung','Hang Tags',
-    'Braunton','Blauton','Gruenton','Rotton','Gelb-Orangton','Metallisierend / Pearl',
-    'Neon','Durchgefaerbtes bzw, farbiges Papier','Dunkle Farbe','Helle Farbe',
-    'Gibt es passende Briefumschlaege','Transparentpapier','Karton',
-    'sehr hohes Volumen (groesser / gleich 1,5)','hohes Volumen (von 1,1 bis 1,49)',
-    'guenstig','teuer','Alleinstellungsmerkmale','Bestseller',
-    'Musterartikel','Artikel im Shop','Groesstes Format'
-  ].map(c => encodeURIComponent(c)).join(',');
 
   try {
     let allRows = [];
@@ -833,7 +809,7 @@ async function loadDatabase() {
     const pageSize = 1000;
     while (true) {
       const response = await fetch(
-        `${SUPABASE_URL}/rest/v1/papier_masterliste?select=${COLS}&offset=${from}&limit=${pageSize}`,
+        `${SUPABASE_URL}/rest/v1/papier_masterliste?select=*&offset=${from}&limit=${pageSize}`,
         { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
       );
       if (!response.ok) throw new Error('HTTP ' + response.status);
