@@ -414,6 +414,14 @@ textarea:focus{border-bottom-color:var(--accent);}
       </div>
     </div>
 
+    <div class="filter-group" id="f-extras">
+      <div class="filter-group-label">Extras</div>
+      <div class="filter-pills">
+        <button class="filter-pill" onclick="togglePill(this,'extras','umschlag')">Mit Briefumschlag</button>
+        <button class="filter-pill" onclick="togglePill(this,'extras','guenstig')">Günstig</button>
+      </div>
+    </div>
+
     <!-- Grammatur -->
     <div class="filter-group">
       <div class="filter-group-label">Grammatur
@@ -577,7 +585,7 @@ textarea:focus{border-bottom-color:var(--accent);}
   <div class="results-header">
     <div class="results-title">Deine Empfehlungen</div>
     <div class="results-count" id="resultsCount"></div>
-    <div class="demo-response-badge" id="responseBadge">Live DB</div>
+    <div class="demo-response-badge" id="responseBadge">Live Datenbank</div>
   </div>
   <div id="refinementPanel" class="refinement-panel" style="display:none;"></div>
 
@@ -712,6 +720,11 @@ function mapRow(r) {
   if (isPos(r['Booklet Inhalt']))                   uc.push('booklet');
   if (isPos(r['Notizblock']))                       uc.push('notizblock');
   if (isPos(r['Faltschachtel']) || isPos(r['oekologische Verpackung inklusive ueberzugspapier'])) uc.push('verpackung');
+  if (isPos(r['Flyer']))                        uc.push('flyer');
+  if (isPos(r['Karten']))                       uc.push('karte');
+  if (isPos(r['Broschuere mit Selfcover']))     uc.push('broschure');
+  if (isPos(r['Zeitung']))                      uc.push('zeitung');
+  if (isPos(r['Hang Tags']))                    uc.push('hangtag');
 
   // Farbtöne
   const col = {
@@ -727,14 +740,29 @@ function mapRow(r) {
     hell:       isPos(r['Helle Farbe']),
   };
 
+  // Zusätzliche Felder
+  const sb      = isPos(r['Eignung fuer den Siebdruck']);
+  const uvo     = isPos(r['Eignung fuer den Offset mit UV-Trocknung']);
+  const uvlack  = isPos(r['Fuer UV-Lack geeignet']);
+  const umschlag= isPos(r['Gibt es passende Briefumschlaege']);
+  const transp  = isPos(r['Transparentpapier']);
+  const karton  = isPos(r['Karton']);
+  const volHoch = isPos(r['sehr hohes Volumen (groesser / gleich 1,5)']) || isPos(r['hohes Volumen (von 1,1 bis 1,49)']);
+  const guenstigFlag = isPos(r['guenstig']);
+  const teuerFlag    = isPos(r['teuer']);
+  const desc    = r['Alleinstellungsmerkmale'] || '';
+
   return {
     n:    r['Brand_Identifier'] || '',
     w, s, c, wt, col,
-    r: r_, hi, o, ij, t, lp, lp2, sc,
+    r: r_, hi, o, ij, t, lp, lp2, sc, sb, uvo, uvlack,
+    umschlag, transp, karton, volHoch,
+    guenstigFlag, teuerFlag, desc,
     su, uc,
     bs:   isPos(r['Bestseller']),
     muster: r['Musterartikel'] || '',
-    shop:   r['Artikel im Shop'] || ''
+    shop:   r['Artikel im Shop'] || '',
+    format: r['Groesstes Format'] || ''
   };
 }
 
@@ -769,7 +797,7 @@ loadDatabase();
 // dbCount intentionally left empty
 
 // ─── FILTER STATE ───
-const activeFilters = { anwendung: null, druck: [], nachhaltig: [], gramm: [], oberflaeche: [], farbe: [] };
+const activeFilters = { anwendung: null, druck: [], nachhaltig: [], gramm: [], oberflaeche: [], farbe: [], extras: [] };
 
 function togglePill(btn, group, value) {
   const arr = activeFilters[group];
@@ -998,6 +1026,10 @@ function applyHardFilters(papers) {
     res = res.filter(p => activeFilters.oberflaeche.some(o => oberflaecheMatches(p, o)));
   if (activeFilters.farbe.length)
     res = res.filter(p => activeFilters.farbe.some(f => farbeMatches(p, f)));
+  if (activeFilters.extras.length) {
+    if (activeFilters.extras.includes('umschlag')) res = res.filter(p => p.umschlag);
+    if (activeFilters.extras.includes('guenstig')) res = res.filter(p => p.guenstigFlag);
+  }
   return res;
 }
 
@@ -1014,7 +1046,9 @@ function parseQuery(query) {
     guenstig: false,
     recycling: false, recycling100: false, fsc: false, blauEngel: false, upcycling: false, nachhaltig: false,
     visitenkarte: false, broschure: false, fanzine: false, magazin: false,
-    kunstbuch: false, einladung: false, verpackung: false, nachhaltigkeitsbericht: false
+    kunstbuch: false, einladung: false, verpackung: false, nachhaltigkeitsbericht: false,
+    flyer: false, karte: false, umschlag: false, siebdruck: false,
+    uvlack: false, transparent: false, karton: false, voluminoes: false, teuer: false
   };
 
   // Weights: range first, then single
@@ -1083,6 +1117,15 @@ function parseQuery(query) {
   if (/einladung|\bkarte\b|invitation/.test(q)) p.einladung = true;
   if (/\bverpackung\b|packaging|pack/.test(q)) p.verpackung = true;
   if (/nachhaltigkeitsbericht/.test(q)) p.nachhaltigkeitsbericht = true;
+  if (/\bflyer\b/.test(q)) p.flyer = true;
+  if (/\bkarte[n]?\b|einladungskarte/.test(q)) p.karte = true;
+  if (/briefumschlag|umschlag|envelope/.test(q)) p.umschlag = true;
+  if (/siebdruck|screen.?print/.test(q)) p.siebdruck = true;
+  if (/uv.?lack|uv.?veredel|lackier/.test(q)) p.uvlack = true;
+  if (/transparent|durchsichtig/.test(q)) p.transparent = true;
+  if (/\bkarton\b|board/.test(q)) p.karton = true;
+  if (/voluminös|volumen|bulk|bauchig/.test(q)) p.voluminoes = true;
+  if (/\bteuer\b|premium|exklusiv|hochwertig/.test(q)) p.teuer = true;
 
   return p;
 }
@@ -1182,12 +1225,27 @@ function scorePaper(paper, p) {
 
   if (paper.bs) s += 5;
 
-  // Preis-Sensitivität: Premium-Linien abwerten
+  // Preis
   if (p.guenstig) {
-    const n = paper.n.toUpperCase();
-    if (/EXTRA(SMOOTH|ROUGH)|DELUXE|PREMIUM/.test(n)) s -= 20;
-    else s += 10;
+    if (paper.guenstigFlag) s += 20;
+    else if (paper.teuerFlag) s -= 20;
   }
+  if (p.teuer) {
+    if (paper.teuerFlag) s += 15;
+    else if (paper.guenstigFlag) s -= 10;
+  }
+
+  // Neue Felder
+  if (p.siebdruck) s += paper.sb ? 20 : -15;
+  if (p.uvlack) s += paper.uvlack ? 20 : 0;
+  if (p.transparent) s += paper.transp ? 40 : -30;
+  if (p.karton) s += paper.karton ? 25 : -10;
+  if (p.voluminoes) s += paper.volHoch ? 25 : 0;
+  if (p.umschlag) s += paper.umschlag ? 30 : -5;
+
+  // Use cases
+  if (p.flyer && paper.uc.includes('flyer')) s += 20;
+  if (p.karte && paper.uc.includes('karte')) s += 20;
 
   return s;
 }
@@ -1260,7 +1318,8 @@ function buildCardData(paper, rank, p, rawScore) {
     sample_url: paper.muster,
     shop_url: paper.shop,
     eco_info: paper.su.length ? paper.su.join(' · ') : null,
-    specs: { gramm: paper.w + ' g/m²', rauhigkeit: surfaceLabel(paper.s) }
+    specs: { gramm: paper.w + ' g/m²', rauhigkeit: surfaceLabel(paper.s) },
+    format: paper.format || ''
   };
 }
 
@@ -1385,7 +1444,7 @@ function runSearch() {
     clearInterval(timerInterval);
     try {
       const result = searchPapers(query);
-      document.getElementById('responseBadge').textContent = 'Live DB · ' + result.total_db + ' Papiere';
+      document.getElementById('responseBadge').textContent = 'Live Datenbank';
       renderResults(result, query);
       currentSearch = { scoredCandidates: result.scoredCandidates, parsedQuery: result.parsedQuery };
       const missing = detectMissingCategories(result.parsedQuery);
@@ -1716,7 +1775,7 @@ function showAllCandidates() {
 
   document.querySelector('.results-title').textContent = 'Vorauswahl';
   document.getElementById('resultsCount').textContent = scoredCandidates.length + ' Kandidaten';
-  document.getElementById('responseBadge').textContent = 'Live DB';
+  document.getElementById('responseBadge').textContent = 'Live Datenbank';
 
   if (parsedQuery) {
     const qa = document.createElement('div');
@@ -1776,7 +1835,7 @@ function makeCardElement(paper, i) {
       '<div class="card-toggle">▾</div>' +
     '</div>' +
     '<div class="card-body open">' +
-      '<div class="card-section"><span class="card-section-label">Eigenschaften</span><p>' + (paper.properties || '–') + '</p></div>' +
+      '<div class="card-section"><span class="card-section-label">Eigenschaften</span><p>' + (paper.properties || '–') + (paper.format ? ' | Max. Format: ' + paper.format : '') + '</p></div>' +
       '<div class="why-block">' + (paper.why || '–') + '</div>' +
       (specItems ? '<div class="specs-grid">' + specItems + '</div>' : '') +
       ecoBlock +
