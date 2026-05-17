@@ -920,17 +920,29 @@ function removeFilter(group, value) {
   injectFiltersIntoQuery();
 }
 
+let _filterSearchTimer = null;
+
 function injectFiltersIntoQuery() {
   const parts = [];
-  if (activeFilters.anwendung) parts.push('Anwendung: ' + activeFilters.anwendung);
-  if (activeFilters.druck.length) parts.push('Druckverfahren: ' + activeFilters.druck.join(', '));
-  if (activeFilters.nachhaltig.length) parts.push('Nachhaltigkeit: ' + activeFilters.nachhaltig.join(', '));
-  if (activeFilters.gramm.length) parts.push('Grammatur: ' + activeFilters.gramm.join(', '));
-  if (activeFilters.oberflaeche.length) parts.push('Oberfläche: ' + activeFilters.oberflaeche.join(', '));
-  if (activeFilters.farbe.length) parts.push('Farbe/Weißton: ' + activeFilters.farbe.join(', '));
-  if (parts.length > 0) {
-    const existing = document.getElementById('queryInput').value.replace(/\n?\[Filter:.*\]/g, '').trim();
-    document.getElementById('queryInput').value = existing + (existing ? '\n' : '') + '[Filter: ' + parts.join(' · ') + ']';
+  if (activeFilters.anwendung)       parts.push('für ' + activeFilters.anwendung);
+  if (activeFilters.druck.length)    parts.push('gedruckt im ' + activeFilters.druck.join(' / '));
+  if (activeFilters.gramm.length)    parts.push('Grammatur ' + activeFilters.gramm.join(' oder '));
+  if (activeFilters.oberflaeche.length) parts.push('Oberfläche ' + activeFilters.oberflaeche.join(' oder '));
+  if (activeFilters.farbe.length)    parts.push('Farbe/Weißton ' + activeFilters.farbe.join(' oder '));
+  if (activeFilters.nachhaltig.length) parts.push('nachhaltig (' + activeFilters.nachhaltig.join(', ') + ')');
+  if (activeFilters.extras.includes('umschlag')) parts.push('mit passendem Briefumschlag');
+  if (activeFilters.extras.includes('guenstig')) parts.push('günstig');
+
+  const sentence = parts.length > 0
+    ? 'Ich suche ein Papier ' + parts.join(', ') + '.'
+    : '';
+
+  document.getElementById('queryInput').value = sentence;
+
+  // Suche automatisch starten (mit Debounce)
+  if (_filterSearchTimer) clearTimeout(_filterSearchTimer);
+  if (sentence) {
+    _filterSearchTimer = setTimeout(() => runSearch(), 400);
   }
 }
 
