@@ -1998,7 +1998,7 @@ function makeCardElement(paper, i) {
   const aiScoreHtml = paper.match_score
     ? '<div class="ai-score ' + aiScoreCls + '"><span class="ai-score-label">AI Score</span><span class="ai-score-val">' + paper.match_score + '%</span></div>'
     : '';
-  const labelsMap = {gramm:'Grammatur',rauhigkeit:'Oberfläche',dicke:'Dicke',cie_weisse:'CIE Weiße',min_order:'Mindestbestellung',volumen:'Volumen',lager:'Lager',umschlag:'✉'};
+  const labelsMap = {gramm:'Grammatur',rauhigkeit:'Oberfläche',dicke:'Dicke',cie_weisse:'CIE Weiße',min_order:'Mindestbestellung',volumen:'Volumen',lager:'Lager',umschlag:''};
   const specItems = Object.entries(paper.specs || {}).filter(([,v]) => v).map(([k,v]) =>
     '<div class="spec-item"><span class="spec-label">' + (labelsMap[k]||k) + '</span><span class="spec-val">' + v + '</span></div>'
   ).join('');
