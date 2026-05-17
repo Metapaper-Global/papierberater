@@ -744,25 +744,6 @@ async function loadDatabase() {
     }
     DB = allRows.map(mapRow);
     DB_LOADED = true;
-    console.log('Datenbank geladen:', DB.length, 'Papiere');
-    if (DB.length > 0) {
-      const ex = DB[0];
-      console.log('Beispiel Papier:', ex.n);
-      console.log('  c:', ex.c, '| wt:', ex.wt, '| w:', ex.w, '| s:', ex.s);
-      console.log('  uc:', ex.uc);
-      console.log('  su:', ex.su);
-      console.log('  hi:', ex.hi, '| sc:', ex.sc, '| r:', ex.r, '| o:', ex.o);
-      const withVK = DB.filter(p => p.uc.includes('visitenkarte'));
-      console.log('Papiere mit uc=visitenkarte:', withVK.length);
-      const withWt = DB.filter(p => p.wt !== '');
-      console.log('Papiere mit Weißton:', withWt.length);
-      const wtDist = {};
-      DB.forEach(p => { const k = p.wt || '(leer)'; wtDist[k] = (wtDist[k]||0)+1; });
-      console.log('wt-Verteilung:', wtDist);
-      // Zeige 3 raue Papiere mit ihrem wt
-      const rauPapers = DB.filter(p => p.s === 'rau').slice(0,3);
-      rauPapers.forEach(p => console.log('Rau-Papier:', p.n, '| wt:', p.wt, '| w:', p.w));
-    }
   } catch (err) {
     console.error('Supabase Fehler:', err);
   }
@@ -987,32 +968,20 @@ function farbeMatches(p, f) {
 
 function applyHardFilters(papers) {
   let res = papers;
-  console.log('Filter start:', res.length, '| activeFilters:', JSON.stringify(activeFilters));
   if (activeFilters.anwendung) {
     const uc = ANWENDUNG_UC_MAP[activeFilters.anwendung] || activeFilters.anwendung.toLowerCase();
     res = res.filter(p => p.uc.includes(uc));
-    console.log('Nach anwendung ('+uc+'):', res.length);
   }
-  if (activeFilters.druck.length) {
+  if (activeFilters.druck.length)
     res = res.filter(p => activeFilters.druck.some(d => druckMatches(p, d)));
-    console.log('Nach druck:', res.length);
-  }
-  if (activeFilters.nachhaltig.length) {
+  if (activeFilters.nachhaltig.length)
     res = res.filter(p => activeFilters.nachhaltig.every(n => nachhaltigMatches(p, n)));
-    console.log('Nach nachhaltig:', res.length);
-  }
-  if (activeFilters.gramm.length) {
+  if (activeFilters.gramm.length)
     res = res.filter(p => activeFilters.gramm.some(g => grammMatches(p, g)));
-    console.log('Nach gramm:', res.length);
-  }
-  if (activeFilters.oberflaeche.length) {
+  if (activeFilters.oberflaeche.length)
     res = res.filter(p => activeFilters.oberflaeche.some(o => oberflaecheMatches(p, o)));
-    console.log('Nach oberflaeche:', res.length);
-  }
-  if (activeFilters.farbe.length) {
+  if (activeFilters.farbe.length)
     res = res.filter(p => activeFilters.farbe.some(f => farbeMatches(p, f)));
-    console.log('Nach farbe:', res.length);
-  }
   return res;
 }
 
@@ -1398,7 +1367,6 @@ function runSearch() {
 
   setTimeout(() => {
     clearInterval(timerInterval);
-    console.log('Suche startet, Query:', query);
     try {
       const result = searchPapers(query);
       document.getElementById('responseBadge').textContent = 'Live DB · ' + result.total_db + ' Papiere';
