@@ -975,20 +975,32 @@ function farbeMatches(p, f) {
 
 function applyHardFilters(papers) {
   let res = papers;
+  console.log('Filter start:', res.length, '| activeFilters:', JSON.stringify(activeFilters));
   if (activeFilters.anwendung) {
     const uc = ANWENDUNG_UC_MAP[activeFilters.anwendung] || activeFilters.anwendung.toLowerCase();
     res = res.filter(p => p.uc.includes(uc));
+    console.log('Nach anwendung ('+uc+'):', res.length);
   }
-  if (activeFilters.druck.length)
+  if (activeFilters.druck.length) {
     res = res.filter(p => activeFilters.druck.some(d => druckMatches(p, d)));
-  if (activeFilters.nachhaltig.length)
+    console.log('Nach druck:', res.length);
+  }
+  if (activeFilters.nachhaltig.length) {
     res = res.filter(p => activeFilters.nachhaltig.every(n => nachhaltigMatches(p, n)));
-  if (activeFilters.gramm.length)
+    console.log('Nach nachhaltig:', res.length);
+  }
+  if (activeFilters.gramm.length) {
     res = res.filter(p => activeFilters.gramm.some(g => grammMatches(p, g)));
-  if (activeFilters.oberflaeche.length)
+    console.log('Nach gramm:', res.length);
+  }
+  if (activeFilters.oberflaeche.length) {
     res = res.filter(p => activeFilters.oberflaeche.some(o => oberflaecheMatches(p, o)));
-  if (activeFilters.farbe.length)
+    console.log('Nach oberflaeche:', res.length);
+  }
+  if (activeFilters.farbe.length) {
     res = res.filter(p => activeFilters.farbe.some(f => farbeMatches(p, f)));
+    console.log('Nach farbe:', res.length);
+  }
   return res;
 }
 
