@@ -1349,7 +1349,16 @@ function runSearch() {
   const query = document.getElementById('queryInput').value.trim();
   if (!query) { document.getElementById('queryInput').focus(); return; }
   if (!DB_LOADED) {
-    alert('Die Papierdatenbank wird noch geladen. Bitte einen Moment warten.');
+    document.getElementById('sendBtn').disabled = true;
+    document.getElementById('sendBtn').innerHTML = '⏳ Datenbank lädt…';
+    const waitAndSearch = setInterval(() => {
+      if (DB_LOADED) {
+        clearInterval(waitAndSearch);
+        document.getElementById('sendBtn').disabled = false;
+        document.getElementById('sendBtn').innerHTML = '<span style="font-family:\'Nunito\',sans-serif;font-style:italic;">⏱</span> Erneut suchen';
+        runSearch();
+      }
+    }, 300);
     return;
   }
 
