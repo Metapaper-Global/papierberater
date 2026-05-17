@@ -697,7 +697,9 @@ function mapRow(r) {
   else if (wtRaw.includes('white') && !wtRaw.includes('green') && !wtRaw.includes('rose') && !wtRaw.includes('metallic') && !wtRaw.includes('transparent')) wt = 'white';
 
   // Druckverfahren
-  const hi = isPos(r['Eignung fuer HP Indigo']);
+  const hiRaw = r['Eignung fuer HP Indigo'] || '';
+  const hi   = hiRaw.includes('hervorragend');            // zertifiziert
+  const hiOk = !hi && hiRaw.includes('bedruckbar') && isPos(hiRaw); // bedruckbar, nicht zertifiziert
   const r_  = isPos(r['Eignung fuer den Riso']);
   const o   = isPos(r['Eignung fuer den Offset']);
   const ij  = isPos(r['Eignung fuer den Inkjet']);
@@ -770,7 +772,7 @@ function mapRow(r) {
   return {
     n:    r['Brand_Identifier'] || '',
     w, s, c, wt, col,
-    r: r_, hi, o, ij, t, lp, lp2, sc, sb, uvo, uvlack,
+    r: r_, hi, hiOk, o, ij, t, lp, lp2, sc, sb, uvo, uvlack,
     umschlag, transp, karton, volHoch,
     guenstigFlag, teuerFlag, desc,
     su, uc,
@@ -1007,7 +1009,7 @@ const ANWENDUNG_UC_MAP = {
 
 function druckMatches(p, d) {
   if (d === 'Riso') return p.r;
-  if (d === 'HP Indigo') return p.hi;
+  if (d === 'HP Indigo') return p.hi || p.hiOk;
   if (d === 'Offset' || d === 'UV-Offset' || d === 'Siebdruck') return p.o;
   if (d === 'Letterpress') return p.lp;
   if (d === 'Inkjet') return p.ij;
@@ -1195,7 +1197,7 @@ function scorePaper(paper, p) {
 
   // Process match/mismatch
   if (p.riso) { s += paper.r ? 35 : -30; }
-  if (p.indigo) { s += paper.hi ? 40 : -35; }
+  if (p.indigo) { s += paper.hi ? 40 : paper.hiOk ? 20 : -35; }
   if (p.letterpress) { s += paper.lp ? 35 : -25; }
   if (p.scodix) { s += paper.sc ? 50 : -45; }
   if (p.offset) { s += paper.o ? 15 : 0; }
@@ -1327,6 +1329,7 @@ function buildWhyText(paper, p) {
 
   if (p.riso && paper.r) parts.push('Riso-geeignet: Die saugfähige Oberfläche nimmt Riso-Farben optimal auf.');
   if (p.indigo && paper.hi) parts.push('HP Indigo garantiert zertifiziert – für optimale Farbhaftung und Reproduzierbarkeit.');
+  else if (p.indigo && paper.hiOk) parts.push('HP Indigo bedruckbar – nicht offiziell zertifiziert, funktioniert aber in der Praxis.');
   if (p.letterpress && paper.lp) parts.push('Letterpress-geeignet: Struktur und Gewicht ermöglichen tiefe, präzise Prägungen.');
   if (p.scodix && paper.sc) parts.push('Scodix/MGI zertifiziert: Eines der wenigen Papiere das digitale Veredelung auf rauer Oberfläche ermöglicht.');
 
@@ -1356,7 +1359,8 @@ function buildCardData(paper, rank, p, rawScore) {
 
   const tags = [paper.w + ' g/m²', surfaceLabel(paper.s)];
   if (paper.r) tags.push('Riso');
-  if (paper.hi) tags.push('HP Indigo');
+  if (paper.hi) tags.push('HP Indigo ✓');
+  else if (paper.hiOk) tags.push('HP Indigo');
   if (paper.sc) tags.push('Scodix');
   if (paper.lp) tags.push('Letterpress');
   paper.su.slice(0, 2).forEach(x => tags.push(x));
@@ -1364,6 +1368,7 @@ function buildCardData(paper, rank, p, rawScore) {
 
   const extras = [];
   if (paper.hi) extras.push('HP Indigo garantiert zertifiziert.');
+  else if (paper.hiOk) extras.push('HP Indigo bedruckbar (nicht zertifiziert).');
   if (paper.sc) extras.push('Scodix und MGI zertifiziert.');
   if (paper.su.length) extras.push(paper.su.join(', ') + '.');
   if (paper.u) extras.push(paper.u.charAt(0).toUpperCase() + paper.u.slice(1) + '.');
@@ -1421,7 +1426,7 @@ function searchPapers(query) {
   // Druckverfahren aus Query als harter Vorfilter — AND-Logik (Paper muss ALLE genannten können)
   let filtered = applyHardFilters(DB);
   const druckChecks = [];
-  if (p.indigo      && !activeFilters.druck.includes('HP Indigo'))                        druckChecks.push(x => x.hi);
+  if (p.indigo      && !activeFilters.druck.includes('HP Indigo'))                        druckChecks.push(x => x.hi || x.hiOk);
   if (p.riso        && !activeFilters.druck.includes('Riso'))                             druckChecks.push(x => x.r);
   if (p.letterpress && !activeFilters.druck.includes('Letterpress'))                      druckChecks.push(x => x.lp);
   if (p.scodix      && !activeFilters.druck.some(d => d === 'Scodix' || d === 'MGI'))    druckChecks.push(x => x.sc);
@@ -1461,7 +1466,12 @@ function searchPapers(query) {
   const nichtWeistonActive = p.schwarz || p.naturfarben ||
     activeFilters.farbe.some(f => ['Schwarz','Naturfarben','Gelbtöne','Blautöne','Rottöne','Grüntöne','Brauntöne','Schwarz','Farbig','Neon','Metallisierend'].includes(f));
   if (scodixActive && !nichtWeistonActive) {
-    const rdPool = applyHardFilters(DB).filter(pap => pap.n.includes('ROUGH DELUXE') && pap.sc);
+    // ROUGH DELUXE: nur Grammatur-Filter anwenden (nicht Anwendung — ROUGH DELUXE erscheint immer bei Scodix-Suche)
+    let rdPool = DB.filter(pap => pap.n.includes('ROUGH DELUXE') && pap.sc);
+    if (activeFilters.gramm.length)
+      rdPool = rdPool.filter(pap => activeFilters.gramm.some(g => grammMatches(pap, g)));
+    else if (p.minWeight || p.maxWeight)
+      rdPool = rdPool.filter(pap => pap.w >= (p.minWeight || 0) && pap.w <= (p.maxWeight || 9999));
     if (rdPool.length) {
       const rdScored = rdPool.map(pap => ({ paper: pap, score: scorePaper(pap, p) }));
       rdScored.sort((a, b) => b.score - a.score);
