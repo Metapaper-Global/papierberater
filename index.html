@@ -266,6 +266,12 @@ textarea:focus{border-bottom-color:var(--accent);}
 .ov-stat{display:inline-flex;align-items:center;gap:6px;font-family:'Inter',sans-serif;font-size:.56rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);}
 .ov-dot{width:5px;height:5px;border-radius:50%;}
 .ws-menu::-webkit-scrollbar{width:4px;}.ws-menu::-webkit-scrollbar-thumb{background:var(--rule);border-radius:6px;}
+
+/* ── LANG SWITCHER ── */
+.lang-switcher{display:flex;align-items:center;gap:2px;background:var(--cream);border:1px solid var(--rule);border-radius:8px;padding:3px;margin-left:12px;}
+.lang-btn{font-family:'Inter',sans-serif;font-size:.66rem;font-weight:600;letter-spacing:.04em;color:var(--ink-muted);background:none;border:none;padding:4px 7px;border-radius:5px;cursor:pointer;transition:background .15s,color .15s;}
+.lang-btn:hover{color:var(--ink);background:rgba(0,0,0,.05);}
+.lang-btn.active{background:var(--green);color:#fff;}
 </style>
 </head>
 <body>
@@ -292,28 +298,28 @@ textarea:focus{border-bottom-color:var(--accent);}
   </header>
   <!-- Stage -->
   <div class="ov-stage">
-    <div class="ov-eyebrow">Beschreibe dein Papier in einem Satz</div>
+    <div class="ov-eyebrow" data-i18n="ovEyebrow">Beschreibe dein Papier in einem Satz</div>
     <div class="ov-sentence">
-      <span>Ich suche ein Papier für eine </span>
+      <span id="ov-before-anwendung">Ich suche ein Papier für eine </span>
       <span class="ws"><button class="ws-btn" onclick="ovToggle('anwendung',event)"><span id="ovlbl-anwendung">Visitenkarte</span><span class="ws-arrow">▾</span></button><div class="ws-menu" id="ovmenu-anwendung"></div></span>
-      <span>, mit einer </span>
+      <span id="ov-between-a-o">, mit einer </span>
       <span class="ws"><button class="ws-btn" onclick="ovToggle('oberflaeche',event)"><span id="ovlbl-oberflaeche">rauen</span><span class="ws-arrow">▾</span></button><div class="ws-menu" id="ovmenu-oberflaeche"></div></span>
-      <span> Oberfläche, in </span>
+      <span id="ov-after-o"> Oberfläche, in </span>
       <span class="ws"><button class="ws-btn" onclick="ovToggle('farbe',event)"><span id="ovlbl-farbe">Warmwhite</span><span class="ws-arrow">▾</span></button><div class="ws-menu" id="ovmenu-farbe"></div></span>
-      <span>, möglichst </span>
+      <span id="ov-before-gramm">, möglichst </span>
       <span class="ws"><button class="ws-btn" onclick="ovToggle('gramm',event)"><span id="ovlbl-gramm">dick</span><span class="ws-arrow">▾</span></button><div class="ws-menu" id="ovmenu-gramm"></div></span>
-      <span>, gedruckt im </span>
+      <span id="ov-before-druck">, gedruckt im </span>
       <span class="ws"><button class="ws-btn" onclick="ovToggle('druck',event)"><span id="ovlbl-druck">HP Indigo Digitaldruck</span><span class="ws-arrow">▾</span></button><div class="ws-menu" id="ovmenu-druck"></div></span>
       <span>.</span>
     </div>
-    <button class="ov-cta" onclick="startFromOverlay()">⏱ 60 Sekunden starten</button>
-    <div class="ov-hint">Wähle deine Anforderungen und finde dein Papier in 60 Sekunden</div>
-    <button class="ov-advanced" onclick="goToAdvancedSearch()">Go to Advanced Search →</button>
+    <button class="ov-cta" onclick="startFromOverlay()" data-i18n="ovCta">⏱ 60 Sekunden starten</button>
+    <div class="ov-hint" data-i18n="ovHint">Wähle deine Anforderungen und finde dein Papier in 60 Sekunden</div>
+    <button class="ov-advanced" onclick="goToAdvancedSearch()" data-i18n="ovAdvanced">Go to Advanced Search →</button>
   </div>
   <div class="ov-footer">
-    <span class="ov-stat"><span class="ov-dot" style="background:#5A9A5A;"></span>Alle Metapaper Papiere</span>
-    <span class="ov-stat"><span class="ov-dot" style="background:#5A7A9A;"></span>Direkte Musterbestellung</span>
-    <span class="ov-stat"><span class="ov-dot" style="background:var(--accent);"></span>Direkt im Shop bestellen</span>
+    <span class="ov-stat"><span class="ov-dot" style="background:#5A9A5A;"></span><span data-i18n="stat1">Alle Metapaper Papiere</span></span>
+    <span class="ov-stat"><span class="ov-dot" style="background:#5A7A9A;"></span><span data-i18n="stat2">Direkte Musterbestellung</span></span>
+    <span class="ov-stat"><span class="ov-dot" style="background:var(--accent);"></span><span data-i18n="stat3">Direkt im Shop bestellen</span></span>
   </div>
 </div>
 <!-- ══ END OVERLAY ══ -->
@@ -337,16 +343,23 @@ textarea:focus{border-bottom-color:var(--accent);}
   <div class="header-right">
     <div class="db-live"><span class="db-dot"></span>Live DB</div>
     <div class="header-badge" style="color:var(--green);border-color:var(--green);">metapaper.io</div>
+    <div class="lang-switcher" id="langSwitcher">
+      <button class="lang-btn" data-lang="de">DE</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="fr">FR</button>
+      <button class="lang-btn" data-lang="nl">NL</button>
+      <button class="lang-btn" data-lang="da">DA</button>
+    </div>
   </div>
 </header>
 
 <section class="hero">
-  <h1 class="hero-title">Finde dein Papier in<br>weniger als <em style="color:var(--green);font-style:normal;">60 Sekunden.</em></h1>
-  <p class="hero-sub">Suche dein Papier über Anwendung, Druckverfahren, Grammatur, Oberfläche, Veredelungen oder Nachhaltigkeit – und erhalte die besten Empfehlungen aus dem Metapaper-Sortiment.</p>
+  <h1 class="hero-title" data-i18n="heroTitle">Finde dein Papier in<br>weniger als <em style="color:var(--green);font-style:normal;">60 Sekunden.</em></h1>
+  <p class="hero-sub" data-i18n="heroSub">Suche dein Papier über Anwendung, Druckverfahren, Grammatur, Oberfläche, Veredelungen oder Nachhaltigkeit – und erhalte die besten Empfehlungen aus dem Metapaper-Sortiment.</p>
   <div class="db-stats">
-    <div class="stat-pill"><span class="stat-dot dot-green"></span>Alle Metapaper-Papiere</div>
-    <div class="stat-pill"><span class="stat-dot dot-blue"></span>Direkte Musterbestellung</div>
-    <div class="stat-pill"><span class="stat-dot dot-orange"></span>Direkt im Shop bestellen</div>
+    <div class="stat-pill"><span class="stat-dot dot-green"></span><span data-i18n="stat1">Alle Metapaper-Papiere</span></div>
+    <div class="stat-pill"><span class="stat-dot dot-blue"></span><span data-i18n="stat2">Direkte Musterbestellung</span></div>
+    <div class="stat-pill"><span class="stat-dot dot-orange"></span><span data-i18n="stat3">Direkt im Shop bestellen</span></div>
   </div>
 </section>
 
@@ -358,19 +371,19 @@ textarea:focus{border-bottom-color:var(--accent);}
 
     <!-- Aktive Filter -->
     <div id="activeFiltersWrap" style="display:none;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--rule);">
-      <div class="filter-group-label">Aktive Filter
-        <button class="filter-clear" onclick="clearAllFilters()">Alle löschen</button>
+      <div class="filter-group-label"><span data-i18n="activeFiltersLabel">Aktive Filter</span>
+        <button class="filter-clear" onclick="clearAllFilters()" data-i18n="clearAll">Alle löschen</button>
       </div>
       <div class="active-filters" id="activeFilterTags"></div>
     </div>
 
     <!-- Anwendung -->
     <div class="filter-group">
-      <div class="filter-group-label">Anwendung
+      <div class="filter-group-label"><span data-i18n="filterAnwendung">Anwendung</span>
         <button class="filter-clear" onclick="clearFilter('anwendung')">×</button>
       </div>
       <select class="filter-select" id="f-anwendung" onchange="applyFilter('anwendung', this.value, this.options[this.selectedIndex].text)">
-        <option value="">Alle Anwendungen</option>
+        <option value="" data-i18n="allAnwendungen">Alle Anwendungen</option>
         <option value="Booklet">Booklet</option>
         <option value="Briefpapier">Briefpapier</option>
         <option value="Broschüre">Broschüre</option>
@@ -392,7 +405,7 @@ textarea:focus{border-bottom-color:var(--accent);}
 
     <!-- Druckverfahren -->
     <div class="filter-group">
-      <div class="filter-group-label">Druckverfahren
+      <div class="filter-group-label"><span data-i18n="filterDruck">Druckverfahren</span>
         <button class="filter-clear" onclick="clearFilter('druck')">×</button>
       </div>
       <div class="filter-pills" id="f-druck">
@@ -411,7 +424,7 @@ textarea:focus{border-bottom-color:var(--accent);}
 
     <!-- Nachhaltigkeit -->
     <div class="filter-group">
-      <div class="filter-group-label">Nachhaltigkeit
+      <div class="filter-group-label"><span data-i18n="filterNachhaltig">Nachhaltigkeit</span>
         <button class="filter-clear" onclick="clearFilter('nachhaltig')">×</button>
       </div>
       <div class="filter-pills" id="f-nachhaltig">
@@ -425,14 +438,14 @@ textarea:focus{border-bottom-color:var(--accent);}
     </div>
 
     <div class="filter-group" id="f-extras">
-      <div class="filter-group-label">Extras</div>
+      <div class="filter-group-label"><span data-i18n="filterExtras">Extras</span></div>
       <div class="filter-pills">
       </div>
     </div>
 
     <!-- Grammatur -->
     <div class="filter-group">
-      <div class="filter-group-label">Grammatur
+      <div class="filter-group-label"><span data-i18n="filterGramm">Grammatur</span>
         <button class="filter-clear" onclick="clearFilter('gramm')">×</button>
       </div>
       <div class="filter-pills" id="f-gramm">
@@ -446,7 +459,7 @@ textarea:focus{border-bottom-color:var(--accent);}
 
     <!-- Oberfläche -->
     <div class="filter-group">
-      <div class="filter-group-label">Oberfläche
+      <div class="filter-group-label"><span data-i18n="filterOberflaeche">Oberfläche</span>
         <button class="filter-clear" onclick="clearFilter('oberflaeche')">×</button>
       </div>
       <div class="filter-pills" id="f-oberflaeche">
@@ -461,7 +474,7 @@ textarea:focus{border-bottom-color:var(--accent);}
 
     <!-- Weißton / Farbe -->
     <div class="filter-group">
-      <div class="filter-group-label">Weißton &amp; Farbe
+      <div class="filter-group-label"><span data-i18n="filterFarbe">Weißton &amp; Farbe</span>
         <button class="filter-clear" onclick="clearFilter('farbe')">×</button>
       </div>
       <div class="color-grid" id="f-farbe">
@@ -528,20 +541,20 @@ textarea:focus{border-bottom-color:var(--accent);}
       </div>
     </div>
 
-    <button class="sidebar-reset-btn" onclick="triggerFilterSearch()">↩ Erneut suchen</button>
+    <button class="sidebar-reset-btn" onclick="triggerFilterSearch()" data-i18n="resetSearchBtn">↩ Erneut suchen</button>
 
   </aside>
   </div><!-- /.filter-sidebar-wrap -->
 
   <!-- ── FLOATING RESET BUTTON ── -->
-  <button class="floating-reset" id="floatingReset" onclick="triggerFilterSearch()">↩ Erneut suchen</button>
+  <button class="floating-reset" id="floatingReset" onclick="triggerFilterSearch()" data-i18n="resetSearchBtn">↩ Erneut suchen</button>
 
   <!-- ── INPUT + RIGHT COLUMN ── -->
   <div class="input-main">
     <section class="input-section">
       <div class="input-card">
-        <span class="input-label">Los geht's mit deinem Papierwunsch. Einfach prompten und finden.</span>
-        <textarea id="queryInput" placeholder="z.B. »Ich suche ein raues, leicht gelbliches Papier für eine Riso-Broschüre, ca. 120g, A3. Nachhaltig wäre super.«"></textarea>
+        <span class="input-label" data-i18n="inputLabel">Los geht's mit deinem Papierwunsch. Einfach prompten und finden.</span>
+        <textarea id="queryInput" data-i18n-placeholder="inputPlaceholder" placeholder="z.B. »Ich suche ein raues, leicht gelbliches Papier für eine Riso-Broschüre, ca. 120g, A3. Nachhaltig wäre super.«"></textarea>
         <div class="input-footer">
           <div class="chips">
             <button class="chip" onclick="setEx('Riso')">Riso</button>
@@ -554,7 +567,7 @@ textarea:focus{border-bottom-color:var(--accent);}
             <button class="chip" onclick="setEx('Fanzine')">Fanzine</button>
           </div>
           <button class="send-btn" id="sendBtn" onclick="runSearch()">
-            <span style="font-family:'Inter',sans-serif;font-style:italic;">⏱</span> Suchen
+            <span style="font-family:'Inter',sans-serif;font-style:italic;">⏱</span> <span data-i18n="searchBtn">Suchen</span>
           </button>
         </div>
       </div>
@@ -562,7 +575,7 @@ textarea:focus{border-bottom-color:var(--accent);}
 
     <!-- SCENARIO QUICK-PICKER -->
     <div class="scenario-bar" id="scenarioBar" style="padding:12px 0 0;">
-      <span class="scenario-label">▸ Beispielanfragen:</span>
+      <span class="scenario-label" data-i18n="scenarioLabel">▸ Beispielanfragen:</span>
       <div class="scenario-btns">
         <button class="scenario-btn" onclick="loadScenario('riso')">Riso 120 g/m²</button>
         <button class="scenario-btn" onclick="loadScenario('visitenkarten')">Visitenkarten 300 g/m²</button>
@@ -578,62 +591,62 @@ textarea:focus{border-bottom-color:var(--accent);}
     <div class="loading-block" id="loadingBlock">
       <div class="loading-inner">
         <div class="loading-timer" id="timerDisplay">5</div>
-        <div class="loading-label">Sekunden · Durchsuche Metapaper-Datenbank</div>
+        <div class="loading-label" data-i18n="loadingLabel">Sekunden · Durchsuche Metapaper-Datenbank</div>
         <div class="loading-steps">
-          <div class="loading-step" id="s1">◦ Anforderungen analysieren</div>
-          <div class="loading-step" id="s2">◦ Kandidaten filtern</div>
-          <div class="loading-step" id="s3">◦ Matches bewerten</div>
-          <div class="loading-step" id="s4">◦ Empfehlungen aufbereiten</div>
+          <div class="loading-step" id="s1" data-i18n-step="loadingStep1">◦ Anforderungen analysieren</div>
+          <div class="loading-step" id="s2" data-i18n-step="loadingStep2">◦ Kandidaten filtern</div>
+          <div class="loading-step" id="s3" data-i18n-step="loadingStep3">◦ Matches bewerten</div>
+          <div class="loading-step" id="s4" data-i18n-step="loadingStep4">◦ Empfehlungen aufbereiten</div>
         </div>
-        <div class="mode-indicator" id="modeIndicator">⚡ Live-Datenbanksuche · Alle Metapaper-Papiere</div>
+        <div class="mode-indicator" id="modeIndicator" data-i18n="modeIndicator">⚡ Live-Datenbanksuche · Alle Metapaper-Papiere</div>
       </div>
     </div>
 
     <div class="query-display" id="queryDisplay">
-      <button class="reset-btn" onclick="resetSearch()">↩ Neue Suche</button>
-      <div class="query-pill"><span>Anfrage</span><div class="query-text" id="queryText"></div></div>
+      <button class="reset-btn" onclick="resetSearch()" data-i18n="newSearchBtn">↩ Neue Suche</button>
+      <div class="query-pill"><span data-i18n="queryLabel">Anfrage</span><div class="query-text" id="queryText"></div></div>
     </div>
     <div class="error-block" id="errorBlock"></div>
 
     <section class="results-section" id="resultsSection">
   <div class="results-header">
-    <div class="results-title">Deine Empfehlungen</div>
+    <div class="results-title" data-i18n="resultsTitle">Deine Empfehlungen</div>
     <div class="results-count" id="resultsCount"></div>
-    <div class="demo-response-badge" id="responseBadge">Live Datenbank</div>
+    <div class="demo-response-badge" id="responseBadge" data-i18n="liveDbBadge">Live Datenbank</div>
   </div>
   <div id="refinementPanel" class="refinement-panel" style="display:none;"></div>
 
   <div id="cardsContainer"></div>
 
   <div class="feedback-panel" id="feedbackPanel">
-    <div class="feedback-title">Feedback für Feintuning</div>
+    <div class="feedback-title" data-i18n="feedbackTitle">Feedback für Feintuning</div>
     <div class="feedback-grid">
       <div class="feedback-item">
-        <span class="feedback-label">Relevanz der Ergebnisse</span>
+        <span class="feedback-label" data-i18n="feedbackRelevanz">Relevanz der Ergebnisse</span>
         <div class="star-row" id="stars-relevanz"></div>
       </div>
       <div class="feedback-item">
-        <span class="feedback-label">Qualität der Begründungen</span>
+        <span class="feedback-label" data-i18n="feedbackBegruendung">Qualität der Begründungen</span>
         <div class="star-row" id="stars-begruendung"></div>
       </div>
       <div class="feedback-item">
-        <span class="feedback-label">Vollständigkeit der Infos</span>
+        <span class="feedback-label" data-i18n="feedbackInfos">Vollständigkeit der Infos</span>
         <div class="star-row" id="stars-infos"></div>
       </div>
       <div class="feedback-item">
-        <span class="feedback-label">Allgemeine Zufriedenheit</span>
+        <span class="feedback-label" data-i18n="feedbackGesamt">Allgemeine Zufriedenheit</span>
         <div class="star-row" id="stars-gesamt"></div>
       </div>
     </div>
     <div class="feedback-item" style="margin-bottom:12px;">
-      <span class="feedback-label">Was würdest du anders formulieren / was fehlt?</span>
-      <textarea class="feedback-textarea" id="feedbackText" placeholder="z.B. »Die Begründung für Papier 2 war zu allgemein – mehr auf Riso-Spezifik eingehen...«"></textarea>
+      <span class="feedback-label" data-i18n="feedbackNotes">Was würdest du anders formulieren / was fehlt?</span>
+      <textarea class="feedback-textarea" id="feedbackText" data-i18n-placeholder="feedbackPlaceholder" placeholder="z.B. »Die Begründung für Papier 2 war zu allgemein – mehr auf Riso-Spezifik eingehen...«"></textarea>
     </div>
-    <button class="feedback-submit" onclick="submitFeedback()">Feedback speichern ↗</button>
-    <div class="feedback-thanks" id="feedbackThanks">✓ Gespeichert – danke für dein Feedback!</div>
+    <button class="feedback-submit" onclick="submitFeedback()" data-i18n="feedbackSubmit">Feedback speichern ↗</button>
+    <div class="feedback-thanks" id="feedbackThanks" data-i18n="feedbackThanks">✓ Gespeichert – danke für dein Feedback!</div>
   </div>
   <div style="text-align:center;padding:32px 0 8px;">
-    <a href="mailto:service@metapaper.io" class="contact-btn">Metapaper kontaktieren</a>
+    <a href="mailto:service@metapaper.io" class="contact-btn" data-i18n="contactBtn">Metapaper kontaktieren</a>
   </div>
 </section>
 
@@ -1359,8 +1372,8 @@ function buildCardData(paper, rank, p, rawScore) {
   if (paper.lp) prints.push('Letterpress');
   if (paper.sc) prints.push('Scodix/MGI');
 
-  const colorPart = paper.c === 'schwarz' ? 'Farbe: Schwarz' : (paper.c === 'grau' ? 'Farbe: Naturton' : 'Weißton: ' + whiteToneLabel(paper.wt));
-  const properties = ['Grammatur: ' + paper.w + ' g/m²', 'Oberfläche: ' + surfaceLabel(paper.s), colorPart, prints.length ? 'Druck: ' + prints.join(', ') : null].filter(Boolean).join(' | ');
+  const colorPart = paper.c === 'schwarz' ? T('colorSchwarz') : (paper.c === 'grau' ? T('colorGrau') : T('colorWeisston') + whiteToneLabel(paper.wt));
+  const properties = [T('labelGramm') + ': ' + paper.w + ' g/m²', T('labelOberflaeche') + ': ' + surfaceLabel(paper.s), colorPart, prints.length ? 'Druck: ' + prints.join(', ') : null].filter(Boolean).join(' | ');
 
   const tags = [paper.w + ' g/m²', surfaceLabel(paper.s)];
   if (paper.rTop) tags.push('Riso ✓');
@@ -1509,7 +1522,7 @@ function runSearch() {
       if (DB_LOADED) {
         clearInterval(waitAndSearch);
         document.getElementById('sendBtn').disabled = false;
-        document.getElementById('sendBtn').innerHTML = '<span style="font-family:\'Nunito\',sans-serif;font-style:italic;">⏱</span> Erneut suchen';
+        document.getElementById('sendBtn').innerHTML = '<span style="font-family:\'Nunito\',sans-serif;font-style:italic;">⏱</span> <span data-i18n="searchBtn">' + T('searchBtn') + '</span>';
         runSearch();
       }
     }, 300);
@@ -1572,29 +1585,29 @@ function renderResults(data, query) {
 
   if (!data.papers.length) {
     const hints = [];
-    if (activeFilters.gramm.length)   hints.push('Grammatur (' + activeFilters.gramm.join(', ') + ')');
-    if (activeFilters.druck.length)   hints.push('Druckverfahren (' + activeFilters.druck.join(' + ') + ')');
-    if (activeFilters.anwendung)      hints.push('Anwendung (' + activeFilters.anwendung + ')');
-    if (activeFilters.oberflaeche.length) hints.push('Oberfläche (' + activeFilters.oberflaeche.join(', ') + ')');
-    if (activeFilters.farbe.length)   hints.push('Farbe (' + activeFilters.farbe.join(', ') + ')');
+    if (activeFilters.gramm.length)   hints.push(T('hintGramm')(activeFilters.gramm.join(', ')));
+    if (activeFilters.druck.length)   hints.push(T('hintDruck')(activeFilters.druck.join(' + ')));
+    if (activeFilters.anwendung)      hints.push(T('hintAnwendung')(activeFilters.anwendung));
+    if (activeFilters.oberflaeche.length) hints.push(T('hintOberflaeche')(activeFilters.oberflaeche.join(', ')));
+    if (activeFilters.farbe.length)   hints.push(T('hintFarbe')(activeFilters.farbe.join(', ')));
     const hintText = hints.length > 1
-      ? 'Die Kombination aus ' + hints.join(' · ') + ' ergibt keine Treffer. Versuche einen der Filter zu entfernen.'
-      : 'Keine passenden Papiere für diese Anfrage gefunden. Versuche weniger Filter oder eine andere Formulierung.';
-    container.innerHTML = '<div class="no-results"><div class="no-results-title">Keine passenden Papiere gefunden</div><div class="no-results-sub">' + hintText + '</div></div>';
+      ? T('noResultsCombination')(hints.join(' · '))
+      : T('noResultsGeneral');
+    container.innerHTML = '<div class="no-results"><div class="no-results-title">' + T('noResultsTitle') + '</div><div class="no-results-sub">' + hintText + '</div></div>';
     document.getElementById('resultsSection').style.display = 'block';
     return;
   }
 
-  document.querySelector('.results-title').textContent = data.papers.length > 3 ? 'Vorauswahl' : 'Deine Empfehlungen';
+  document.querySelector('.results-title').textContent = data.papers.length > 3 ? T('preselectionTitle') : T('resultsTitle');
   document.getElementById('resultsCount').textContent = data.papers.length > 3
-    ? data.papers.length + ' Kandidaten · aus ' + data.total_filtered + ' gefiltert'
-    : data.papers.length + ' Empfehlungen · ' + data.total_filtered + ' Papiere gefiltert';
+    ? T('candidatesCount')(data.papers.length, data.total_filtered)
+    : T('recommendationsCount')(data.papers.length, data.total_filtered);
   document.getElementById('refinementPanel').style.display = 'none';
 
   if (data.query_analysis) {
     const qa = document.createElement('div');
     qa.style.cssText = 'background:var(--warm-white);border:1px solid var(--rule);border-radius:8px;padding:12px 16px;margin-bottom:16px;';
-    qa.innerHTML = '<span style="font-family:\'Nunito Sans\',sans-serif;font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);display:block;margin-bottom:5px;">Analyse der Anfrage</span><p style="font-size:.84rem;color:var(--ink-light);line-height:1.55;">' + data.query_analysis + '</p>';
+    qa.innerHTML = '<span style="font-family:\'Nunito Sans\',sans-serif;font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);display:block;margin-bottom:5px;">' + T('analysisLabel') + '</span><p style="font-size:.84rem;color:var(--ink-light);line-height:1.55;">' + data.query_analysis + '</p>';
     container.appendChild(qa);
   }
 
@@ -1798,14 +1811,14 @@ function showRefinementPanel(questions, candidateCount) {
     '<div class="refine-header">' +
       '<div class="refine-icon">◎</div>' +
       '<div>' +
-        '<div class="refine-title">Noch ' + (questions.length === 1 ? 'eine kurze Frage' : questions.length + ' kurze Fragen') + ' – um die Ergebnisse zu verfeinern.</div>' +
-        '<div class="refine-sub">Wir haben <strong>' + candidateCount + ' passende Papiere</strong> gefunden. Hier kannst du deine Ergebnisse - bis auf die drei besten Papiere - weiter einschränken.</div>' +
+        '<div class="refine-title">' + T('refineTitle')(questions.length) + '</div>' +
+        '<div class="refine-sub">' + T('refineSub')(candidateCount) + '</div>' +
       '</div>' +
     '</div>' +
     '<div class="refine-questions" id="refinementQuestions"></div>' +
     '<div class="refine-footer">' +
-      '<button class="refine-btn" id="refineBtn" onclick="applyRefinement()">▶ Beste 3 Papiere anzeigen</button>' +
-      '<button class="refine-skip-btn" onclick="skipRefinement()">Alle ' + candidateCount + ' anzeigen</button>' +
+      '<button class="refine-btn" id="refineBtn" onclick="applyRefinement()">' + T('refineBtn') + '</button>' +
+      '<button class="refine-skip-btn" onclick="skipRefinement()">' + T('refineSkip')(candidateCount) + '</button>' +
     '</div>';
 
   const qDiv = document.getElementById('refinementQuestions');
@@ -1820,7 +1833,7 @@ function showRefinementPanel(questions, candidateCount) {
         cfg.opts.map(o =>
           '<button class="refine-pill" onclick="setRefinement(\'' + cat + '\',\'' + o.val.replace(/'/g, "\\'") + '\',this)">' + o.label + '</button>'
         ).join('') +
-        '<button class="refine-pill refine-pill-skip" onclick="setRefinement(\'' + cat + '\',null,this)">Keine Präferenz</button>' +
+        '<button class="refine-pill refine-pill-skip" onclick="setRefinement(\'' + cat + '\',null,this)">' + T('refineNoPreference') + '</button>' +
       '</div>';
     qDiv.appendChild(block);
   });
@@ -1921,16 +1934,16 @@ function applyRefinement() {
 
 function renderTop3(topScored, p, totalCandidates) {
   document.getElementById('refinementPanel').style.display = 'none';
-  document.querySelector('.results-title').textContent = 'Deine Top 3';
-  document.getElementById('resultsCount').textContent = '3 Empfehlungen · verfeinert aus ' + totalCandidates + ' Kandidaten';
-  document.getElementById('responseBadge').textContent = 'Verfeinert';
+  document.querySelector('.results-title').textContent = T('top3Title');
+  document.getElementById('resultsCount').textContent = T('top3Count')(totalCandidates);
+  document.getElementById('responseBadge').textContent = T('refinedBadge');
 
   const container = document.getElementById('cardsContainer');
   container.innerHTML = '';
 
   const backWrap = document.createElement('div');
   backWrap.style.cssText = 'text-align:right;margin-bottom:12px;';
-  backWrap.innerHTML = '<button class="reset-btn" onclick="showAllCandidates()" style="display:inline-block;">↩ Alle ' + totalCandidates + ' Kandidaten anzeigen</button>';
+  backWrap.innerHTML = '<button class="reset-btn" onclick="showAllCandidates()" style="display:inline-block;">' + T('backToAll')(totalCandidates) + '</button>';
   container.appendChild(backWrap);
 
   topScored.forEach((x, i) => {
@@ -1949,14 +1962,14 @@ function showAllCandidates() {
   const container = document.getElementById('cardsContainer');
   container.innerHTML = '';
 
-  document.querySelector('.results-title').textContent = 'Vorauswahl';
-  document.getElementById('resultsCount').textContent = scoredCandidates.length + ' Kandidaten';
-  document.getElementById('responseBadge').textContent = 'Live Datenbank';
+  document.querySelector('.results-title').textContent = T('preselectionTitle');
+  document.getElementById('resultsCount').textContent = T('candidatesOnly')(scoredCandidates.length);
+  document.getElementById('responseBadge').textContent = T('liveDbBadge');
 
   if (parsedQuery) {
     const qa = document.createElement('div');
     qa.style.cssText = 'background:var(--warm-white);border:1px solid var(--rule);border-radius:8px;padding:12px 16px;margin-bottom:16px;';
-    qa.innerHTML = '<span style="font-family:\'Nunito Sans\',sans-serif;font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);display:block;margin-bottom:5px;">Analyse der Anfrage</span><p style="font-size:.84rem;color:var(--ink-light);line-height:1.55;">' + buildQueryAnalysis(parsedQuery, scoredCandidates.length) + '</p>';
+    qa.innerHTML = '<span style="font-family:\'Nunito Sans\',sans-serif;font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);display:block;margin-bottom:5px;">' + T('analysisLabel') + '</span><p style="font-size:.84rem;color:var(--ink-light);line-height:1.55;">' + buildQueryAnalysis(parsedQuery, scoredCandidates.length) + '</p>';
     container.appendChild(qa);
   }
 
@@ -1989,17 +2002,17 @@ function makeCardElement(paper, i) {
   const aiScoreHtml = paper.match_score
     ? '<div class="ai-score ' + aiScoreCls + '"><span class="ai-score-label">AI Score</span><span class="ai-score-val">' + paper.match_score + '%</span></div>'
     : '';
-  const labelsMap = {gramm:'Grammatur',rauhigkeit:'Oberfläche',dicke:'Dicke',cie_weisse:'CIE Weiße',min_order:'Mindestbestellung',volumen:'Volumen',lager:'Lager',umschlag:'Erhältlich'};
+  const labelsMap = {gramm:T('labelGramm'),rauhigkeit:T('labelOberflaeche'),dicke:'Dicke',cie_weisse:'CIE Weiße',min_order:'Mindestbestellung',volumen:'Volumen',lager:'Lager',umschlag:T('labelUmschlag')};
   const specItems = Object.entries(paper.specs || {}).filter(([,v]) => v).map(([k,v]) =>
     '<div class="spec-item"><span class="spec-label">' + (labelsMap[k]||k) + '</span><span class="spec-val">' + v + '</span></div>'
   ).join('');
   const ecoBlock = paper.eco_info ? '<div class="eco-block">🌿 ' + paper.eco_info + '</div>' : '';
   const rankStr = (paper.rank < 10 ? '0' : '') + paper.rank;
   const sBtn = paper.sample_url && paper.sample_url.startsWith('http')
-    ? '<a class="link-btn primary" href="' + paper.sample_url + '" target="_blank">🎯 Muster bestellen</a>'
-    : '<button class="link-btn secondary" style="opacity:.5;cursor:default;">🎯 Muster auf Anfrage</button>';
+    ? '<a class="link-btn primary" href="' + paper.sample_url + '" target="_blank">' + T('sampleBtn') + '</a>'
+    : '<button class="link-btn secondary" style="opacity:.5;cursor:default;">' + T('sampleRequest') + '</button>';
   const shBtn = paper.shop_url && paper.shop_url.startsWith('http')
-    ? '<a class="link-btn secondary" href="' + paper.shop_url + '" target="_blank">🛒 Online kaufen</a>'
+    ? '<a class="link-btn secondary" href="' + paper.shop_url + '" target="_blank">' + T('shopBtn') + '</a>'
     : '';
 
   card.innerHTML =
@@ -2013,11 +2026,11 @@ function makeCardElement(paper, i) {
       '<div class="card-toggle">▾</div>' +
     '</div>' +
     '<div class="card-body open">' +
-      '<div class="card-section"><span class="card-section-label">Eigenschaften</span><p>' + (paper.properties || '–') + (paper.format ? ' | Max. Format: ' + paper.format : '') + '</p></div>' +
+      '<div class="card-section"><span class="card-section-label">' + T('labelEigenschaften') + '</span><p>' + (paper.properties || '–') + (paper.format ? ' ' + T('labelMaxFormat') + ' ' + paper.format : '') + '</p></div>' +
       '<div class="why-block">' + (paper.why || '–') + '</div>' +
       (specItems ? '<div class="specs-grid">' + specItems + '</div>' : '') +
       ecoBlock +
-      (paper.extra ? '<div class="card-section"><span class="card-section-label">Zusatzinfos</span><p>' + paper.extra + '</p></div>' : '') +
+      (paper.extra ? '<div class="card-section"><span class="card-section-label">' + T('labelZusatzinfos') + '</span><p>' + paper.extra + '</p></div>' : '') +
     '</div>' +
     '<div class="card-links">' + sBtn + shBtn + '</div>';
 
@@ -2296,28 +2309,887 @@ function startFromOverlay() {
 
   // Natürlichsprachige Anfrage aufbauen (Reihenfolge: Anwendung → Oberfläche → Farbe → Gramm → Druck)
   const parts = [];
-  if (ovSel.anwendung)   parts.push('für eine ' + ovSel.anwendung);
+  if (ovSel.anwendung)   parts.push(T('ovQueryFor') + ovSel.anwendung);
   if (ovSel.oberflaeche) {
     const obflOpt = OV_DATA.oberflaeche.opts.find(o => o.v === ovSel.oberflaeche);
-    parts.push('mit einer ' + (obflOpt ? obflOpt.l : ovSel.oberflaeche) + ' Oberfläche');
+    parts.push(T('ovQueryWith') + (obflOpt ? obflOpt.l : ovSel.oberflaeche) + T('ovQuerySurface'));
   }
-  if (ovSel.farbe)       parts.push('in ' + ovSel.farbe);
+  if (ovSel.farbe)       parts.push(T('ovQueryIn') + ovSel.farbe);
   if (ovSel.gramm) {
     const grammOpt = OV_DATA.gramm.opts.find(o => o.v === ovSel.gramm);
-    parts.push('möglichst ' + (grammOpt ? grammOpt.l : ovSel.gramm));
+    parts.push(T('ovQueryPrefer') + (grammOpt ? grammOpt.l : ovSel.gramm));
   }
   if (ovSel.druck) {
     const druckOpt = OV_DATA.druck.opts.find(o => o.v === ovSel.druck);
-    parts.push('gedruckt im ' + (druckOpt ? druckOpt.l : ovSel.druck));
+    parts.push(T('ovQueryPrinted') + (druckOpt ? druckOpt.l : ovSel.druck));
   }
 
-  document.getElementById('queryInput').value = 'Ich suche ein Papier ' + parts.join(', ');
+  document.getElementById('queryInput').value = T('ovQuerySeek') + parts.join(', ');
   document.getElementById('scenarioBar').style.display = 'none';
   runSearch();
 }
 
 // Overlay initialisieren
 ovBuildMenus();
+
+// ─── I18N ───────────────────────────────────────────────────────────────────
+
+const TEXTS = {
+  de: {
+    ovEyebrow: 'Beschreibe dein Papier in einem Satz',
+    ovBeforeAnwendung: 'Ich suche ein Papier für eine ',
+    ovBetweenAO: ', mit einer ',
+    ovAfterO: ' Oberfläche, in ',
+    ovBeforeGramm: ', möglichst ',
+    ovBeforeDruck: ', gedruckt im ',
+    ovCta: '⏱ 60 Sekunden starten',
+    ovHint: 'Wähle deine Anforderungen und finde dein Papier in 60 Sekunden',
+    ovAdvanced: 'Go to Advanced Search →',
+    stat1: 'Alle Metapaper Papiere',
+    stat2: 'Direkte Musterbestellung',
+    stat3: 'Direkt im Shop bestellen',
+    heroTitle: 'Finde dein Papier in<br>weniger als <em style="color:var(--green);font-style:normal;">60 Sekunden.</em>',
+    heroSub: 'Suche dein Papier über Anwendung, Druckverfahren, Grammatur, Oberfläche, Veredelungen oder Nachhaltigkeit – und erhalte die besten Empfehlungen aus dem Metapaper-Sortiment.',
+    activeFiltersLabel: 'Aktive Filter',
+    clearAll: 'Alle löschen',
+    filterAnwendung: 'Anwendung',
+    filterDruck: 'Druckverfahren',
+    filterNachhaltig: 'Nachhaltigkeit',
+    filterGramm: 'Grammatur',
+    filterOberflaeche: 'Oberfläche',
+    filterFarbe: 'Weißton & Farbe',
+    filterExtras: 'Extras',
+    allAnwendungen: 'Alle Anwendungen',
+    resetSearchBtn: '↩ Erneut suchen',
+    inputLabel: 'Los geht\'s mit deinem Papierwunsch. Einfach prompten und finden.',
+    inputPlaceholder: 'z.B. »Ich suche ein raues, leicht gelbliches Papier für eine Riso-Broschüre, ca. 120g, A3. Nachhaltig wäre super.«',
+    searchBtn: 'Suchen',
+    scenarioLabel: '▸ Beispielanfragen:',
+    loadingLabel: 'Sekunden · Durchsuche Metapaper-Datenbank',
+    loadingStep1: 'Anforderungen analysieren',
+    loadingStep2: 'Kandidaten filtern',
+    loadingStep3: 'Matches bewerten',
+    loadingStep4: 'Empfehlungen aufbereiten',
+    modeIndicator: '⚡ Live-Datenbanksuche · Alle Metapaper-Papiere',
+    newSearchBtn: '↩ Neue Suche',
+    queryLabel: 'Anfrage',
+    resultsTitle: 'Deine Empfehlungen',
+    preselectionTitle: 'Vorauswahl',
+    top3Title: 'Deine Top 3',
+    liveDbBadge: 'Live Datenbank',
+    refinedBadge: 'Verfeinert',
+    analysisLabel: 'Analyse der Anfrage',
+    noResultsTitle: 'Keine passenden Papiere gefunden',
+    noResultsSub: 'Keine passenden Papiere für diese Anfrage gefunden. Versuche weniger Filter oder eine andere Formulierung.',
+    sampleBtn: '🎯 Muster bestellen',
+    sampleRequest: '🎯 Muster auf Anfrage',
+    shopBtn: '🛒 Online kaufen',
+    labelGramm: 'Grammatur',
+    labelOberflaeche: 'Oberfläche',
+    labelFarbe: 'Farbe',
+    labelWeisston: 'Weißton',
+    labelEigenschaften: 'Eigenschaften',
+    labelZusatzinfos: 'Zusatzinfos',
+    labelMaxFormat: '| Max. Format:',
+    labelUmschlag: 'Briefumschlag erhältlich',
+    feedbackTitle: 'Feedback für Feintuning',
+    feedbackRelevanz: 'Relevanz der Ergebnisse',
+    feedbackBegruendung: 'Qualität der Begründungen',
+    feedbackInfos: 'Vollständigkeit der Infos',
+    feedbackGesamt: 'Allgemeine Zufriedenheit',
+    feedbackNotes: 'Was würdest du anders formulieren / was fehlt?',
+    feedbackPlaceholder: 'z.B. »Die Begründung für Papier 2 war zu allgemein – mehr auf Riso-Spezifik eingehen...«',
+    feedbackSubmit: 'Feedback speichern ↗',
+    feedbackThanks: '✓ Gespeichert – danke für dein Feedback!',
+    contactBtn: 'Metapaper kontaktieren',
+    // Refinement panel
+    refineTitle: (n) => 'Noch ' + (n === 1 ? 'eine kurze Frage' : n + ' kurze Fragen') + ' – um die Ergebnisse zu verfeinern.',
+    refineSub: (n) => 'Wir haben <strong>' + n + ' passende Papiere</strong> gefunden. Hier kannst du deine Ergebnisse - bis auf die drei besten Papiere - weiter einschränken.',
+    refineBtn: '▶ Beste 3 Papiere anzeigen',
+    refineSkip: (n) => 'Alle ' + n + ' anzeigen',
+    refineNoPreference: 'Keine Präferenz',
+    backToAll: (n) => '↩ Alle ' + n + ' Kandidaten anzeigen',
+    // Result counts
+    candidatesCount: (n, tot) => n + ' Kandidaten · aus ' + tot + ' gefiltert',
+    recommendationsCount: (n, tot) => n + ' Empfehlungen · ' + tot + ' Papiere gefiltert',
+    top3Count: (n) => '3 Empfehlungen · verfeinert aus ' + n + ' Kandidaten',
+    candidatesOnly: (n) => n + ' Kandidaten',
+    // No-results filter hint
+    noResultsCombination: (h) => 'Die Kombination aus ' + h + ' ergibt keine Treffer. Versuche einen der Filter zu entfernen.',
+    noResultsGeneral: 'Keine passenden Papiere für diese Anfrage gefunden. Versuche weniger Filter oder eine andere Formulierung.',
+    hintGramm: (v) => 'Grammatur (' + v + ')',
+    hintDruck: (v) => 'Druckverfahren (' + v + ')',
+    hintAnwendung: (v) => 'Anwendung (' + v + ')',
+    hintOberflaeche: (v) => 'Oberfläche (' + v + ')',
+    hintFarbe: (v) => 'Farbe (' + v + ')',
+    // Query analysis
+    queryAnalysisLabel: 'Analyse der Anfrage',
+    queryNoFeats: (n) => n + ' Papiere aus der Metapaper-Datenbank durchsucht.',
+    queryFeats: (f, n) => 'Erkannte Anforderungen: ' + f + '. ' + n + ' von allen Metapaper Papieren als Kandidaten bewertet.',
+    // Query sentence construction
+    queryISeek: 'Ich suche ein Papier',
+    queryFor: 'für',
+    queryPrintedIn: 'gedruckt im',
+    queryGramm: 'Grammatur',
+    querySurface: 'Oberfläche',
+    queryColor: 'Farbe/Weißton',
+    querySustain: 'nachhaltig',
+    queryOr: 'oder',
+    // Overlay OV_DATA sentence parts (for startFromOverlay)
+    ovQueryFor: 'für eine ',
+    ovQueryWith: 'mit einer ',
+    ovQuerySurface: ' Oberfläche',
+    ovQueryIn: 'in ',
+    ovQueryPrefer: 'möglichst ',
+    ovQueryPrinted: 'gedruckt im ',
+    ovQuerySeek: 'Ich suche ein Papier ',
+    // Surface labels
+    surfLabels: {extrarau:'Extrem rau',rau:'Rau','leicht gestrichen':'Leicht gestrichen',glatt:'Glatt','sehr glatt':'Sehr glatt','voll gestrichen':'Voll gestrichen',natur:'Natur',gepraegt:'Geprägt'},
+    // White tone labels
+    wtLabels: {white:'Weiß',coldwhite:'Kaltweiß',warmwhite:'Warmweiß',white_coldwhite:'Weiß/Kaltweiß'},
+    // Color label
+    colorSchwarz: 'Farbe: Schwarz',
+    colorGrau: 'Farbe: Naturton',
+    colorWeisston: 'Weißton: ',
+    // Overlay options (adjective forms for sentence)
+    ovOberflaeche: [
+      {v:'extrem rau',l:'extrem rauen'},{v:'rau',l:'rauen'},{v:'leicht gestrichen',l:'leicht gestrichenen'},
+      {v:'glatt',l:'glatten'},{v:'sehr glatt',l:'sehr glatten'},{v:'gepraegt',l:'geprägten'}
+    ],
+    ovGramm: [
+      {v:'< 100 g/m²',l:'dünn',g:'bis 100 g/m²'},{v:'100–150 g/m²',l:'leicht',g:'100–150 g/m²'},
+      {v:'150–250 g/m²',l:'mittel',g:'150–250 g/m²'},{v:'250–350 g/m²',l:'dick',g:'250–350 g/m²'},
+      {v:'> 350 g/m²',l:'sehr dick',g:'über 350 g/m²'}
+    ],
+    ovDruck: [
+      {v:'Heißfolie',l:'Heißfolie'},{v:'HP Indigo',l:'HP Indigo Digitaldruck'},{v:'Inkjet',l:'Inkjet'},
+      {v:'Letterpress',l:'Letterpress'},{v:'MGI',l:'MGI'},{v:'Offset',l:'Offset'},
+      {v:'Riso',l:'Riso'},{v:'Scodix',l:'Scodix'},{v:'Siebdruck',l:'Siebdruck'},{v:'UV-Offset',l:'UV-Offset'}
+    ],
+    ovNoPreferenceDruck: 'Kein spezifisches Verfahren',
+    ovNoPreferenceFarbe: 'Kein Weißton-Filter',
+    ovNoPreferenceGramm: 'Keine Präferenz',
+    // REFINE_CATS translations
+    refineCats: {
+      oberflaeche: { label: 'Oberfläche', sub: 'Welche Papieroberfläche bevorzugst du?',
+        opts: [{val:'extrem rau',label:'Extrem rau'},{val:'rau',label:'Rau'},{val:'glatt',label:'Glatt / Smooth'},{val:'sehr glatt',label:'Sehr glatt'},{val:'gepraegt',label:'Geprägt'},{val:'leicht gestrichen',label:'Leicht gestrichen'},{val:'gestrichen',label:'Gestrichen'}]},
+      farbe: { label: 'Weißton & Färbung', sub: 'Welchen Weißton oder welche Farbe soll das Papier haben?',
+        opts: [{val:'kaltweiss',label:'Kaltweiß / Coldwhite'},{val:'weiss',label:'Reinweiß / White'},{val:'warmweiss',label:'Warmweiß / Warmwhite'},{val:'naturfarben',label:'Natur / Beige'},{val:'schwarz',label:'Schwarz'},{val:'bunt',label:'Farbig / Bunt'}]},
+      gramm: { label: 'Grammatur', sub: 'Welches Gewicht / welche Dicke soll das Papier haben?',
+        opts: [{val:'< 100 g/m²',label:'Leicht · bis 100 g/m²'},{val:'100–150 g/m²',label:'100–150 g/m²'},{val:'150–250 g/m²',label:'150–250 g/m²'},{val:'250–350 g/m²',label:'250–350 g/m²'},{val:'> 350 g/m²',label:'Schwer · über 350 g/m²'}]},
+      anwendung: { label: 'Anwendung / Druckprodukt', sub: 'Wofür wird das Papier eingesetzt?',
+        opts: [{val:'Visitenkarte',label:'Visitenkarte'},{val:'Broschüre',label:'Broschüre / Softcover'},{val:'Magazin',label:'Magazin'},{val:'Karte / Einladung',label:'Karte / Einladung'},{val:'Kunstbuch',label:'Kunst- / Fotobuch'},{val:'Fanzine',label:'Fanzine / Zine'},{val:'Verpackung',label:'Verpackung'},{val:'Geschäftsbericht',label:'Geschäftsbericht'},{val:'Nachhaltigkeitsbericht',label:'Nachhaltigkeitsbericht'},{val:'Booklet',label:'Booklet'}]},
+      druck: { label: 'Drucktechnologie', sub: 'Welches Druckverfahren wird eingesetzt?',
+        opts: [{val:'Riso',label:'Riso'},{val:'HP Indigo',label:'HP Indigo'},{val:'Offset',label:'Offset'},{val:'UV-Offset',label:'UV-Offset'},{val:'Letterpress',label:'Letterpress'},{val:'Scodix',label:'Scodix / MGI'},{val:'Heißfolie',label:'Heißfolienprägung'},{val:'Inkjet',label:'Inkjet / Großformat'}]},
+      nachhaltigkeit: { label: 'Nachhaltigkeit', sub: 'Gibt es Anforderungen an die Nachhaltigkeit des Papiers?',
+        opts: [{val:'fsc',label:'FSC-zertifiziert'},{val:'recycling',label:'Recyclingpapier'},{val:'recycling100',label:'100% Recycling'},{val:'blauEngel',label:'Blauer Engel'},{val:'upcycling',label:'Upcycling'}]},
+      volumen: { label: 'Volumen / Haptik', sub: 'Soll das Papier besonders voluminös und griffig sein?',
+        opts: [{val:'voluminoes',label:'Ja, möglichst voluminös'},{val:'normal',label:'Kein besonderes Volumen nötig'}]}
+    }
+  },
+
+  en: {
+    ovEyebrow: 'Describe your paper in one sentence',
+    ovBeforeAnwendung: "I'm looking for a paper for ",
+    ovBetweenAO: ', with a ',
+    ovAfterO: ' surface, in ',
+    ovBeforeGramm: ', preferably ',
+    ovBeforeDruck: ', printed using ',
+    ovCta: '⏱ Start 60 seconds',
+    ovHint: 'Choose your requirements and find your paper in 60 seconds',
+    ovAdvanced: 'Go to Advanced Search →',
+    stat1: 'All Metapaper papers',
+    stat2: 'Direct sample order',
+    stat3: 'Buy directly in the shop',
+    heroTitle: 'Find your paper in<br>less than <em style="color:var(--green);font-style:normal;">60 seconds.</em>',
+    heroSub: 'Search for your paper by application, printing process, grammage, surface, finishing or sustainability – and get the best recommendations from the Metapaper range.',
+    activeFiltersLabel: 'Active filters',
+    clearAll: 'Clear all',
+    filterAnwendung: 'Application',
+    filterDruck: 'Print process',
+    filterNachhaltig: 'Sustainability',
+    filterGramm: 'Grammage',
+    filterOberflaeche: 'Surface',
+    filterFarbe: 'White tone & colour',
+    filterExtras: 'Extras',
+    allAnwendungen: 'All applications',
+    resetSearchBtn: '↩ Search again',
+    inputLabel: "Let's go with your paper wish. Simply prompt and find.",
+    inputPlaceholder: 'e.g. "I\'m looking for a rough, slightly yellowish paper for a Riso brochure, approx. 120g, A3. Sustainable would be great."',
+    searchBtn: 'Search',
+    scenarioLabel: '▸ Example searches:',
+    loadingLabel: 'Seconds · Searching Metapaper database',
+    loadingStep1: 'Analysing requirements',
+    loadingStep2: 'Filtering candidates',
+    loadingStep3: 'Evaluating matches',
+    loadingStep4: 'Preparing recommendations',
+    modeIndicator: '⚡ Live database search · All Metapaper papers',
+    newSearchBtn: '↩ New search',
+    queryLabel: 'Query',
+    resultsTitle: 'Your recommendations',
+    preselectionTitle: 'Pre-selection',
+    top3Title: 'Your top 3',
+    liveDbBadge: 'Live database',
+    refinedBadge: 'Refined',
+    analysisLabel: 'Query analysis',
+    noResultsTitle: 'No matching papers found',
+    noResultsSub: 'No matching papers found for this query. Try fewer filters or a different wording.',
+    sampleBtn: '🎯 Order sample',
+    sampleRequest: '🎯 Sample on request',
+    shopBtn: '🛒 Buy online',
+    labelGramm: 'Grammage',
+    labelOberflaeche: 'Surface',
+    labelFarbe: 'Colour',
+    labelWeisston: 'White tone',
+    labelEigenschaften: 'Properties',
+    labelZusatzinfos: 'Additional info',
+    labelMaxFormat: '| Max. format:',
+    labelUmschlag: 'Envelope available',
+    feedbackTitle: 'Feedback for fine-tuning',
+    feedbackRelevanz: 'Relevance of results',
+    feedbackBegruendung: 'Quality of explanations',
+    feedbackInfos: 'Completeness of info',
+    feedbackGesamt: 'Overall satisfaction',
+    feedbackNotes: 'What would you phrase differently / what\'s missing?',
+    feedbackPlaceholder: 'e.g. "The explanation for paper 2 was too general..."',
+    feedbackSubmit: 'Save feedback ↗',
+    feedbackThanks: '✓ Saved – thank you for your feedback!',
+    contactBtn: 'Contact Metapaper',
+    refineTitle: (n) => 'Just ' + (n === 1 ? 'one quick question' : n + ' quick questions') + ' – to refine your results.',
+    refineSub: (n) => 'We found <strong>' + n + ' matching papers</strong>. Here you can narrow down your results to the three best papers.',
+    refineBtn: '▶ Show best 3 papers',
+    refineSkip: (n) => 'Show all ' + n,
+    refineNoPreference: 'No preference',
+    backToAll: (n) => '↩ Show all ' + n + ' candidates',
+    candidatesCount: (n, tot) => n + ' candidates · from ' + tot + ' filtered',
+    recommendationsCount: (n, tot) => n + ' recommendations · ' + tot + ' papers filtered',
+    top3Count: (n) => '3 recommendations · refined from ' + n + ' candidates',
+    candidatesOnly: (n) => n + ' candidates',
+    noResultsCombination: (h) => 'The combination of ' + h + ' yields no results. Try removing one of the filters.',
+    noResultsGeneral: 'No matching papers found for this query. Try fewer filters or a different wording.',
+    hintGramm: (v) => 'Grammage (' + v + ')',
+    hintDruck: (v) => 'Print process (' + v + ')',
+    hintAnwendung: (v) => 'Application (' + v + ')',
+    hintOberflaeche: (v) => 'Surface (' + v + ')',
+    hintFarbe: (v) => 'Colour (' + v + ')',
+    queryAnalysisLabel: 'Query analysis',
+    queryNoFeats: (n) => n + ' papers from the Metapaper database searched.',
+    queryFeats: (f, n) => 'Detected requirements: ' + f + '. ' + n + ' papers from Metapaper evaluated as candidates.',
+    queryISeek: 'I\'m looking for a paper',
+    queryFor: 'for',
+    queryPrintedIn: 'printed using',
+    queryGramm: 'Grammage',
+    querySurface: 'Surface',
+    queryColor: 'Colour/White tone',
+    querySustain: 'sustainable',
+    queryOr: 'or',
+    ovQueryFor: 'for ',
+    ovQueryWith: ', with a ',
+    ovQuerySurface: ' surface',
+    ovQueryIn: 'in ',
+    ovQueryPrefer: 'preferably ',
+    ovQueryPrinted: 'printed using ',
+    ovQuerySeek: "I'm looking for a paper ",
+    surfLabels: {extrarau:'Extra rough',rau:'Rough','leicht gestrichen':'Lightly coated',glatt:'Smooth','sehr glatt':'Very smooth','voll gestrichen':'Fully coated',natur:'Natural',gepraegt:'Embossed'},
+    wtLabels: {white:'White',coldwhite:'Cold white',warmwhite:'Warm white',white_coldwhite:'White/Cold white'},
+    colorSchwarz: 'Colour: Black',
+    colorGrau: 'Colour: Natural tone',
+    colorWeisston: 'White tone: ',
+    ovOberflaeche: [
+      {v:'extrem rau',l:'extra rough'},{v:'rau',l:'rough'},{v:'leicht gestrichen',l:'lightly coated'},
+      {v:'glatt',l:'smooth'},{v:'sehr glatt',l:'very smooth'},{v:'gepraegt',l:'embossed'}
+    ],
+    ovGramm: [
+      {v:'< 100 g/m²',l:'light',g:'up to 100 g/m²'},{v:'100–150 g/m²',l:'medium-light',g:'100–150 g/m²'},
+      {v:'150–250 g/m²',l:'medium',g:'150–250 g/m²'},{v:'250–350 g/m²',l:'thick',g:'250–350 g/m²'},
+      {v:'> 350 g/m²',l:'very thick',g:'over 350 g/m²'}
+    ],
+    ovDruck: [
+      {v:'Heißfolie',l:'Hot foil'},{v:'HP Indigo',l:'HP Indigo digital printing'},{v:'Inkjet',l:'Inkjet'},
+      {v:'Letterpress',l:'Letterpress'},{v:'MGI',l:'MGI'},{v:'Offset',l:'Offset'},
+      {v:'Riso',l:'Riso'},{v:'Scodix',l:'Scodix'},{v:'Siebdruck',l:'Screen printing'},{v:'UV-Offset',l:'UV Offset'}
+    ],
+    ovNoPreferenceDruck: 'No specific process',
+    ovNoPreferenceFarbe: 'No white tone filter',
+    ovNoPreferenceGramm: 'No preference',
+    refineCats: {
+      oberflaeche: { label: 'Surface', sub: 'Which paper surface do you prefer?',
+        opts: [{val:'extrem rau',label:'Extra rough'},{val:'rau',label:'Rough'},{val:'glatt',label:'Smooth'},{val:'sehr glatt',label:'Very smooth'},{val:'gepraegt',label:'Embossed'},{val:'leicht gestrichen',label:'Lightly coated'},{val:'gestrichen',label:'Coated'}]},
+      farbe: { label: 'White tone & colour', sub: 'Which white tone or colour should the paper have?',
+        opts: [{val:'kaltweiss',label:'Cold white'},{val:'weiss',label:'Pure white'},{val:'warmweiss',label:'Warm white'},{val:'naturfarben',label:'Natural / Beige'},{val:'schwarz',label:'Black'},{val:'bunt',label:'Coloured'}]},
+      gramm: { label: 'Grammage', sub: 'What weight / thickness should the paper have?',
+        opts: [{val:'< 100 g/m²',label:'Light · up to 100 g/m²'},{val:'100–150 g/m²',label:'100–150 g/m²'},{val:'150–250 g/m²',label:'150–250 g/m²'},{val:'250–350 g/m²',label:'250–350 g/m²'},{val:'> 350 g/m²',label:'Heavy · over 350 g/m²'}]},
+      anwendung: { label: 'Application / Print product', sub: 'What is the paper used for?',
+        opts: [{val:'Visitenkarte',label:'Business card'},{val:'Broschüre',label:'Brochure / Softcover'},{val:'Magazin',label:'Magazine'},{val:'Karte / Einladung',label:'Card / Invitation'},{val:'Kunstbuch',label:'Art / Photo book'},{val:'Fanzine',label:'Fanzine / Zine'},{val:'Verpackung',label:'Packaging'},{val:'Geschäftsbericht',label:'Annual report'},{val:'Nachhaltigkeitsbericht',label:'Sustainability report'},{val:'Booklet',label:'Booklet'}]},
+      druck: { label: 'Print technology', sub: 'Which printing process is used?',
+        opts: [{val:'Riso',label:'Riso'},{val:'HP Indigo',label:'HP Indigo'},{val:'Offset',label:'Offset'},{val:'UV-Offset',label:'UV Offset'},{val:'Letterpress',label:'Letterpress'},{val:'Scodix',label:'Scodix / MGI'},{val:'Heißfolie',label:'Hot foil stamping'},{val:'Inkjet',label:'Inkjet / Wide format'}]},
+      nachhaltigkeit: { label: 'Sustainability', sub: 'Are there sustainability requirements for the paper?',
+        opts: [{val:'fsc',label:'FSC certified'},{val:'recycling',label:'Recycled paper'},{val:'recycling100',label:'100% recycled'},{val:'blauEngel',label:'Blue Angel'},{val:'upcycling',label:'Upcycling'}]},
+      volumen: { label: 'Volume / Texture', sub: 'Should the paper be particularly bulky and tactile?',
+        opts: [{val:'voluminoes',label:'Yes, as bulky as possible'},{val:'normal',label:'No special volume needed'}]}
+    }
+  },
+
+  fr: {
+    ovEyebrow: 'Décris ton papier en une phrase',
+    ovBeforeAnwendung: 'Je cherche un papier pour ',
+    ovBetweenAO: ', avec une surface ',
+    ovAfterO: ', en ',
+    ovBeforeGramm: ', de préférence ',
+    ovBeforeDruck: ', imprimé en ',
+    ovCta: '⏱ Lancer 60 secondes',
+    ovHint: 'Choisis tes critères et trouve ton papier en 60 secondes',
+    ovAdvanced: 'Recherche avancée →',
+    stat1: 'Tous les papiers Metapaper',
+    stat2: "Commande d'échantillon direct",
+    stat3: 'Commander directement en boutique',
+    heroTitle: 'Trouvez votre papier en<br>moins de <em style="color:var(--green);font-style:normal;">60 secondes.</em>',
+    heroSub: 'Cherchez votre papier par application, procédé d\'impression, grammage, surface, finition ou durabilité – et obtenez les meilleures recommandations de la gamme Metapaper.',
+    activeFiltersLabel: 'Filtres actifs',
+    clearAll: 'Tout effacer',
+    filterAnwendung: 'Application',
+    filterDruck: "Procédé d'impression",
+    filterNachhaltig: 'Durabilité',
+    filterGramm: 'Grammage',
+    filterOberflaeche: 'Surface',
+    filterFarbe: 'Ton blanc & couleur',
+    filterExtras: 'Extras',
+    allAnwendungen: 'Toutes les applications',
+    resetSearchBtn: '↩ Rechercher à nouveau',
+    inputLabel: 'C\'est parti avec votre demande de papier. Saisissez et trouvez.',
+    inputPlaceholder: 'ex. « Je cherche un papier rugueux, légèrement jaunâtre pour une brochure Riso, env. 120g, A3. Durable serait super. »',
+    searchBtn: 'Rechercher',
+    scenarioLabel: '▸ Exemples de recherche :',
+    loadingLabel: 'Secondes · Recherche dans la base Metapaper',
+    loadingStep1: 'Analyse des critères',
+    loadingStep2: 'Filtrage des candidats',
+    loadingStep3: 'Évaluation des correspondances',
+    loadingStep4: 'Préparation des recommandations',
+    modeIndicator: '⚡ Recherche en direct · Tous les papiers Metapaper',
+    newSearchBtn: '↩ Nouvelle recherche',
+    queryLabel: 'Demande',
+    resultsTitle: 'Vos recommandations',
+    preselectionTitle: 'Pré-sélection',
+    top3Title: 'Vos 3 meilleurs',
+    liveDbBadge: 'Base en direct',
+    refinedBadge: 'Affiné',
+    analysisLabel: 'Analyse de la demande',
+    noResultsTitle: 'Aucun papier correspondant trouvé',
+    noResultsSub: 'Aucun papier correspondant à cette demande. Essayez moins de filtres ou une autre formulation.',
+    sampleBtn: '🎯 Commander un échantillon',
+    sampleRequest: '🎯 Échantillon sur demande',
+    shopBtn: '🛒 Acheter en ligne',
+    labelGramm: 'Grammage',
+    labelOberflaeche: 'Surface',
+    labelFarbe: 'Couleur',
+    labelWeisston: 'Ton blanc',
+    labelEigenschaften: 'Propriétés',
+    labelZusatzinfos: 'Infos supplémentaires',
+    labelMaxFormat: '| Format max. :',
+    labelUmschlag: 'Enveloppe disponible',
+    feedbackTitle: 'Feedback pour affinage',
+    feedbackRelevanz: 'Pertinence des résultats',
+    feedbackBegruendung: 'Qualité des justifications',
+    feedbackInfos: 'Complétude des informations',
+    feedbackGesamt: 'Satisfaction générale',
+    feedbackNotes: 'Que formuleriez-vous autrement / qu\'est-ce qui manque ?',
+    feedbackPlaceholder: 'ex. « La justification pour le papier 2 était trop générale... »',
+    feedbackSubmit: 'Enregistrer le feedback ↗',
+    feedbackThanks: '✓ Enregistré – merci pour votre feedback !',
+    contactBtn: 'Contacter Metapaper',
+    refineTitle: (n) => 'Encore ' + (n === 1 ? 'une question rapide' : n + ' questions rapides') + ' – pour affiner vos résultats.',
+    refineSub: (n) => 'Nous avons trouvé <strong>' + n + ' papiers correspondants</strong>. Vous pouvez affiner vos résultats pour obtenir les trois meilleurs.',
+    refineBtn: '▶ Afficher les 3 meilleurs',
+    refineSkip: (n) => 'Afficher les ' + n,
+    refineNoPreference: 'Aucune préférence',
+    backToAll: (n) => '↩ Afficher les ' + n + ' candidats',
+    candidatesCount: (n, tot) => n + ' candidats · sur ' + tot + ' filtrés',
+    recommendationsCount: (n, tot) => n + ' recommandations · ' + tot + ' papiers filtrés',
+    top3Count: (n) => '3 recommandations · affinées sur ' + n + ' candidats',
+    candidatesOnly: (n) => n + ' candidats',
+    noResultsCombination: (h) => 'La combinaison de ' + h + ' ne donne aucun résultat. Essayez de supprimer un filtre.',
+    noResultsGeneral: 'Aucun papier correspondant à cette demande. Essayez moins de filtres ou une autre formulation.',
+    hintGramm: (v) => 'Grammage (' + v + ')',
+    hintDruck: (v) => "Procédé d'impression (" + v + ')',
+    hintAnwendung: (v) => 'Application (' + v + ')',
+    hintOberflaeche: (v) => 'Surface (' + v + ')',
+    hintFarbe: (v) => 'Couleur (' + v + ')',
+    queryAnalysisLabel: 'Analyse de la demande',
+    queryNoFeats: (n) => n + ' papiers de la base Metapaper parcourus.',
+    queryFeats: (f, n) => 'Critères détectés : ' + f + '. ' + n + ' papiers Metapaper évalués.',
+    queryISeek: 'Je cherche un papier',
+    queryFor: 'pour',
+    queryPrintedIn: 'imprimé en',
+    queryGramm: 'Grammage',
+    querySurface: 'Surface',
+    queryColor: 'Couleur/Ton blanc',
+    querySustain: 'durable',
+    queryOr: 'ou',
+    ovQueryFor: 'pour une ',
+    ovQueryWith: ', avec une surface ',
+    ovQuerySurface: '',
+    ovQueryIn: 'en ',
+    ovQueryPrefer: 'de préférence ',
+    ovQueryPrinted: 'imprimé en ',
+    ovQuerySeek: 'Je cherche un papier ',
+    surfLabels: {extrarau:'Très rugueux',rau:'Rugueux','leicht gestrichen':'Légèrement couché',glatt:'Lisse','sehr glatt':'Très lisse','voll gestrichen':'Couché',natur:'Naturel',gepraegt:'Gaufré'},
+    wtLabels: {white:'Blanc',coldwhite:'Blanc froid',warmwhite:'Blanc chaud',white_coldwhite:'Blanc/Blanc froid'},
+    colorSchwarz: 'Couleur : Noir',
+    colorGrau: 'Couleur : Naturel',
+    colorWeisston: 'Ton blanc : ',
+    ovOberflaeche: [
+      {v:'extrem rau',l:'très rugueuse'},{v:'rau',l:'rugueuse'},{v:'leicht gestrichen',l:'légèrement couchée'},
+      {v:'glatt',l:'lisse'},{v:'sehr glatt',l:'très lisse'},{v:'gepraegt',l:'gaufrée'}
+    ],
+    ovGramm: [
+      {v:'< 100 g/m²',l:'léger',g:'jusqu\'à 100 g/m²'},{v:'100–150 g/m²',l:'mi-léger',g:'100–150 g/m²'},
+      {v:'150–250 g/m²',l:'moyen',g:'150–250 g/m²'},{v:'250–350 g/m²',l:'épais',g:'250–350 g/m²'},
+      {v:'> 350 g/m²',l:'très épais',g:'plus de 350 g/m²'}
+    ],
+    ovDruck: [
+      {v:'Heißfolie',l:'Dorure à chaud'},{v:'HP Indigo',l:'Impression numérique HP Indigo'},{v:'Inkjet',l:'Jet d\'encre'},
+      {v:'Letterpress',l:'Letterpress'},{v:'MGI',l:'MGI'},{v:'Offset',l:'Offset'},
+      {v:'Riso',l:'Riso'},{v:'Scodix',l:'Scodix'},{v:'Siebdruck',l:'Sérigraphie'},{v:'UV-Offset',l:'Offset UV'}
+    ],
+    ovNoPreferenceDruck: 'Aucun procédé spécifique',
+    ovNoPreferenceFarbe: 'Aucun filtre de ton blanc',
+    ovNoPreferenceGramm: 'Aucune préférence',
+    refineCats: {
+      oberflaeche: { label: 'Surface', sub: 'Quelle surface de papier préférez-vous ?',
+        opts: [{val:'extrem rau',label:'Très rugueux'},{val:'rau',label:'Rugueux'},{val:'glatt',label:'Lisse'},{val:'sehr glatt',label:'Très lisse'},{val:'gepraegt',label:'Gaufré'},{val:'leicht gestrichen',label:'Légèrement couché'},{val:'gestrichen',label:'Couché'}]},
+      farbe: { label: 'Ton blanc & couleur', sub: 'Quel ton blanc ou quelle couleur doit avoir le papier ?',
+        opts: [{val:'kaltweiss',label:'Blanc froid'},{val:'weiss',label:'Blanc pur'},{val:'warmweiss',label:'Blanc chaud'},{val:'naturfarben',label:'Naturel / Beige'},{val:'schwarz',label:'Noir'},{val:'bunt',label:'Coloré'}]},
+      gramm: { label: 'Grammage', sub: 'Quel poids / quelle épaisseur doit avoir le papier ?',
+        opts: [{val:'< 100 g/m²',label:'Léger · jusqu\'à 100 g/m²'},{val:'100–150 g/m²',label:'100–150 g/m²'},{val:'150–250 g/m²',label:'150–250 g/m²'},{val:'250–350 g/m²',label:'250–350 g/m²'},{val:'> 350 g/m²',label:'Lourd · plus de 350 g/m²'}]},
+      anwendung: { label: 'Application / Produit imprimé', sub: 'À quoi le papier est-il destiné ?',
+        opts: [{val:'Visitenkarte',label:'Carte de visite'},{val:'Broschüre',label:'Brochure / Softcover'},{val:'Magazin',label:'Magazine'},{val:'Karte / Einladung',label:'Carte / Invitation'},{val:'Kunstbuch',label:'Livre d\'art / Photo'},{val:'Fanzine',label:'Fanzine / Zine'},{val:'Verpackung',label:'Emballage'},{val:'Geschäftsbericht',label:'Rapport annuel'},{val:'Nachhaltigkeitsbericht',label:'Rapport durabilité'},{val:'Booklet',label:'Booklet'}]},
+      druck: { label: "Technologie d'impression", sub: 'Quel procédé d\'impression est utilisé ?',
+        opts: [{val:'Riso',label:'Riso'},{val:'HP Indigo',label:'HP Indigo'},{val:'Offset',label:'Offset'},{val:'UV-Offset',label:'Offset UV'},{val:'Letterpress',label:'Letterpress'},{val:'Scodix',label:'Scodix / MGI'},{val:'Heißfolie',label:'Dorure à chaud'},{val:'Inkjet',label:'Jet d\'encre / Grand format'}]},
+      nachhaltigkeit: { label: 'Durabilité', sub: 'Y a-t-il des exigences de durabilité pour le papier ?',
+        opts: [{val:'fsc',label:'Certifié FSC'},{val:'recycling',label:'Papier recyclé'},{val:'recycling100',label:'100% recyclé'},{val:'blauEngel',label:'Ange bleu'},{val:'upcycling',label:'Upcycling'}]},
+      volumen: { label: 'Volume / Texture', sub: 'Le papier doit-il être particulièrement volumineux ?',
+        opts: [{val:'voluminoes',label:'Oui, aussi volumineux que possible'},{val:'normal',label:'Pas de volume particulier requis'}]}
+    }
+  },
+
+  nl: {
+    ovEyebrow: 'Beschrijf jouw papier in één zin',
+    ovBeforeAnwendung: 'Ik zoek een papier voor ',
+    ovBetweenAO: ', met een ',
+    ovAfterO: ' oppervlak, in ',
+    ovBeforeGramm: ', bij voorkeur ',
+    ovBeforeDruck: ', gedrukt met ',
+    ovCta: '⏱ 60 seconden starten',
+    ovHint: 'Kies je vereisten en vind jouw papier in 60 seconden',
+    ovAdvanced: 'Naar uitgebreid zoeken →',
+    stat1: 'Alle Metapaper-papieren',
+    stat2: 'Directe staalbestelling',
+    stat3: 'Rechtstreeks bestellen in de winkel',
+    heroTitle: 'Vind jouw papier in<br>minder dan <em style="color:var(--green);font-style:normal;">60 seconden.</em>',
+    heroSub: 'Zoek uw papier op toepassing, drukproces, gramgewicht, oppervlak, afwerking of duurzaamheid – en ontvang de beste aanbevelingen uit het Metapaper-assortiment.',
+    activeFiltersLabel: 'Actieve filters',
+    clearAll: 'Alles wissen',
+    filterAnwendung: 'Toepassing',
+    filterDruck: 'Drukproces',
+    filterNachhaltig: 'Duurzaamheid',
+    filterGramm: 'Gramgewicht',
+    filterOberflaeche: 'Oppervlak',
+    filterFarbe: 'Wittoon & kleur',
+    filterExtras: 'Extras',
+    allAnwendungen: 'Alle toepassingen',
+    resetSearchBtn: '↩ Opnieuw zoeken',
+    inputLabel: 'Laten we beginnen met je papierwens. Geef gewoon je zoekopdracht in.',
+    inputPlaceholder: 'bijv. »Ik zoek een ruw, lichtgelig papier voor een Riso-brochure, ca. 120g, A3. Duurzaam zou mooi zijn.«',
+    searchBtn: 'Zoeken',
+    scenarioLabel: '▸ Voorbeeldzoekopdrachten:',
+    loadingLabel: 'Seconden · Zoeken in Metapaper-database',
+    loadingStep1: 'Vereisten analyseren',
+    loadingStep2: 'Kandidaten filteren',
+    loadingStep3: 'Overeenkomsten beoordelen',
+    loadingStep4: 'Aanbevelingen voorbereiden',
+    modeIndicator: '⚡ Live database zoeken · Alle Metapaper-papieren',
+    newSearchBtn: '↩ Nieuwe zoekopdracht',
+    queryLabel: 'Zoekopdracht',
+    resultsTitle: 'Jouw aanbevelingen',
+    preselectionTitle: 'Voorselectie',
+    top3Title: 'Jouw top 3',
+    liveDbBadge: 'Live database',
+    refinedBadge: 'Verfijnd',
+    analysisLabel: 'Analyse van de zoekopdracht',
+    noResultsTitle: 'Geen passende papieren gevonden',
+    noResultsSub: 'Geen passende papieren gevonden voor deze zoekopdracht. Probeer minder filters of een andere omschrijving.',
+    sampleBtn: '🎯 Staal bestellen',
+    sampleRequest: '🎯 Staal op aanvraag',
+    shopBtn: '🛒 Online kopen',
+    labelGramm: 'Gramgewicht',
+    labelOberflaeche: 'Oppervlak',
+    labelFarbe: 'Kleur',
+    labelWeisston: 'Wittoon',
+    labelEigenschaften: 'Eigenschappen',
+    labelZusatzinfos: 'Extra info',
+    labelMaxFormat: '| Max. formaat:',
+    labelUmschlag: 'Envelop beschikbaar',
+    feedbackTitle: 'Feedback voor fijnafstelling',
+    feedbackRelevanz: 'Relevantie van resultaten',
+    feedbackBegruendung: 'Kwaliteit van de uitleg',
+    feedbackInfos: 'Volledigheid van informatie',
+    feedbackGesamt: 'Algemene tevredenheid',
+    feedbackNotes: 'Wat zou je anders formuleren / wat ontbreekt?',
+    feedbackPlaceholder: 'bijv. »De uitleg voor papier 2 was te algemeen...«',
+    feedbackSubmit: 'Feedback opslaan ↗',
+    feedbackThanks: '✓ Opgeslagen – bedankt voor je feedback!',
+    contactBtn: 'Contact Metapaper',
+    refineTitle: (n) => 'Nog ' + (n === 1 ? 'één korte vraag' : n + ' korte vragen') + ' – om de resultaten te verfijnen.',
+    refineSub: (n) => 'We hebben <strong>' + n + ' passende papieren</strong> gevonden. Je kunt je resultaten verder verfijnen tot de drie beste papieren.',
+    refineBtn: '▶ Beste 3 papieren tonen',
+    refineSkip: (n) => 'Alle ' + n + ' tonen',
+    refineNoPreference: 'Geen voorkeur',
+    backToAll: (n) => '↩ Alle ' + n + ' kandidaten tonen',
+    candidatesCount: (n, tot) => n + ' kandidaten · uit ' + tot + ' gefilterd',
+    recommendationsCount: (n, tot) => n + ' aanbevelingen · ' + tot + ' papieren gefilterd',
+    top3Count: (n) => '3 aanbevelingen · verfijnd uit ' + n + ' kandidaten',
+    candidatesOnly: (n) => n + ' kandidaten',
+    noResultsCombination: (h) => 'De combinatie van ' + h + ' geeft geen resultaten. Probeer een filter te verwijderen.',
+    noResultsGeneral: 'Geen passende papieren gevonden voor deze zoekopdracht. Probeer minder filters of een andere omschrijving.',
+    hintGramm: (v) => 'Gramgewicht (' + v + ')',
+    hintDruck: (v) => 'Drukproces (' + v + ')',
+    hintAnwendung: (v) => 'Toepassing (' + v + ')',
+    hintOberflaeche: (v) => 'Oppervlak (' + v + ')',
+    hintFarbe: (v) => 'Kleur (' + v + ')',
+    queryAnalysisLabel: 'Analyse van de zoekopdracht',
+    queryNoFeats: (n) => n + ' papieren uit de Metapaper-database doorzocht.',
+    queryFeats: (f, n) => 'Gedetecteerde vereisten: ' + f + '. ' + n + ' Metapaper-papieren beoordeeld als kandidaten.',
+    queryISeek: 'Ik zoek een papier',
+    queryFor: 'voor',
+    queryPrintedIn: 'gedrukt met',
+    queryGramm: 'Gramgewicht',
+    querySurface: 'Oppervlak',
+    queryColor: 'Kleur/Wittoon',
+    querySustain: 'duurzaam',
+    queryOr: 'of',
+    ovQueryFor: 'voor ',
+    ovQueryWith: ', met een ',
+    ovQuerySurface: ' oppervlak',
+    ovQueryIn: 'in ',
+    ovQueryPrefer: 'bij voorkeur ',
+    ovQueryPrinted: 'gedrukt met ',
+    ovQuerySeek: 'Ik zoek een papier ',
+    surfLabels: {extrarau:'Extreem ruw',rau:'Ruw','leicht gestrichen':'Licht gestreken',glatt:'Glad','sehr glatt':'Zeer glad','voll gestrichen':'Volledig gestreken',natur:'Natuurlijk',gepraegt:'Geperst'},
+    wtLabels: {white:'Wit',coldwhite:'Koudwit',warmwhite:'Warmwit',white_coldwhite:'Wit/Koudwit'},
+    colorSchwarz: 'Kleur: Zwart',
+    colorGrau: 'Kleur: Naturel',
+    colorWeisston: 'Wittoon: ',
+    ovOberflaeche: [
+      {v:'extrem rau',l:'extreem ruw'},{v:'rau',l:'ruw'},{v:'leicht gestrichen',l:'licht gestreken'},
+      {v:'glatt',l:'glad'},{v:'sehr glatt',l:'zeer glad'},{v:'gepraegt',l:'geperst'}
+    ],
+    ovGramm: [
+      {v:'< 100 g/m²',l:'licht',g:'tot 100 g/m²'},{v:'100–150 g/m²',l:'medium-licht',g:'100–150 g/m²'},
+      {v:'150–250 g/m²',l:'medium',g:'150–250 g/m²'},{v:'250–350 g/m²',l:'dik',g:'250–350 g/m²'},
+      {v:'> 350 g/m²',l:'zeer dik',g:'meer dan 350 g/m²'}
+    ],
+    ovDruck: [
+      {v:'Heißfolie',l:'Hete folie'},{v:'HP Indigo',l:'HP Indigo digitaal drukken'},{v:'Inkjet',l:'Inkjet'},
+      {v:'Letterpress',l:'Letterpress'},{v:'MGI',l:'MGI'},{v:'Offset',l:'Offset'},
+      {v:'Riso',l:'Riso'},{v:'Scodix',l:'Scodix'},{v:'Siebdruck',l:'Zeefdruk'},{v:'UV-Offset',l:'UV-Offset'}
+    ],
+    ovNoPreferenceDruck: 'Geen specifiek proces',
+    ovNoPreferenceFarbe: 'Geen wittoonfilter',
+    ovNoPreferenceGramm: 'Geen voorkeur',
+    refineCats: {
+      oberflaeche: { label: 'Oppervlak', sub: 'Welk papieroppervlak heeft jouw voorkeur?',
+        opts: [{val:'extrem rau',label:'Extreem ruw'},{val:'rau',label:'Ruw'},{val:'glatt',label:'Glad'},{val:'sehr glatt',label:'Zeer glad'},{val:'gepraegt',label:'Geperst'},{val:'leicht gestrichen',label:'Licht gestreken'},{val:'gestrichen',label:'Gestreken'}]},
+      farbe: { label: 'Wittoon & kleur', sub: 'Welke wittoon of kleur moet het papier hebben?',
+        opts: [{val:'kaltweiss',label:'Koudwit'},{val:'weiss',label:'Reinwit'},{val:'warmweiss',label:'Warmwit'},{val:'naturfarben',label:'Naturel / Beige'},{val:'schwarz',label:'Zwart'},{val:'bunt',label:'Gekleurd'}]},
+      gramm: { label: 'Gramgewicht', sub: 'Welk gewicht / welke dikte moet het papier hebben?',
+        opts: [{val:'< 100 g/m²',label:'Licht · tot 100 g/m²'},{val:'100–150 g/m²',label:'100–150 g/m²'},{val:'150–250 g/m²',label:'150–250 g/m²'},{val:'250–350 g/m²',label:'250–350 g/m²'},{val:'> 350 g/m²',label:'Zwaar · meer dan 350 g/m²'}]},
+      anwendung: { label: 'Toepassing / Drukproduct', sub: 'Waarvoor wordt het papier gebruikt?',
+        opts: [{val:'Visitenkarte',label:'Visitekaartje'},{val:'Broschüre',label:'Brochure / Softcover'},{val:'Magazin',label:'Magazine'},{val:'Karte / Einladung',label:'Kaart / Uitnodiging'},{val:'Kunstbuch',label:'Kunstboek / Fotoboek'},{val:'Fanzine',label:'Fanzine / Zine'},{val:'Verpackung',label:'Verpakking'},{val:'Geschäftsbericht',label:'Jaarverslag'},{val:'Nachhaltigkeitsbericht',label:'Duurzaamheidsrapport'},{val:'Booklet',label:'Booklet'}]},
+      druck: { label: 'Druktechnologie', sub: 'Welk drukproces wordt gebruikt?',
+        opts: [{val:'Riso',label:'Riso'},{val:'HP Indigo',label:'HP Indigo'},{val:'Offset',label:'Offset'},{val:'UV-Offset',label:'UV-Offset'},{val:'Letterpress',label:'Letterpress'},{val:'Scodix',label:'Scodix / MGI'},{val:'Heißfolie',label:'Hete foliedruk'},{val:'Inkjet',label:'Inkjet / Grootformaat'}]},
+      nachhaltigkeit: { label: 'Duurzaamheid', sub: 'Zijn er duurzaamheidseisen voor het papier?',
+        opts: [{val:'fsc',label:'FSC-gecertificeerd'},{val:'recycling',label:'Gerecycled papier'},{val:'recycling100',label:'100% gerecycled'},{val:'blauEngel',label:'Blauwe Engel'},{val:'upcycling',label:'Upcycling'}]},
+      volumen: { label: 'Volume / Haptiek', sub: 'Moet het papier bijzonder volumineus zijn?',
+        opts: [{val:'voluminoes',label:'Ja, zo volumineus mogelijk'},{val:'normal',label:'Geen speciaal volume nodig'}]}
+    }
+  },
+
+  da: {
+    ovEyebrow: 'Beskriv dit papir i én sætning',
+    ovBeforeAnwendung: 'Jeg leder efter papir til ',
+    ovBetweenAO: ', med en ',
+    ovAfterO: ' overflade, i ',
+    ovBeforeGramm: ', helst ',
+    ovBeforeDruck: ', trykt med ',
+    ovCta: '⏱ Start 60 sekunder',
+    ovHint: 'Vælg dine krav og find dit papir på 60 sekunder',
+    ovAdvanced: 'Gå til avanceret søgning →',
+    stat1: 'Alle Metapaper-papirer',
+    stat2: 'Direkte prøvebestilling',
+    stat3: 'Bestil direkte i butikken',
+    heroTitle: 'Find dit papir på<br>under <em style="color:var(--green);font-style:normal;">60 sekunder.</em>',
+    heroSub: 'Søg dit papir efter anvendelse, trykproces, gramvægt, overflade, efterbehandling eller bæredygtighed – og få de bedste anbefalinger fra Metapaper-sortimentet.',
+    activeFiltersLabel: 'Aktive filtre',
+    clearAll: 'Ryd alle',
+    filterAnwendung: 'Anvendelse',
+    filterDruck: 'Trykproces',
+    filterNachhaltig: 'Bæredygtighed',
+    filterGramm: 'Gramvægt',
+    filterOberflaeche: 'Overflade',
+    filterFarbe: 'Hvidtone & farve',
+    filterExtras: 'Ekstra',
+    allAnwendungen: 'Alle anvendelser',
+    resetSearchBtn: '↩ Søg igen',
+    inputLabel: 'Lad os komme i gang med dit papirbehov. Skriv blot og find.',
+    inputPlaceholder: 'f.eks. »Jeg leder efter et ru, let gulligt papir til en Riso-brochure, ca. 120g, A3. Bæredygtigt ville være fantastisk.«',
+    searchBtn: 'Søg',
+    scenarioLabel: '▸ Eksempelsøgninger:',
+    loadingLabel: 'Sekunder · Søger i Metapaper-database',
+    loadingStep1: 'Analyserer krav',
+    loadingStep2: 'Filtrerer kandidater',
+    loadingStep3: 'Evaluerer matches',
+    loadingStep4: 'Forbereder anbefalinger',
+    modeIndicator: '⚡ Live database-søgning · Alle Metapaper-papirer',
+    newSearchBtn: '↩ Ny søgning',
+    queryLabel: 'Forespørgsel',
+    resultsTitle: 'Dine anbefalinger',
+    preselectionTitle: 'Forhåndsudvælgelse',
+    top3Title: 'Dine top 3',
+    liveDbBadge: 'Live database',
+    refinedBadge: 'Forfinet',
+    analysisLabel: 'Analyse af forespørgsel',
+    noResultsTitle: 'Ingen matchende papirer fundet',
+    noResultsSub: 'Ingen matchende papirer fundet for denne søgning. Prøv færre filtre eller en anden formulering.',
+    sampleBtn: '🎯 Bestil prøve',
+    sampleRequest: '🎯 Prøve på forespørgsel',
+    shopBtn: '🛒 Køb online',
+    labelGramm: 'Gramvægt',
+    labelOberflaeche: 'Overflade',
+    labelFarbe: 'Farve',
+    labelWeisston: 'Hvidtone',
+    labelEigenschaften: 'Egenskaber',
+    labelZusatzinfos: 'Yderligere info',
+    labelMaxFormat: '| Maks. format:',
+    labelUmschlag: 'Kuvert tilgængelig',
+    feedbackTitle: 'Feedback til finjustering',
+    feedbackRelevanz: 'Relevans af resultater',
+    feedbackBegruendung: 'Kvalitet af begrundelser',
+    feedbackInfos: 'Fuldstændighed af info',
+    feedbackGesamt: 'Overordnet tilfredshed',
+    feedbackNotes: 'Hvad ville du formulere anderledes / hvad mangler?',
+    feedbackPlaceholder: 'f.eks. »Begrundelsen for papir 2 var for generel...«',
+    feedbackSubmit: 'Gem feedback ↗',
+    feedbackThanks: '✓ Gemt – tak for din feedback!',
+    contactBtn: 'Kontakt Metapaper',
+    refineTitle: (n) => 'Bare ' + (n === 1 ? 'ét hurtigt spørgsmål' : n + ' hurtige spørgsmål') + ' – for at forfine dine resultater.',
+    refineSub: (n) => 'Vi fandt <strong>' + n + ' matchende papirer</strong>. Her kan du indsnævre dine resultater til de tre bedste papirer.',
+    refineBtn: '▶ Vis de bedste 3 papirer',
+    refineSkip: (n) => 'Vis alle ' + n,
+    refineNoPreference: 'Ingen præference',
+    backToAll: (n) => '↩ Vis alle ' + n + ' kandidater',
+    candidatesCount: (n, tot) => n + ' kandidater · fra ' + tot + ' filtrerede',
+    recommendationsCount: (n, tot) => n + ' anbefalinger · ' + tot + ' papirer filtreret',
+    top3Count: (n) => '3 anbefalinger · forfinet fra ' + n + ' kandidater',
+    candidatesOnly: (n) => n + ' kandidater',
+    noResultsCombination: (h) => 'Kombinationen af ' + h + ' giver ingen resultater. Prøv at fjerne et filter.',
+    noResultsGeneral: 'Ingen matchende papirer fundet for denne søgning. Prøv færre filtre eller en anden formulering.',
+    hintGramm: (v) => 'Gramvægt (' + v + ')',
+    hintDruck: (v) => 'Trykproces (' + v + ')',
+    hintAnwendung: (v) => 'Anvendelse (' + v + ')',
+    hintOberflaeche: (v) => 'Overflade (' + v + ')',
+    hintFarbe: (v) => 'Farve (' + v + ')',
+    queryAnalysisLabel: 'Analyse af forespørgsel',
+    queryNoFeats: (n) => n + ' papirer fra Metapaper-databasen gennemsøgt.',
+    queryFeats: (f, n) => 'Opdagede krav: ' + f + '. ' + n + ' Metapaper-papirer vurderet som kandidater.',
+    queryISeek: 'Jeg leder efter papir',
+    queryFor: 'til',
+    queryPrintedIn: 'trykt med',
+    queryGramm: 'Gramvægt',
+    querySurface: 'Overflade',
+    queryColor: 'Farve/Hvidtone',
+    querySustain: 'bæredygtig',
+    queryOr: 'eller',
+    ovQueryFor: 'til ',
+    ovQueryWith: ', med en ',
+    ovQuerySurface: ' overflade',
+    ovQueryIn: 'i ',
+    ovQueryPrefer: 'helst ',
+    ovQueryPrinted: 'trykt med ',
+    ovQuerySeek: 'Jeg leder efter papir ',
+    surfLabels: {extrarau:'Ekstremt ru',rau:'Ru','leicht gestrichen':'Let bestrøget',glatt:'Glat','sehr glatt':'Meget glat','voll gestrichen':'Fuldt bestrøget',natur:'Naturlig',gepraegt:'Præget'},
+    wtLabels: {white:'Hvid',coldwhite:'Koldthvid',warmwhite:'Varmhvid',white_coldwhite:'Hvid/Koldthvid'},
+    colorSchwarz: 'Farve: Sort',
+    colorGrau: 'Farve: Naturlig tone',
+    colorWeisston: 'Hvidtone: ',
+    ovOberflaeche: [
+      {v:'extrem rau',l:'ekstremt ru'},{v:'rau',l:'ru'},{v:'leicht gestrichen',l:'let bestrøget'},
+      {v:'glatt',l:'glat'},{v:'sehr glatt',l:'meget glat'},{v:'gepraegt',l:'præget'}
+    ],
+    ovGramm: [
+      {v:'< 100 g/m²',l:'let',g:'op til 100 g/m²'},{v:'100–150 g/m²',l:'medium-let',g:'100–150 g/m²'},
+      {v:'150–250 g/m²',l:'medium',g:'150–250 g/m²'},{v:'250–350 g/m²',l:'tyk',g:'250–350 g/m²'},
+      {v:'> 350 g/m²',l:'meget tyk',g:'over 350 g/m²'}
+    ],
+    ovDruck: [
+      {v:'Heißfolie',l:'Varm folie'},{v:'HP Indigo',l:'HP Indigo digital print'},{v:'Inkjet',l:'Inkjet'},
+      {v:'Letterpress',l:'Letterpress'},{v:'MGI',l:'MGI'},{v:'Offset',l:'Offset'},
+      {v:'Riso',l:'Riso'},{v:'Scodix',l:'Scodix'},{v:'Siebdruck',l:'Silkescreentryk'},{v:'UV-Offset',l:'UV-Offset'}
+    ],
+    ovNoPreferenceDruck: 'Ingen specifik proces',
+    ovNoPreferenceFarbe: 'Ingen hvidtonefilter',
+    ovNoPreferenceGramm: 'Ingen præference',
+    refineCats: {
+      oberflaeche: { label: 'Overflade', sub: 'Hvilken papirOverflade foretrækker du?',
+        opts: [{val:'extrem rau',label:'Ekstremt ru'},{val:'rau',label:'Ru'},{val:'glatt',label:'Glat'},{val:'sehr glatt',label:'Meget glat'},{val:'gepraegt',label:'Præget'},{val:'leicht gestrichen',label:'Let bestrøget'},{val:'gestrichen',label:'Bestrøget'}]},
+      farbe: { label: 'Hvidtone & farve', sub: 'Hvilken hvidtone eller farve skal papiret have?',
+        opts: [{val:'kaltweiss',label:'Koldthvid'},{val:'weiss',label:'Renhvid'},{val:'warmweiss',label:'Varmhvid'},{val:'naturfarben',label:'Naturlig / Beige'},{val:'schwarz',label:'Sort'},{val:'bunt',label:'Farvet'}]},
+      gramm: { label: 'Gramvægt', sub: 'Hvilken vægt / tykkelse skal papiret have?',
+        opts: [{val:'< 100 g/m²',label:'Let · op til 100 g/m²'},{val:'100–150 g/m²',label:'100–150 g/m²'},{val:'150–250 g/m²',label:'150–250 g/m²'},{val:'250–350 g/m²',label:'250–350 g/m²'},{val:'> 350 g/m²',label:'Tungt · over 350 g/m²'}]},
+      anwendung: { label: 'Anvendelse / Trykprodukt', sub: 'Hvad bruges papiret til?',
+        opts: [{val:'Visitenkarte',label:'Visitkort'},{val:'Broschüre',label:'Brochure / Softcover'},{val:'Magazin',label:'Magasin'},{val:'Karte / Einladung',label:'Kort / Invitation'},{val:'Kunstbuch',label:'Kunstbog / Fotobog'},{val:'Fanzine',label:'Fanzine / Zine'},{val:'Verpackung',label:'Emballage'},{val:'Geschäftsbericht',label:'Årsrapport'},{val:'Nachhaltigkeitsbericht',label:'Bæredygtighedsrapport'},{val:'Booklet',label:'Booklet'}]},
+      druck: { label: 'Trykteknologi', sub: 'Hvilken trykproces bruges?',
+        opts: [{val:'Riso',label:'Riso'},{val:'HP Indigo',label:'HP Indigo'},{val:'Offset',label:'Offset'},{val:'UV-Offset',label:'UV-Offset'},{val:'Letterpress',label:'Letterpress'},{val:'Scodix',label:'Scodix / MGI'},{val:'Heißfolie',label:'Varm folieprægning'},{val:'Inkjet',label:'Inkjet / Storformat'}]},
+      nachhaltigkeit: { label: 'Bæredygtighed', sub: 'Er der bæredygtighedskrav til papiret?',
+        opts: [{val:'fsc',label:'FSC-certificeret'},{val:'recycling',label:'Genbrugspapir'},{val:'recycling100',label:'100% genanvendt'},{val:'blauEngel',label:'Blå Engel'},{val:'upcycling',label:'Upcycling'}]},
+      volumen: { label: 'Volumen / Tekstur', sub: 'Skal papiret være særligt voluminøst?',
+        opts: [{val:'voluminoes',label:'Ja, så voluminøst som muligt'},{val:'normal',label:'Intet særligt volumen nødvendigt'}]}
+    }
+  }
+};
+
+// ─── LANGUAGE INIT ───
+let currentLang = 'de';
+
+function T(key) {
+  const t = TEXTS[currentLang];
+  if (!t) return TEXTS.de[key] || key;
+  return t[key] !== undefined ? t[key] : (TEXTS.de[key] || key);
+}
+
+function getLang() {
+  const param = new URLSearchParams(window.location.search).get('lang');
+  if (param && TEXTS[param]) return param;
+  const stored = localStorage.getItem('mp_lang');
+  if (stored && TEXTS[stored]) return stored;
+  return 'de';
+}
+
+function applyLang(lang) {
+  if (!TEXTS[lang]) return;
+  currentLang = lang;
+  document.documentElement.lang = lang;
+  localStorage.setItem('mp_lang', lang);
+
+  // Update active button
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+
+  const t = TEXTS[lang];
+
+  // Update data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) el.innerHTML = t[key];
+  });
+
+  // Update placeholders
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (t[key]) el.placeholder = t[key];
+  });
+
+  // Update loading steps (with prefix state preserved)
+  ['s1','s2','s3','s4'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const key = el.getAttribute('data-i18n-step');
+    if (key && t[key]) {
+      const prefix = el.textContent.match(/^[◦→✓] /) ? el.textContent.match(/^[◦→✓] /)[0] : '◦ ';
+      el.textContent = prefix + t[key];
+    }
+  });
+
+  // Update overlay sentence connectors
+  const ovMap = {
+    'ov-before-anwendung': 'ovBeforeAnwendung',
+    'ov-between-a-o': 'ovBetweenAO',
+    'ov-after-o': 'ovAfterO',
+    'ov-before-gramm': 'ovBeforeGramm',
+    'ov-before-druck': 'ovBeforeDruck'
+  };
+  Object.entries(ovMap).forEach(([id, key]) => {
+    const el = document.getElementById(id);
+    if (el && t[key] !== undefined) el.textContent = t[key];
+  });
+
+  // Update overlay option labels based on language
+  if (t.ovOberflaeche) {
+    OV_DATA.oberflaeche.opts = t.ovOberflaeche;
+    OV_DATA.oberflaeche.defaultLabel = t.ovOberflaeche.find(o => o.v === 'rau')?.l || 'rau';
+  }
+  if (t.ovGramm) {
+    OV_DATA.gramm.opts = t.ovGramm;
+    OV_DATA.gramm.defaultLabel = t.ovGramm.find(o => o.v === '250–350 g/m²')?.l || 'dick';
+  }
+  if (t.ovDruck) {
+    OV_DATA.druck.opts = t.ovDruck;
+    OV_DATA.druck.defaultLabel = t.ovDruck.find(o => o.v === 'HP Indigo')?.l || 'HP Indigo';
+    OV_DATA.druck.placeholder = t.ovNoPreferenceDruck;
+  }
+  if (t.ovNoPreferenceFarbe) OV_DATA.farbe.placeholder = t.ovNoPreferenceFarbe;
+  if (t.ovNoPreferenceGramm) OV_DATA.gramm.placeholder = t.ovNoPreferenceGramm;
+
+  // Re-render overlay menus with new labels
+  ovBuildMenus();
+  // Update currently displayed overlay label text
+  Object.entries(ovSel).forEach(([key, val]) => {
+    const data = OV_DATA[key];
+    if (!data || !val) return;
+    const opt = data.opts.find(o => o.v === val);
+    const lbl = document.getElementById('ovlbl-' + key);
+    if (lbl && opt) lbl.textContent = opt.l || opt.v;
+  });
+
+  // Update REFINE_CATS with language-specific data
+  if (t.refineCats) {
+    Object.entries(t.refineCats).forEach(([k, v]) => {
+      if (REFINE_CATS[k]) {
+        REFINE_CATS[k].label = v.label;
+        REFINE_CATS[k].sub   = v.sub;
+        REFINE_CATS[k].opts  = v.opts;
+      }
+    });
+  }
+
+  // Update surface/white-tone helper functions
+  if (t.surfLabels) {
+    window._surfLabels = t.surfLabels;
+  }
+  if (t.wtLabels) {
+    window._wtLabels = t.wtLabels;
+  }
+}
+
+// Override surfaceLabel and whiteToneLabel to use language
+const _origSurfaceLabel = surfaceLabel;
+const _origWhiteToneLabel = whiteToneLabel;
+surfaceLabel = function(s) { return (window._surfLabels && window._surfLabels[s]) || _origSurfaceLabel(s); };
+whiteToneLabel = function(wt) { return (window._wtLabels && window._wtLabels[wt]) || _origWhiteToneLabel(wt); };
+
+// Wire up buttons
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const lang = btn.dataset.lang;
+    const url = new URL(window.location.href);
+    url.searchParams.set('lang', lang);
+    history.replaceState(null, '', url);
+    applyLang(lang);
+  });
+});
+
+// Init language
+applyLang(getLang());
 
 </script>
 </body>
