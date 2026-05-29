@@ -930,14 +930,15 @@ function updateActiveFilterDisplay() {
 
   // Satz direkt hier bauen (zuverlässiger als separater Funktionsaufruf)
   const parts = [];
-  if (activeFilters.anwendung)            parts.push('für ' + activeFilters.anwendung);
-  if (activeFilters.druck.length)         parts.push('gedruckt im ' + activeFilters.druck.join(' / '));
-  if (activeFilters.gramm.length)         parts.push('Grammatur ' + activeFilters.gramm.join(' oder '));
-  if (activeFilters.oberflaeche.length)   parts.push('Oberfläche ' + activeFilters.oberflaeche.join(' oder '));
-  if (activeFilters.farbe.length)         parts.push('Farbe/Weißton ' + activeFilters.farbe.join(' oder '));
-  if (activeFilters.nachhaltig.length)    parts.push('nachhaltig (' + activeFilters.nachhaltig.join(', ') + ')');
+  const or = T('queryOr');
+  if (activeFilters.anwendung)            parts.push(T('queryFor') + ' ' + activeFilters.anwendung);
+  if (activeFilters.druck.length)         parts.push(T('queryPrintedIn') + ' ' + activeFilters.druck.join(' / '));
+  if (activeFilters.gramm.length)         parts.push(T('queryGramm') + ' ' + activeFilters.gramm.join(' ' + or + ' '));
+  if (activeFilters.oberflaeche.length)   parts.push(T('querySurface') + ' ' + activeFilters.oberflaeche.join(' ' + or + ' '));
+  if (activeFilters.farbe.length)         parts.push(T('queryColor') + ' ' + activeFilters.farbe.join(' ' + or + ' '));
+  if (activeFilters.nachhaltig.length)    parts.push(T('querySustain') + ' (' + activeFilters.nachhaltig.join(', ') + ')');
 
-  const sentence = 'Ich suche ein Papier ' + parts.join(', ') + '.';
+  const sentence = T('queryISeek') + ' ' + parts.join(', ') + '.';
   document.getElementById('queryInput').value = sentence;
 
 }
@@ -961,15 +962,16 @@ let _filterSearchTimer = null;
 
 function injectFiltersIntoQuery() {
   const parts = [];
-  if (activeFilters.anwendung)       parts.push('für ' + activeFilters.anwendung);
-  if (activeFilters.druck.length)    parts.push('gedruckt im ' + activeFilters.druck.join(' / '));
-  if (activeFilters.gramm.length)    parts.push('Grammatur ' + activeFilters.gramm.join(' oder '));
-  if (activeFilters.oberflaeche.length) parts.push('Oberfläche ' + activeFilters.oberflaeche.join(' oder '));
-  if (activeFilters.farbe.length)    parts.push('Farbe/Weißton ' + activeFilters.farbe.join(' oder '));
-  if (activeFilters.nachhaltig.length) parts.push('nachhaltig (' + activeFilters.nachhaltig.join(', ') + ')');
+  const or = T('queryOr');
+  if (activeFilters.anwendung)          parts.push(T('queryFor') + ' ' + activeFilters.anwendung);
+  if (activeFilters.druck.length)       parts.push(T('queryPrintedIn') + ' ' + activeFilters.druck.join(' / '));
+  if (activeFilters.gramm.length)       parts.push(T('queryGramm') + ' ' + activeFilters.gramm.join(' ' + or + ' '));
+  if (activeFilters.oberflaeche.length) parts.push(T('querySurface') + ' ' + activeFilters.oberflaeche.join(' ' + or + ' '));
+  if (activeFilters.farbe.length)       parts.push(T('queryColor') + ' ' + activeFilters.farbe.join(' ' + or + ' '));
+  if (activeFilters.nachhaltig.length)  parts.push(T('querySustain') + ' (' + activeFilters.nachhaltig.join(', ') + ')');
 
   const sentence = parts.length > 0
-    ? 'Ich suche ein Papier ' + parts.join(', ') + '.'
+    ? T('queryISeek') + ' ' + parts.join(', ') + '.'
     : '';
 
   document.getElementById('queryInput').value = sentence;
@@ -1328,37 +1330,243 @@ function scorePaper(paper, p) {
   return s;
 }
 
+// ─── WHY TEXTS (i18n) ───
+const WHY_TEXTS = {
+  de: {
+    surf: {
+      extrarau: 'Die extreme Rauheit (extrarau) ist haptisch einzigartig – ideal für ungestrichene Verfahren wie Riso oder Letterpress.',
+      rau: 'Die raue, ungestrichene Oberfläche gibt dem Druck Authentizität und Charakter.',
+      'leicht gestrichen': 'Leicht gestrichen: Gute Balance zwischen angenehmer Haptik und Druckqualität.',
+      glatt: 'Die glatte Oberfläche ermöglicht präzise Farbreproduktion und scharfe Detailwiedergabe.',
+      'sehr glatt': 'Die sehr glatte Oberfläche liefert brillante Farbwiedergabe und maximale Bildqualität.',
+      'voll gestrichen': 'Voll gestrichen – maximale Bildbrillanz für anspruchsvolle Reproduktionen.',
+      natur: 'Natürliche, unbehandelte Oberfläche mit echtem Charakter.'
+    },
+    risoTop: 'Hervorragend für Riso geeignet – optimale Farbaufnahme und Druckqualität.',
+    riso: 'Riso-geeignet: Die saugfähige Oberfläche nimmt Riso-Farben gut auf.',
+    indigoTop: 'HP Indigo garantiert zertifiziert – für optimale Farbhaftung und Reproduzierbarkeit.',
+    indigoOk: 'HP Indigo bedruckbar – nicht offiziell zertifiziert, funktioniert aber in der Praxis.',
+    letterpressTop: 'Hervorragend für Letterpress geeignet – ideale Struktur für tiefe, präzise Prägungen.',
+    letterpress: 'Letterpress-geeignet: Struktur und Gewicht ermöglichen präzise Prägungen.',
+    scodixTop: 'Speziell für Scodix/MGI entwickelt – maximale Veredelungsqualität auf dieser Oberfläche.',
+    scodix: 'Scodix/MGI geeignet: Digitale Veredelung auf dieser Oberfläche möglich.',
+    upcycling: '100% Upcycling-Material – produziert aus industriellen Abfallstoffen, mit eigenem Charakter.',
+    recycling100: '100% Recyclingfasern – die nachhaltigste Variante im Sortiment.',
+    recyclingPartial: function(l) { return l + ' – deutlich nachhaltiger als konventionelle Papiere.'; },
+    fsc: 'FSC-zertifiziert: Nachhaltiges Holz aus verantwortungsvoller Forstwirtschaft.',
+    fallback: 'Hochwertiges Papier aus dem Metapaper-Sortiment.',
+    extraIndigoTop: 'HP Indigo garantiert zertifiziert.',
+    extraIndigoOk: 'HP Indigo bedruckbar (nicht zertifiziert).',
+    extraScodix: 'Scodix und MGI zertifiziert.',
+    feats: {
+      riso: 'Riso-Druck', indigo: 'HP Indigo garantiert', letterpress: 'Letterpress',
+      scodix: 'Scodix/MGI', heissfolie: 'Heißfolienprägung', offset: 'Offset',
+      extrarau: 'extrem raue Oberfläche', rau: 'raue Oberfläche',
+      sehrGlatt: 'sehr glatte Oberfläche', glatt: 'glatte Oberfläche',
+      schwarz: 'schwarzes Papier', warmweiss: 'warmer Weißton',
+      approxWeight: function(w) { return 'ca. ' + w + ' g/m²'; },
+      weightRange: function(min, max) { return min + '–' + max + ' g/m²'; },
+      weightFrom: function(min) { return 'ab ' + min + ' g/m²'; },
+      recycling100: '100% Recycling', recycling: 'Recycling', upcycling: 'Upcycling',
+      nachhaltig: 'Nachhaltigkeit', nachhaltigkeitsbericht: 'Nachhaltigkeitsbericht',
+      analysisNone: function(n) { return n + ' Papiere aus der Metapaper-Datenbank durchsucht.'; },
+      analysisFound: function(feats, n) { return 'Erkannte Anforderungen: ' + feats + '. ' + n + ' von allen Metapaper Papieren als Kandidaten bewertet.'; }
+    }
+  },
+  en: {
+    surf: {
+      extrarau: 'The extreme roughness (extra rough) is tactilely unique – ideal for uncoated processes like Riso or letterpress.',
+      rau: 'The rough, uncoated surface gives the print authenticity and character.',
+      'leicht gestrichen': 'Lightly coated: a good balance between pleasant feel and print quality.',
+      glatt: 'The smooth surface enables precise colour reproduction and sharp detail.',
+      'sehr glatt': 'The very smooth surface delivers brilliant colour rendering and maximum image quality.',
+      'voll gestrichen': 'Fully coated – maximum image brilliance for demanding reproductions.',
+      natur: 'Natural, untreated surface with genuine character.'
+    },
+    risoTop: 'Excellent for Risograph – optimal ink absorption and print quality.',
+    riso: 'Riso-suitable: the absorbent surface takes up Riso inks well.',
+    indigoTop: 'HP Indigo certified – for optimal ink adhesion and colour reproducibility.',
+    indigoOk: 'HP Indigo printable – not officially certified, but works well in practice.',
+    letterpressTop: 'Excellent for letterpress – ideal structure for deep, precise impressions.',
+    letterpress: 'Letterpress-suitable: structure and weight enable precise impressions.',
+    scodixTop: 'Specifically developed for Scodix/MGI – maximum embellishment quality on this surface.',
+    scodix: 'Scodix/MGI suitable: digital embellishment possible on this surface.',
+    upcycling: '100% upcycled material – produced from industrial waste, with its own character.',
+    recycling100: '100% recycled fibres – the most sustainable option in the range.',
+    recyclingPartial: function(l) { return l + ' – significantly more sustainable than conventional papers.'; },
+    fsc: 'FSC-certified: sustainable timber from responsible forestry.',
+    fallback: 'Premium paper from the Metapaper range.',
+    extraIndigoTop: 'HP Indigo certified guaranteed.',
+    extraIndigoOk: 'HP Indigo printable (not certified).',
+    extraScodix: 'Scodix and MGI certified.',
+    feats: {
+      riso: 'Risograph printing', indigo: 'HP Indigo certified', letterpress: 'Letterpress',
+      scodix: 'Scodix/MGI', heissfolie: 'hot foil stamping', offset: 'Offset',
+      extrarau: 'extra rough surface', rau: 'rough surface',
+      sehrGlatt: 'very smooth surface', glatt: 'smooth surface',
+      schwarz: 'black paper', warmweiss: 'warm white tone',
+      approxWeight: function(w) { return 'approx. ' + w + ' g/m²'; },
+      weightRange: function(min, max) { return min + '–' + max + ' g/m²'; },
+      weightFrom: function(min) { return 'from ' + min + ' g/m²'; },
+      recycling100: '100% recycled', recycling: 'recycled', upcycling: 'upcycled',
+      nachhaltig: 'sustainability', nachhaltigkeitsbericht: 'sustainability report',
+      analysisNone: function(n) { return n + ' papers searched in the Metapaper database.'; },
+      analysisFound: function(feats, n) { return 'Identified requirements: ' + feats + '. ' + n + ' papers from the Metapaper range evaluated as candidates.'; }
+    }
+  },
+  fr: {
+    surf: {
+      extrarau: 'La texture extrêmement rugueuse est haptiquement unique – idéale pour des procédés non couchés comme le Riso ou le letterpress.',
+      rau: 'La surface rugueuse et non couchée confère authenticité et caractère à l\'impression.',
+      'leicht gestrichen': 'Légèrement couché : bon équilibre entre toucher agréable et qualité d\'impression.',
+      glatt: 'La surface lisse permet une reproduction précise des couleurs et des détails nets.',
+      'sehr glatt': 'La surface très lisse offre un rendu des couleurs brillant et une qualité image maximale.',
+      'voll gestrichen': 'Entièrement couché – brillance maximale pour des reproductions exigeantes.',
+      natur: 'Surface naturelle, non traitée, au vrai caractère.'
+    },
+    risoTop: 'Excellent pour le Riso – absorption optimale de l\'encre et qualité d\'impression.',
+    riso: 'Compatible Riso : la surface absorbante prend bien les encres Riso.',
+    indigoTop: 'Certifié HP Indigo – pour une adhérence optimale et une reproductibilité des couleurs.',
+    indigoOk: 'Imprimable en HP Indigo – non certifié officiellement, mais fonctionne en pratique.',
+    letterpressTop: 'Excellent pour le letterpress – structure idéale pour des impressions profondes et précises.',
+    letterpress: 'Compatible letterpress : la structure et le grammage permettent des impressions précises.',
+    scodixTop: 'Spécialement développé pour Scodix/MGI – qualité de finition maximale sur cette surface.',
+    scodix: 'Compatible Scodix/MGI : finition numérique possible sur cette surface.',
+    upcycling: '100% matière upcyclée – produite à partir de déchets industriels, avec un caractère unique.',
+    recycling100: '100% fibres recyclées – l\'option la plus durable de la gamme.',
+    recyclingPartial: function(l) { return l + ' – nettement plus durable que les papiers conventionnels.'; },
+    fsc: 'Certifié FSC : bois durable issu d\'une gestion forestière responsable.',
+    fallback: 'Papier premium de la gamme Metapaper.',
+    extraIndigoTop: 'HP Indigo certifié garanti.',
+    extraIndigoOk: 'HP Indigo imprimable (non certifié).',
+    extraScodix: 'Scodix et MGI certifié.',
+    feats: {
+      riso: 'impression Riso', indigo: 'HP Indigo certifié', letterpress: 'Letterpress',
+      scodix: 'Scodix/MGI', heissfolie: 'dorure à chaud', offset: 'Offset',
+      extrarau: 'surface extra rugueuse', rau: 'surface rugueuse',
+      sehrGlatt: 'surface très lisse', glatt: 'surface lisse',
+      schwarz: 'papier noir', warmweiss: 'blanc chaud',
+      approxWeight: function(w) { return 'env. ' + w + ' g/m²'; },
+      weightRange: function(min, max) { return min + '–' + max + ' g/m²'; },
+      weightFrom: function(min) { return 'à partir de ' + min + ' g/m²'; },
+      recycling100: '100% recyclé', recycling: 'recyclé', upcycling: 'upcyclé',
+      nachhaltig: 'durabilité', nachhaltigkeitsbericht: 'rapport de durabilité',
+      analysisNone: function(n) { return n + ' papiers parcourus dans la base de données Metapaper.'; },
+      analysisFound: function(feats, n) { return 'Exigences identifiées : ' + feats + '. ' + n + ' papiers de la gamme Metapaper évalués comme candidats.'; }
+    }
+  },
+  nl: {
+    surf: {
+      extrarau: 'De extreem ruwe textuur is haptisch uniek – ideaal voor ongestreken processen zoals Riso of letterpress.',
+      rau: 'Het ruwe, ongestreken oppervlak geeft de druk authenticiteit en karakter.',
+      'leicht gestrichen': 'Licht gestreken: goede balans tussen prettig gevoel en drukwaliteit.',
+      glatt: 'Het gladde oppervlak maakt nauwkeurige kleurreproductie en scherpe details mogelijk.',
+      'sehr glatt': 'Het zeer gladde oppervlak levert briljante kleurweergave en maximale beeldkwaliteit.',
+      'voll gestrichen': 'Volledig gestreken – maximale beeldbrillantie voor veeleisende reproducties.',
+      natur: 'Natuurlijk, onbehandeld oppervlak met echt karakter.'
+    },
+    risoTop: 'Uitstekend geschikt voor Riso – optimale inktopname en drukwaliteit.',
+    riso: 'Riso-geschikt: het absorberende oppervlak neemt Riso-inkten goed op.',
+    indigoTop: 'HP Indigo gegarandeerd gecertificeerd – voor optimale inkthechting en reproduceerbaarheid.',
+    indigoOk: 'HP Indigo bedrukbaar – niet officieel gecertificeerd, werkt wel in de praktijk.',
+    letterpressTop: 'Uitstekend voor letterpress – ideale structuur voor diepe, nauwkeurige reliëfdrukken.',
+    letterpress: 'Letterpress-geschikt: structuur en gewicht maken nauwkeurige reliëfdrukken mogelijk.',
+    scodixTop: 'Speciaal ontwikkeld voor Scodix/MGI – maximale afwerkingskwaliteit op dit oppervlak.',
+    scodix: 'Scodix/MGI geschikt: digitale afwerking mogelijk op dit oppervlak.',
+    upcycling: '100% upcycling-materiaal – gemaakt van industrieel afval, met eigen karakter.',
+    recycling100: '100% gerecyclede vezels – de duurzaamste optie in het assortiment.',
+    recyclingPartial: function(l) { return l + ' – aanzienlijk duurzamer dan conventioneel papier.'; },
+    fsc: 'FSC-gecertificeerd: duurzaam hout uit verantwoord bosbeheer.',
+    fallback: 'Premium papier uit het Metapaper-assortiment.',
+    extraIndigoTop: 'HP Indigo gegarandeerd gecertificeerd.',
+    extraIndigoOk: 'HP Indigo bedrukbaar (niet gecertificeerd).',
+    extraScodix: 'Scodix en MGI gecertificeerd.',
+    feats: {
+      riso: 'Riso-druk', indigo: 'HP Indigo gegarandeerd', letterpress: 'Letterpress',
+      scodix: 'Scodix/MGI', heissfolie: 'warmfoliedruk', offset: 'Offset',
+      extrarau: 'extra ruw oppervlak', rau: 'ruw oppervlak',
+      sehrGlatt: 'zeer glad oppervlak', glatt: 'glad oppervlak',
+      schwarz: 'zwart papier', warmweiss: 'warm wit',
+      approxWeight: function(w) { return 'ca. ' + w + ' g/m²'; },
+      weightRange: function(min, max) { return min + '–' + max + ' g/m²'; },
+      weightFrom: function(min) { return 'vanaf ' + min + ' g/m²'; },
+      recycling100: '100% gerecycled', recycling: 'gerecycled', upcycling: 'upcycled',
+      nachhaltig: 'duurzaamheid', nachhaltigkeitsbericht: 'duurzaamheidsrapport',
+      analysisNone: function(n) { return n + ' papieren doorzocht in de Metapaper-database.'; },
+      analysisFound: function(feats, n) { return 'Herkende vereisten: ' + feats + '. ' + n + ' papieren uit het Metapaper-assortiment beoordeeld als kandidaten.'; }
+    }
+  },
+  da: {
+    surf: {
+      extrarau: 'Den ekstremt ru tekstur er haptisk unik – ideel til ikke-bestrøgne processer som Riso eller letterpress.',
+      rau: 'Den ru, ikke-bestrøgne overflade giver trykket autenticitet og karakter.',
+      'leicht gestrichen': 'Let bestrøget: god balance mellem behagelig følelse og trykvalitet.',
+      glatt: 'Den glatte overflade muliggør præcis farvegengivelse og skarpe detaljer.',
+      'sehr glatt': 'Den meget glatte overflade leverer strålende farvegengivelse og maksimal billedkvalitet.',
+      'voll gestrichen': 'Fuldt bestrøget – maksimal billedbrillans til krævende reproduktioner.',
+      natur: 'Naturlig, ubehandlet overflade med ægte karakter.'
+    },
+    risoTop: 'Fremragende til Riso – optimal farveabsorption og trykvalitet.',
+    riso: 'Riso-egnet: den absorberende overflade optager Riso-farver godt.',
+    indigoTop: 'HP Indigo garanteret certificeret – for optimal farvevedhæftning og reproduktionsevne.',
+    indigoOk: 'HP Indigo kan trykkes – ikke officielt certificeret, men fungerer i praksis.',
+    letterpressTop: 'Fremragende til letterpress – ideel struktur for dybe, præcise prægninger.',
+    letterpress: 'Letterpress-egnet: struktur og vægt muliggør præcise prægninger.',
+    scodixTop: 'Specielt udviklet til Scodix/MGI – maksimal efterbehandlingskvalitet på denne overflade.',
+    scodix: 'Scodix/MGI egnet: digital efterbehandling mulig på denne overflade.',
+    upcycling: '100% genanvendt materiale – fremstillet af industrielt affald, med egen karakter.',
+    recycling100: '100% genbrugspapirfibre – den mest bæredygtige mulighed i sortimentet.',
+    recyclingPartial: function(l) { return l + ' – betydeligt mere bæredygtig end konventionelt papir.'; },
+    fsc: 'FSC-certificeret: bæredygtigt træ fra ansvarlig skovforvaltning.',
+    fallback: 'Førsteklasses papir fra Metapaper-sortimentet.',
+    extraIndigoTop: 'HP Indigo garanteret certificeret.',
+    extraIndigoOk: 'HP Indigo kan trykkes (ikke certificeret).',
+    extraScodix: 'Scodix og MGI certificeret.',
+    feats: {
+      riso: 'Riso-tryk', indigo: 'HP Indigo garanteret', letterpress: 'Letterpress',
+      scodix: 'Scodix/MGI', heissfolie: 'varmfolietryk', offset: 'Offset',
+      extrarau: 'ekstra ru overflade', rau: 'ru overflade',
+      sehrGlatt: 'meget glat overflade', glatt: 'glat overflade',
+      schwarz: 'sort papir', warmweiss: 'varm hvid tone',
+      approxWeight: function(w) { return 'ca. ' + w + ' g/m²'; },
+      weightRange: function(min, max) { return min + '–' + max + ' g/m²'; },
+      weightFrom: function(min) { return 'fra ' + min + ' g/m²'; },
+      recycling100: '100% genbrugt', recycling: 'genbrugt', upcycling: 'upcyclet',
+      nachhaltig: 'bæredygtighed', nachhaltigkeitsbericht: 'bæredygtighedsrapport',
+      analysisNone: function(n) { return n + ' papirer gennemsøgt i Metapaper-databasen.'; },
+      analysisFound: function(feats, n) { return 'Identificerede krav: ' + feats + '. ' + n + ' papirer fra Metapaper-sortimentet vurderet som kandidater.'; }
+    }
+  }
+};
+
+function WT(key) {
+  const t = WHY_TEXTS[currentLang] || WHY_TEXTS.de;
+  return t[key] !== undefined ? t[key] : WHY_TEXTS.de[key];
+}
+
 // ─── TEXT GENERATION ───
 function buildWhyText(paper, p) {
   const parts = [];
-  const surfTxt = {
-    extrarau: 'Die extreme Rauheit (extrarau) ist haptisch einzigartig – ideal für ungestrichene Verfahren wie Riso oder Letterpress.',
-    rau: 'Die raue, ungestrichene Oberfläche gibt dem Druck Authentizität und Charakter.',
-    'leicht gestrichen': 'Leicht gestrichen: Gute Balance zwischen angenehmer Haptik und Druckqualität.',
-    glatt: 'Die glatte Oberfläche ermöglicht präzise Farbreproduktion und scharfe Detailwiedergabe.',
-    'sehr glatt': 'Die sehr glatte Oberfläche liefert brillante Farbwiedergabe und maximale Bildqualität.',
-    'voll gestrichen': 'Voll gestrichen – maximale Bildbrillanz für anspruchsvolle Reproduktionen.',
-    natur: 'Natürliche, unbehandelte Oberfläche mit echtem Charakter.'
-  };
-  if (surfTxt[paper.s]) parts.push(surfTxt[paper.s]);
+  const wt = WHY_TEXTS[currentLang] || WHY_TEXTS.de;
+  if (wt.surf[paper.s]) parts.push(wt.surf[paper.s]);
 
-  if (p.riso && paper.rTop) parts.push('Hervorragend für Riso geeignet – optimale Farbaufnahme und Druckqualität.');
-  else if (p.riso && paper.r) parts.push('Riso-geeignet: Die saugfähige Oberfläche nimmt Riso-Farben gut auf.');
-  if (p.indigo && paper.hi) parts.push('HP Indigo garantiert zertifiziert – für optimale Farbhaftung und Reproduzierbarkeit.');
-  else if (p.indigo && paper.hiOk) parts.push('HP Indigo bedruckbar – nicht offiziell zertifiziert, funktioniert aber in der Praxis.');
-  if (p.letterpress && paper.lpTop) parts.push('Hervorragend für Letterpress geeignet – ideale Struktur für tiefe, präzise Prägungen.');
-  else if (p.letterpress && paper.lp) parts.push('Letterpress-geeignet: Struktur und Gewicht ermöglichen präzise Prägungen.');
-  if (p.scodix && paper.scTop) parts.push('Speziell für Scodix/MGI entwickelt – maximale Veredelungsqualität auf dieser Oberfläche.');
-  else if (p.scodix && paper.sc) parts.push('Scodix/MGI geeignet: Digitale Veredelung auf dieser Oberfläche möglich.');
+  if (p.riso && paper.rTop) parts.push(wt.risoTop);
+  else if (p.riso && paper.r) parts.push(wt.riso);
+  if (p.indigo && paper.hi) parts.push(wt.indigoTop);
+  else if (p.indigo && paper.hiOk) parts.push(wt.indigoOk);
+  if (p.letterpress && paper.lpTop) parts.push(wt.letterpressTop);
+  else if (p.letterpress && paper.lp) parts.push(wt.letterpress);
+  if (p.scodix && paper.scTop) parts.push(wt.scodixTop);
+  else if (p.scodix && paper.sc) parts.push(wt.scodix);
 
   if (p.nachhaltig || p.recycling || p.upcycling) {
-    if (paper.su.includes('Upcycling')) parts.push('100% Upcycling-Material – produziert aus industriellen Abfallstoffen, mit eigenem Charakter.');
-    else if (paper.su.includes('100% Recycling')) parts.push('100% Recyclingfasern – die nachhaltigste Variante im Sortiment.');
-    else if (paper.su.some(x => x.includes('Recycling'))) parts.push(paper.su.find(x => x.includes('Recycling')) + ' – deutlich nachhaltiger als konventionelle Papiere.');
-    else if (paper.su.includes('FSC')) parts.push('FSC-zertifiziert: Nachhaltiges Holz aus verantwortungsvoller Forstwirtschaft.');
+    if (paper.su.includes('Upcycling')) parts.push(wt.upcycling);
+    else if (paper.su.includes('100% Recycling')) parts.push(wt.recycling100);
+    else if (paper.su.some(x => x.includes('Recycling'))) parts.push(wt.recyclingPartial(paper.su.find(x => x.includes('Recycling'))));
+    else if (paper.su.includes('FSC')) parts.push(wt.fsc);
   }
 
-  if (parts.length === 0) parts.push(paper.u ? paper.u.charAt(0).toUpperCase() + paper.u.slice(1) + '.' : 'Hochwertiges Papier aus dem Metapaper-Sortiment.');
+  if (parts.length === 0) parts.push(paper.u ? paper.u.charAt(0).toUpperCase() + paper.u.slice(1) + '.' : wt.fallback);
   return parts.join(' ');
 }
 
@@ -1388,9 +1596,9 @@ function buildCardData(paper, rank, p, rawScore) {
   if (paper.bs) tags.push('Bestseller');
 
   const extras = [];
-  if (paper.hi) extras.push('HP Indigo garantiert zertifiziert.');
-  else if (paper.hiOk) extras.push('HP Indigo bedruckbar (nicht zertifiziert).');
-  if (paper.sc) extras.push('Scodix und MGI zertifiziert.');
+  if (paper.hi) extras.push(WT('extraIndigoTop'));
+  else if (paper.hiOk) extras.push(WT('extraIndigoOk'));
+  if (paper.sc) extras.push(WT('extraScodix'));
   if (paper.su.length) extras.push(paper.su.join(', ') + '.');
   if (paper.u) extras.push(paper.u.charAt(0).toUpperCase() + paper.u.slice(1) + '.');
 
@@ -1412,30 +1620,31 @@ function buildCardData(paper, rank, p, rawScore) {
 }
 
 function buildQueryAnalysis(p, filteredCount) {
+  const wf = (WHY_TEXTS[currentLang] || WHY_TEXTS.de).feats;
   const feats = [];
-  if (p.riso) feats.push('Riso-Druck');
-  if (p.indigo) feats.push('HP Indigo garantiert');
-  if (p.letterpress) feats.push('Letterpress');
-  if (p.scodix) feats.push('Scodix/MGI');
-  if (p.heissfolie) feats.push('Heißfolienprägung');
-  if (p.offset) feats.push('Offset');
-  if (p.extrarau) feats.push('extrem raue Oberfläche');
-  else if (p.rau) feats.push('raue Oberfläche');
-  if (p.sehrGlatt) feats.push('sehr glatte Oberfläche');
-  else if (p.glatt) feats.push('glatte Oberfläche');
-  if (p.schwarz) feats.push('schwarzes Papier');
-  if (p.warmweiss) feats.push('warmer Weißton');
-  if (p.weights.length > 0) feats.push('ca. ' + p.weights[0] + ' g/m²');
-  else if (p.minWeight && p.maxWeight) feats.push(p.minWeight + '–' + p.maxWeight + ' g/m²');
-  else if (p.minWeight) feats.push('ab ' + p.minWeight + ' g/m²');
-  if (p.recycling100) feats.push('100% Recycling');
-  else if (p.recycling || p.blauEngel) feats.push('Recycling');
-  else if (p.upcycling) feats.push('Upcycling');
-  else if (p.nachhaltig) feats.push('Nachhaltigkeit');
-  if (p.nachhaltigkeitsbericht) feats.push('Nachhaltigkeitsbericht');
+  if (p.riso) feats.push(wf.riso);
+  if (p.indigo) feats.push(wf.indigo);
+  if (p.letterpress) feats.push(wf.letterpress);
+  if (p.scodix) feats.push(wf.scodix);
+  if (p.heissfolie) feats.push(wf.heissfolie);
+  if (p.offset) feats.push(wf.offset);
+  if (p.extrarau) feats.push(wf.extrarau);
+  else if (p.rau) feats.push(wf.rau);
+  if (p.sehrGlatt) feats.push(wf.sehrGlatt);
+  else if (p.glatt) feats.push(wf.glatt);
+  if (p.schwarz) feats.push(wf.schwarz);
+  if (p.warmweiss) feats.push(wf.warmweiss);
+  if (p.weights.length > 0) feats.push(wf.approxWeight(p.weights[0]));
+  else if (p.minWeight && p.maxWeight) feats.push(wf.weightRange(p.minWeight, p.maxWeight));
+  else if (p.minWeight) feats.push(wf.weightFrom(p.minWeight));
+  if (p.recycling100) feats.push(wf.recycling100);
+  else if (p.recycling || p.blauEngel) feats.push(wf.recycling);
+  else if (p.upcycling) feats.push(wf.upcycling);
+  else if (p.nachhaltig) feats.push(wf.nachhaltig);
+  if (p.nachhaltigkeitsbericht) feats.push(wf.nachhaltigkeitsbericht);
 
-  if (feats.length === 0) return filteredCount + ' Papiere aus der Metapaper-Datenbank durchsucht.';
-  return 'Erkannte Anforderungen: ' + feats.join(', ') + '. ' + filteredCount + ' von allen Metapaper Papieren als Kandidaten bewertet.';
+  if (feats.length === 0) return wf.analysisNone(filteredCount);
+  return wf.analysisFound(feats.join(', '), filteredCount);
 }
 
 // ─── MAIN SEARCH ───
