@@ -557,14 +557,14 @@ textarea:focus{border-bottom-color:var(--accent);}
         <textarea id="queryInput" data-i18n-placeholder="inputPlaceholder" placeholder="z.B. »Ich suche ein raues, leicht gelbliches Papier für eine Riso-Broschüre, ca. 120g, A3. Nachhaltig wäre super.«"></textarea>
         <div class="input-footer">
           <div class="chips">
-            <button class="chip" onclick="setEx('Riso')">Riso</button>
-            <button class="chip" onclick="setEx('Visitenkarten')">Visitenkarten</button>
-            <button class="chip" onclick="setEx('Indigo')">HP Indigo</button>
-            <button class="chip" onclick="setEx('Eco')">Nachhaltigkeit</button>
-            <button class="chip" onclick="setEx('Scodix')">Scodix</button>
-            <button class="chip" onclick="setEx('Schwarz')">Schwarzes Papier</button>
-            <button class="chip" onclick="setEx('Letterpress')">Letterpress</button>
-            <button class="chip" onclick="setEx('Fanzine')">Fanzine</button>
+            <button class="chip" onclick="setEx('Riso')" data-i18n="chipRiso">Riso</button>
+            <button class="chip" onclick="setEx('Visitenkarten')" data-i18n="chipVisitenkarten">Visitenkarten</button>
+            <button class="chip" onclick="setEx('Indigo')" data-i18n="chipIndigo">HP Indigo</button>
+            <button class="chip" onclick="setEx('Eco')" data-i18n="chipNachhaltig">Nachhaltigkeit</button>
+            <button class="chip" onclick="setEx('Scodix')" data-i18n="chipScodix">Scodix</button>
+            <button class="chip" onclick="setEx('Schwarz')" data-i18n="chipSchwarz">Schwarzes Papier</button>
+            <button class="chip" onclick="setEx('Letterpress')" data-i18n="chipLetterpress">Letterpress</button>
+            <button class="chip" onclick="setEx('Fanzine')" data-i18n="chipFanzine">Fanzine</button>
           </div>
           <button class="send-btn" id="sendBtn" onclick="runSearch()">
             <span style="font-family:'Inter',sans-serif;font-style:italic;">⏱</span> <span data-i18n="searchBtn">Suchen</span>
@@ -577,14 +577,14 @@ textarea:focus{border-bottom-color:var(--accent);}
     <div class="scenario-bar" id="scenarioBar" style="padding:12px 0 0;">
       <span class="scenario-label" data-i18n="scenarioLabel">▸ Beispielanfragen:</span>
       <div class="scenario-btns">
-        <button class="scenario-btn" onclick="loadScenario('riso')">Riso 120 g/m²</button>
-        <button class="scenario-btn" onclick="loadScenario('visitenkarten')">Visitenkarten 300 g/m²</button>
-        <button class="scenario-btn" onclick="loadScenario('indigo')">HP Indigo</button>
-        <button class="scenario-btn" onclick="loadScenario('eco')">Recycling</button>
-        <button class="scenario-btn" onclick="loadScenario('scodix')">Scodix rau</button>
-        <button class="scenario-btn" onclick="loadScenario('schwarz')">Schwarzes Papier 300 g/m²</button>
-        <button class="scenario-btn" onclick="loadScenario('letterpress')">Letterpress > 325 g/m²</button>
-        <button class="scenario-btn" onclick="loadScenario('fanzine')">Fanzine Riso</button>
+        <button class="scenario-btn" onclick="loadScenario('riso')" data-i18n="scenarioBtnRiso">Riso 120 g/m²</button>
+        <button class="scenario-btn" onclick="loadScenario('visitenkarten')" data-i18n="scenarioBtnVisitenkarten">Visitenkarten 300 g/m²</button>
+        <button class="scenario-btn" onclick="loadScenario('indigo')" data-i18n="scenarioBtnIndigo">HP Indigo</button>
+        <button class="scenario-btn" onclick="loadScenario('eco')" data-i18n="scenarioBtnEco">Recycling</button>
+        <button class="scenario-btn" onclick="loadScenario('scodix')" data-i18n="scenarioBtnScodix">Scodix rau</button>
+        <button class="scenario-btn" onclick="loadScenario('schwarz')" data-i18n="scenarioBtnSchwarz">Schwarzes Papier 300 g/m²</button>
+        <button class="scenario-btn" onclick="loadScenario('letterpress')" data-i18n="scenarioBtnLetterpress">Letterpress > 325 g/m²</button>
+        <button class="scenario-btn" onclick="loadScenario('fanzine')" data-i18n="scenarioBtnFanzine">Fanzine Riso</button>
       </div>
     </div>
 
@@ -1581,7 +1581,7 @@ function buildCardData(paper, rank, p, rawScore) {
   if (paper.sc) prints.push('Scodix/MGI');
 
   const colorPart = paper.c === 'schwarz' ? T('colorSchwarz') : (paper.c === 'grau' ? T('colorGrau') : T('colorWeisston') + whiteToneLabel(paper.wt));
-  const properties = [T('labelGramm') + ': ' + paper.w + ' g/m²', T('labelOberflaeche') + ': ' + surfaceLabel(paper.s), colorPart, prints.length ? 'Druck: ' + prints.join(', ') : null].filter(Boolean).join(' | ');
+  const properties = [T('labelGramm') + ': ' + paper.w + ' g/m²', T('labelOberflaeche') + ': ' + surfaceLabel(paper.s), colorPart, prints.length ? T('labelDruck') + ': ' + prints.join(', ') : null].filter(Boolean).join(' | ');
 
   const tags = [paper.w + ' g/m²', surfaceLabel(paper.s)];
   if (paper.rTop) tags.push('Riso ✓');
@@ -1613,7 +1613,7 @@ function buildCardData(paper, rank, p, rawScore) {
     sample_url: paper.muster,
     shop_url: paper.shop,
     eco_info: paper.su.length ? paper.su.join(' · ') : null,
-    specs: Object.assign({ gramm: paper.w + ' g/m²', rauhigkeit: surfaceLabel(paper.s) }, paper.umschlag ? { umschlag: 'Passender Briefumschlag' } : {}),
+    specs: Object.assign({ gramm: paper.w + ' g/m²', rauhigkeit: surfaceLabel(paper.s) }, paper.umschlag ? { umschlag: T('labelUmschlag') } : {}),
     format: paper.format || '',
     has_umschlag: !!paper.umschlag
   };
@@ -1726,7 +1726,7 @@ function runSearch() {
   if (!query) { document.getElementById('queryInput').focus(); return; }
   if (!DB_LOADED) {
     document.getElementById('sendBtn').disabled = true;
-    document.getElementById('sendBtn').innerHTML = '⏳ Datenbank lädt…';
+    document.getElementById('sendBtn').innerHTML = T('dbLoading');
     const waitAndSearch = setInterval(() => {
       if (DB_LOADED) {
         clearInterval(waitAndSearch);
@@ -1739,7 +1739,7 @@ function runSearch() {
   }
 
   document.getElementById('sendBtn').disabled = true;
-  document.getElementById('sendBtn').innerHTML = '<span style="font-family:\'Nunito\',sans-serif;font-style:italic;">⏱</span> Erneut suchen';
+  document.getElementById('sendBtn').innerHTML = '<span style="font-family:\'Nunito\',sans-serif;font-style:italic;">⏱</span> ' + T('searchAgainBtn') + '';
   document.getElementById('loadingBlock').style.display = 'block';
   document.getElementById('resultsSection').style.display = 'none';
   document.getElementById('queryDisplay').style.display = 'none';
@@ -1764,7 +1764,7 @@ function runSearch() {
     clearInterval(timerInterval);
     try {
       const result = searchPapers(query);
-      document.getElementById('responseBadge').textContent = 'Live Datenbank';
+      document.getElementById('responseBadge').textContent = T('liveDbBadge');
       renderResults(result, query);
       currentSearch = { scoredCandidates: result.scoredCandidates, parsedQuery: result.parsedQuery };
       if (result.papers.length > 4) {
@@ -1775,7 +1775,7 @@ function runSearch() {
       document.getElementById('loadingBlock').style.display = 'none';
       document.getElementById('errorBlock').style.display = 'block';
       document.getElementById('errorBlock').textContent = '⚠ Fehler: ' + err.message;
-      document.getElementById('sendBtn').disabled = false; document.getElementById('sendBtn').innerHTML = '<span style="font-family:\'Nunito\',sans-serif;font-style:italic;">⏱</span> Erneut suchen';
+      document.getElementById('sendBtn').disabled = false; document.getElementById('sendBtn').innerHTML = '<span style="font-family:\'Nunito\',sans-serif;font-style:italic;">⏱</span> ' + T('searchAgainBtn') + '';
       document.getElementById('scenarioBar').style.display = 'block';
       console.error(err);
     }
@@ -1785,7 +1785,7 @@ function runSearch() {
 // ─── RENDER ───
 function renderResults(data, query) {
   document.getElementById('loadingBlock').style.display = 'none';
-  document.getElementById('sendBtn').disabled = false; document.getElementById('sendBtn').innerHTML = '<span style="font-family:\'Nunito\',sans-serif;font-style:italic;">⏱</span> Erneut suchen';
+  document.getElementById('sendBtn').disabled = false; document.getElementById('sendBtn').innerHTML = '<span style="font-family:\'Nunito\',sans-serif;font-style:italic;">⏱</span> ' + T('searchAgainBtn') + '';
   document.getElementById('queryDisplay').style.display = 'block';
   document.getElementById('queryText').textContent = query;
 
@@ -2275,7 +2275,7 @@ function resetSearch() {
   ['resultsSection','queryDisplay','errorBlock'].forEach(id => document.getElementById(id).style.display = 'none');
   document.getElementById('refinementPanel').style.display = 'none';
   document.getElementById('queryInput').value = '';
-  document.getElementById('sendBtn').disabled = false; document.getElementById('sendBtn').innerHTML = '<span style="font-family:\'Nunito\',sans-serif;font-style:italic;">⏱</span> Erneut suchen';
+  document.getElementById('sendBtn').disabled = false; document.getElementById('sendBtn').innerHTML = '<span style="font-family:\'Nunito\',sans-serif;font-style:italic;">⏱</span> ' + T('searchAgainBtn') + '';
   document.getElementById('scenarioBar').style.display = 'block';
   const fb = document.getElementById('floatingReset');
   if (fb) fb.classList.remove('visible');
@@ -2678,6 +2678,32 @@ const TEXTS = {
     ovNoPreferenceDruck: 'Kein spezifisches Verfahren',
     ovNoPreferenceFarbe: 'Kein Weißton-Filter',
     ovNoPreferenceGramm: 'Keine Präferenz',
+    searchAgainBtn: 'Erneut suchen',
+    dbLoading: '⏳ Datenbank lädt…',
+    labelDruck: 'Druck',
+    labelUmschlag: 'Passender Briefumschlag',
+    chipRiso: 'Riso', chipVisitenkarten: 'Visitenkarten', chipIndigo: 'HP Indigo',
+    chipNachhaltig: 'Nachhaltigkeit', chipScodix: 'Scodix', chipSchwarz: 'Schwarzes Papier',
+    chipLetterpress: 'Letterpress', chipFanzine: 'Fanzine',
+    scenarioBtnRiso: 'Riso 120 g/m²', scenarioBtnVisitenkarten: 'Visitenkarten 300 g/m²',
+    scenarioBtnIndigo: 'HP Indigo', scenarioBtnEco: 'Recycling', scenarioBtnScodix: 'Scodix rau',
+    scenarioBtnSchwarz: 'Schwarzes Papier 300 g/m²', scenarioBtnLetterpress: 'Letterpress > 325 g/m²',
+    scenarioBtnFanzine: 'Fanzine Riso',
+    ovAnwendung: [
+      {v:'Booklet',l:'Booklet'},{v:'Briefpapier',l:'Briefpapier'},{v:'Broschüre',l:'Broschüre'},
+      {v:'Fanzine',l:'Fanzine'},{v:'Geschäftsbericht',l:'Geschäftsbericht'},{v:'Hang Tag',l:'Hang Tag'},
+      {v:'Hardcover',l:'Hardcover'},{v:'Karte / Einladung',l:'Karte / Einladung'},{v:'Kunstbuch',l:'Kunstbuch'},
+      {v:'Magazin',l:'Magazin'},{v:'Nachhaltigkeitsbericht',l:'Nachhaltigkeitsbericht'},
+      {v:'Notizblock',l:'Notizblock'},{v:'Riso-Zine',l:'Riso-Zine'},{v:'Softcover',l:'Softcover'},
+      {v:'Verpackung',l:'Verpackung'},{v:'Visitenkarte',l:'Visitenkarte'}
+    ],
+    ovFarbe: [
+      {v:'Coldwhite',l:'Coldwhite'},{v:'White-Coldwhite',l:'White-Coldwhite'},{v:'White',l:'White'},
+      {v:'White-Warmwhite',l:'White-Warmwhite'},{v:'Warmwhite',l:'Warmwhite'},
+      {v:'Naturfarben',l:'Naturfarben'},{v:'Gelbtöne',l:'Gelbtöne'},{v:'Blautöne',l:'Blautöne'},
+      {v:'Rottöne',l:'Rottöne'},{v:'Grüntöne',l:'Grüntöne'},{v:'Brauntöne',l:'Brauntöne'},
+      {v:'Schwarz',l:'Schwarz'},{v:'Farbig',l:'Farbig / Bunt'},{v:'Neon',l:'Neon'},{v:'Metallisierend',l:'Metallisierend'}
+    ],
     // REFINE_CATS translations
     refineCats: {
       oberflaeche: { label: 'Oberfläche', sub: 'Welche Papieroberfläche bevorzugst du?',
@@ -2821,6 +2847,32 @@ const TEXTS = {
     ovNoPreferenceDruck: 'No specific process',
     ovNoPreferenceFarbe: 'No white tone filter',
     ovNoPreferenceGramm: 'No preference',
+    searchAgainBtn: 'Search again',
+    dbLoading: '⏳ Loading database…',
+    labelDruck: 'Printing',
+    labelUmschlag: 'Matching envelope available',
+    chipRiso: 'Riso', chipVisitenkarten: 'Business cards', chipIndigo: 'HP Indigo',
+    chipNachhaltig: 'Sustainability', chipScodix: 'Scodix', chipSchwarz: 'Black paper',
+    chipLetterpress: 'Letterpress', chipFanzine: 'Fanzine',
+    scenarioBtnRiso: 'Riso 120 g/m²', scenarioBtnVisitenkarten: 'Business cards 300 g/m²',
+    scenarioBtnIndigo: 'HP Indigo', scenarioBtnEco: 'Recycled', scenarioBtnScodix: 'Scodix rough',
+    scenarioBtnSchwarz: 'Black paper 300 g/m²', scenarioBtnLetterpress: 'Letterpress > 325 g/m²',
+    scenarioBtnFanzine: 'Fanzine Riso',
+    ovAnwendung: [
+      {v:'Booklet',l:'Booklet'},{v:'Briefpapier',l:'Letterhead'},{v:'Broschüre',l:'Brochure'},
+      {v:'Fanzine',l:'Fanzine'},{v:'Geschäftsbericht',l:'Annual report'},{v:'Hang Tag',l:'Hang tag'},
+      {v:'Hardcover',l:'Hardcover'},{v:'Karte / Einladung',l:'Card / Invitation'},{v:'Kunstbuch',l:'Art book'},
+      {v:'Magazin',l:'Magazine'},{v:'Nachhaltigkeitsbericht',l:'Sustainability report'},
+      {v:'Notizblock',l:'Notepad'},{v:'Riso-Zine',l:'Riso zine'},{v:'Softcover',l:'Softcover'},
+      {v:'Verpackung',l:'Packaging'},{v:'Visitenkarte',l:'Business card'}
+    ],
+    ovFarbe: [
+      {v:'Coldwhite',l:'Cold white'},{v:'White-Coldwhite',l:'White / Cold white'},{v:'White',l:'White'},
+      {v:'White-Warmwhite',l:'White / Warm white'},{v:'Warmwhite',l:'Warm white'},
+      {v:'Naturfarben',l:'Natural'},{v:'Gelbtöne',l:'Yellow tones'},{v:'Blautöne',l:'Blue tones'},
+      {v:'Rottöne',l:'Red tones'},{v:'Grüntöne',l:'Green tones'},{v:'Brauntöne',l:'Brown tones'},
+      {v:'Schwarz',l:'Black'},{v:'Farbig',l:'Coloured'},{v:'Neon',l:'Neon'},{v:'Metallisierend',l:'Metallic'}
+    ],
     refineCats: {
       oberflaeche: { label: 'Surface', sub: 'Which paper surface do you prefer?',
         opts: [{val:'extrem rau',label:'Extra rough'},{val:'rau',label:'Rough'},{val:'glatt',label:'Smooth'},{val:'sehr glatt',label:'Very smooth'},{val:'gepraegt',label:'Embossed'},{val:'leicht gestrichen',label:'Lightly coated'},{val:'gestrichen',label:'Coated'}]},
@@ -2963,6 +3015,32 @@ const TEXTS = {
     ovNoPreferenceDruck: 'Aucun procédé spécifique',
     ovNoPreferenceFarbe: 'Aucun filtre de ton blanc',
     ovNoPreferenceGramm: 'Aucune préférence',
+    searchAgainBtn: 'Rechercher à nouveau',
+    dbLoading: '⏳ Chargement de la base…',
+    labelDruck: 'Impression',
+    labelUmschlag: 'Enveloppe assortie disponible',
+    chipRiso: 'Riso', chipVisitenkarten: 'Cartes de visite', chipIndigo: 'HP Indigo',
+    chipNachhaltig: 'Durabilité', chipScodix: 'Scodix', chipSchwarz: 'Papier noir',
+    chipLetterpress: 'Letterpress', chipFanzine: 'Fanzine',
+    scenarioBtnRiso: 'Riso 120 g/m²', scenarioBtnVisitenkarten: 'Cartes de visite 300 g/m²',
+    scenarioBtnIndigo: 'HP Indigo', scenarioBtnEco: 'Recyclé', scenarioBtnScodix: 'Scodix rugueux',
+    scenarioBtnSchwarz: 'Papier noir 300 g/m²', scenarioBtnLetterpress: 'Letterpress > 325 g/m²',
+    scenarioBtnFanzine: 'Fanzine Riso',
+    ovAnwendung: [
+      {v:'Booklet',l:'Booklet'},{v:'Briefpapier',l:'Papier à lettres'},{v:'Broschüre',l:'Brochure'},
+      {v:'Fanzine',l:'Fanzine'},{v:'Geschäftsbericht',l:'Rapport annuel'},{v:'Hang Tag',l:'Hang tag'},
+      {v:'Hardcover',l:'Couverture rigide'},{v:'Karte / Einladung',l:'Carte / Invitation'},{v:'Kunstbuch',l:"Livre d'art"},
+      {v:'Magazin',l:'Magazine'},{v:'Nachhaltigkeitsbericht',l:'Rapport durabilité'},
+      {v:'Notizblock',l:'Bloc-notes'},{v:'Riso-Zine',l:'Riso zine'},{v:'Softcover',l:'Couverture souple'},
+      {v:'Verpackung',l:'Emballage'},{v:'Visitenkarte',l:'Carte de visite'}
+    ],
+    ovFarbe: [
+      {v:'Coldwhite',l:'Blanc froid'},{v:'White-Coldwhite',l:'Blanc / Blanc froid'},{v:'White',l:'Blanc'},
+      {v:'White-Warmwhite',l:'Blanc / Blanc chaud'},{v:'Warmwhite',l:'Blanc chaud'},
+      {v:'Naturfarben',l:'Naturel'},{v:'Gelbtöne',l:'Tons jaunes'},{v:'Blautöne',l:'Tons bleus'},
+      {v:'Rottöne',l:'Tons rouges'},{v:'Grüntöne',l:'Tons verts'},{v:'Brauntöne',l:'Tons bruns'},
+      {v:'Schwarz',l:'Noir'},{v:'Farbig',l:'Coloré'},{v:'Neon',l:'Neon'},{v:'Metallisierend',l:'Métallisé'}
+    ],
     refineCats: {
       oberflaeche: { label: 'Surface', sub: 'Quelle surface de papier préférez-vous ?',
         opts: [{val:'extrem rau',label:'Très rugueux'},{val:'rau',label:'Rugueux'},{val:'glatt',label:'Lisse'},{val:'sehr glatt',label:'Très lisse'},{val:'gepraegt',label:'Gaufré'},{val:'leicht gestrichen',label:'Légèrement couché'},{val:'gestrichen',label:'Couché'}]},
@@ -3105,6 +3183,32 @@ const TEXTS = {
     ovNoPreferenceDruck: 'Geen specifiek proces',
     ovNoPreferenceFarbe: 'Geen wittoonfilter',
     ovNoPreferenceGramm: 'Geen voorkeur',
+    searchAgainBtn: 'Opnieuw zoeken',
+    dbLoading: '⏳ Database laden…',
+    labelDruck: 'Druk',
+    labelUmschlag: 'Bijpassende envelop beschikbaar',
+    chipRiso: 'Riso', chipVisitenkarten: 'Visitekaartjes', chipIndigo: 'HP Indigo',
+    chipNachhaltig: 'Duurzaamheid', chipScodix: 'Scodix', chipSchwarz: 'Zwart papier',
+    chipLetterpress: 'Letterpress', chipFanzine: 'Fanzine',
+    scenarioBtnRiso: 'Riso 120 g/m²', scenarioBtnVisitenkarten: 'Visitekaartjes 300 g/m²',
+    scenarioBtnIndigo: 'HP Indigo', scenarioBtnEco: 'Gerecycled', scenarioBtnScodix: 'Scodix ruw',
+    scenarioBtnSchwarz: 'Zwart papier 300 g/m²', scenarioBtnLetterpress: 'Letterpress > 325 g/m²',
+    scenarioBtnFanzine: 'Fanzine Riso',
+    ovAnwendung: [
+      {v:'Booklet',l:'Booklet'},{v:'Briefpapier',l:'Briefpapier'},{v:'Broschüre',l:'Brochure'},
+      {v:'Fanzine',l:'Fanzine'},{v:'Geschäftsbericht',l:'Jaarverslag'},{v:'Hang Tag',l:'Hang tag'},
+      {v:'Hardcover',l:'Hardcover'},{v:'Karte / Einladung',l:'Kaart / Uitnodiging'},{v:'Kunstbuch',l:'Kunstboek'},
+      {v:'Magazin',l:'Magazine'},{v:'Nachhaltigkeitsbericht',l:'Duurzaamheidsrapport'},
+      {v:'Notizblock',l:'Notitieblok'},{v:'Riso-Zine',l:'Riso-zine'},{v:'Softcover',l:'Softcover'},
+      {v:'Verpackung',l:'Verpakking'},{v:'Visitenkarte',l:'Visitekaartje'}
+    ],
+    ovFarbe: [
+      {v:'Coldwhite',l:'Koudwit'},{v:'White-Coldwhite',l:'Wit / Koudwit'},{v:'White',l:'Wit'},
+      {v:'White-Warmwhite',l:'Wit / Warmwit'},{v:'Warmwhite',l:'Warmwit'},
+      {v:'Naturfarben',l:'Naturel'},{v:'Gelbtöne',l:'Geeltinten'},{v:'Blautöne',l:'Blauwtinten'},
+      {v:'Rottöne',l:'Roodtinten'},{v:'Grüntöne',l:'Groentinten'},{v:'Brauntöne',l:'Bruintinten'},
+      {v:'Schwarz',l:'Zwart'},{v:'Farbig',l:'Gekleurd'},{v:'Neon',l:'Neon'},{v:'Metallisierend',l:'Metallic'}
+    ],
     refineCats: {
       oberflaeche: { label: 'Oppervlak', sub: 'Welk papieroppervlak heeft jouw voorkeur?',
         opts: [{val:'extrem rau',label:'Extreem ruw'},{val:'rau',label:'Ruw'},{val:'glatt',label:'Glad'},{val:'sehr glatt',label:'Zeer glad'},{val:'gepraegt',label:'Geperst'},{val:'leicht gestrichen',label:'Licht gestreken'},{val:'gestrichen',label:'Gestreken'}]},
@@ -3247,6 +3351,32 @@ const TEXTS = {
     ovNoPreferenceDruck: 'Ingen specifik proces',
     ovNoPreferenceFarbe: 'Ingen hvidtonefilter',
     ovNoPreferenceGramm: 'Ingen præference',
+    searchAgainBtn: 'Søg igen',
+    dbLoading: '⏳ Indlæser database…',
+    labelDruck: 'Tryk',
+    labelUmschlag: 'Matchende konvolut tilgængelig',
+    chipRiso: 'Riso', chipVisitenkarten: 'Visitkort', chipIndigo: 'HP Indigo',
+    chipNachhaltig: 'Bæredygtighed', chipScodix: 'Scodix', chipSchwarz: 'Sort papir',
+    chipLetterpress: 'Letterpress', chipFanzine: 'Fanzine',
+    scenarioBtnRiso: 'Riso 120 g/m²', scenarioBtnVisitenkarten: 'Visitkort 300 g/m²',
+    scenarioBtnIndigo: 'HP Indigo', scenarioBtnEco: 'Genbrugt', scenarioBtnScodix: 'Scodix ru',
+    scenarioBtnSchwarz: 'Sort papir 300 g/m²', scenarioBtnLetterpress: 'Letterpress > 325 g/m²',
+    scenarioBtnFanzine: 'Fanzine Riso',
+    ovAnwendung: [
+      {v:'Booklet',l:'Booklet'},{v:'Briefpapier',l:'Brevpapir'},{v:'Broschüre',l:'Brochure'},
+      {v:'Fanzine',l:'Fanzine'},{v:'Geschäftsbericht',l:'Årsrapport'},{v:'Hang Tag',l:'Hang tag'},
+      {v:'Hardcover',l:'Hardcover'},{v:'Karte / Einladung',l:'Kort / Invitation'},{v:'Kunstbuch',l:'Kunstbog'},
+      {v:'Magazin',l:'Magasin'},{v:'Nachhaltigkeitsbericht',l:'Bæredygtighedsrapport'},
+      {v:'Notizblock',l:'Noteblok'},{v:'Riso-Zine',l:'Riso-zine'},{v:'Softcover',l:'Softcover'},
+      {v:'Verpackung',l:'Emballage'},{v:'Visitenkarte',l:'Visitkort'}
+    ],
+    ovFarbe: [
+      {v:'Coldwhite',l:'Kold hvid'},{v:'White-Coldwhite',l:'Hvid / Kold hvid'},{v:'White',l:'Hvid'},
+      {v:'White-Warmwhite',l:'Hvid / Varm hvid'},{v:'Warmwhite',l:'Varm hvid'},
+      {v:'Naturfarben',l:'Naturfarvet'},{v:'Gelbtöne',l:'Gultoner'},{v:'Blautöne',l:'Blåtoner'},
+      {v:'Rottöne',l:'Rødtoner'},{v:'Grüntöne',l:'Grønne toner'},{v:'Brauntöne',l:'Brunlige toner'},
+      {v:'Schwarz',l:'Sort'},{v:'Farbig',l:'Farvet'},{v:'Neon',l:'Neon'},{v:'Metallisierend',l:'Metallisk'}
+    ],
     refineCats: {
       oberflaeche: { label: 'Overflade', sub: 'Hvilken papirOverflade foretrækker du?',
         opts: [{val:'extrem rau',label:'Ekstremt ru'},{val:'rau',label:'Ru'},{val:'glatt',label:'Glat'},{val:'sehr glatt',label:'Meget glat'},{val:'gepraegt',label:'Præget'},{val:'leicht gestrichen',label:'Let bestrøget'},{val:'gestrichen',label:'Bestrøget'}]},
@@ -3348,6 +3478,8 @@ function applyLang(lang) {
   }
   if (t.ovNoPreferenceFarbe) OV_DATA.farbe.placeholder = t.ovNoPreferenceFarbe;
   if (t.ovNoPreferenceGramm) OV_DATA.gramm.placeholder = t.ovNoPreferenceGramm;
+  if (t.ovAnwendung) OV_DATA.anwendung.opts = t.ovAnwendung;
+  if (t.ovFarbe) OV_DATA.farbe.opts = t.ovFarbe;
 
   // Re-render overlay menus with new labels
   ovBuildMenus();
