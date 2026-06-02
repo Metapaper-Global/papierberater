@@ -9,7 +9,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "frame-ancestors 'self' https://metapaper.ai https://www.metapaper.ai https://*.lovable.app https://*.vercel.app"
+          "value": "frame-ancestors 'self' https://metapaper.ai https://www.metapaper.ai https://*.lovable.app https://*.vercel.app https://tool-box.metapaper.ai"
         }
       ]
     }
