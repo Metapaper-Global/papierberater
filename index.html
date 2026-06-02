@@ -2484,10 +2484,22 @@ document.addEventListener('keydown', e => {
 });
 
 function goToAdvancedSearch() {
+  if (window.self !== window.top) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('lang', currentLang);
+    window.open(url.toString(), '_blank');
+    return;
+  }
   document.getElementById('sentenceOverlay').style.display = 'none';
 }
 
 function startFromOverlay() {
+  if (window.self !== window.top) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('lang', currentLang);
+    window.open(url.toString(), '_blank');
+    return;
+  }
   // Overlay verstecken
   document.getElementById('sentenceOverlay').style.display = 'none';
 
