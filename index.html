@@ -2487,6 +2487,7 @@ function goToAdvancedSearch() {
   if (window.self !== window.top) {
     const url = new URL(window.location.href);
     url.searchParams.set('lang', currentLang);
+    url.searchParams.set('advanced', '1');
     window.open(url.toString(), '_blank');
     return;
   }
@@ -3542,6 +3543,11 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
 
 // Init language
 applyLang(getLang());
+
+// Skip overlay if ?advanced=1
+if (new URLSearchParams(window.location.search).get('advanced') === '1') {
+  document.getElementById('sentenceOverlay').style.display = 'none';
+}
 
 </script>
 </body>
