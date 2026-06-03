@@ -2498,6 +2498,12 @@ function startFromOverlay() {
   if (window.self !== window.top) {
     const url = new URL(window.location.href);
     url.searchParams.set('lang', currentLang);
+    url.searchParams.set('autostart', '1');
+    if (ovSel.anwendung)   url.searchParams.set('anwendung', ovSel.anwendung);
+    if (ovSel.oberflaeche) url.searchParams.set('oberflaeche', ovSel.oberflaeche);
+    if (ovSel.farbe)       url.searchParams.set('farbe', ovSel.farbe);
+    if (ovSel.gramm)       url.searchParams.set('gramm', ovSel.gramm);
+    if (ovSel.druck)       url.searchParams.set('druck', ovSel.druck);
     window.open(url.toString(), '_blank');
     return;
   }
@@ -3544,9 +3550,49 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
 // Init language
 applyLang(getLang());
 
-// Skip overlay if ?advanced=1
-if (new URLSearchParams(window.location.search).get('advanced') === '1') {
+// Skip overlay if ?advanced=1 or ?autostart=1
+const _params = new URLSearchParams(window.location.search);
+if (_params.get('advanced') === '1') {
   document.getElementById('sentenceOverlay').style.display = 'none';
+}
+if (_params.get('autostart') === '1') {
+  document.getElementById('sentenceOverlay').style.display = 'none';
+  // Restore overlay selections from URL params
+  ['anwendung','oberflaeche','farbe','gramm','druck'].forEach(k => {
+    const v = _params.get(k);
+    if (v) ovSel[k] = v;
+  });
+  // Re-build menus so labels are correct, then kick off search
+  ovBuildMenus();
+  // Trigger startFromOverlay logic (filters + query) without iframe check
+  (function() {
+    function actPill(gid, val) {
+      document.querySelectorAll('#f-' + gid + ' .filter-pill').forEach(btn => {
+        const m = (btn.getAttribute('onclick') || '').match(/togglePill\(this,'[^']*','([^']*)'\)/);
+        if (m && m[1] === val) togglePill(btn, gid, val);
+      });
+    }
+    function actSwatch(val) {
+      document.querySelectorAll('#f-farbe .color-swatch').forEach(el => {
+        const m = (el.getAttribute('onclick') || '').match(/toggleSwatch\(this,'farbe','([^']*)'\)/);
+        if (m && m[1] === val) toggleSwatch(el, 'farbe', val);
+      });
+    }
+    if (ovSel.anwendung)   { document.getElementById('f-anwendung').value = ovSel.anwendung; applyFilter('anwendung', ovSel.anwendung, ovSel.anwendung); }
+    if (ovSel.druck)       actPill('druck', ovSel.druck);
+    if (ovSel.oberflaeche) actPill('oberflaeche', ovSel.oberflaeche);
+    if (ovSel.farbe)       actSwatch(ovSel.farbe);
+    if (ovSel.gramm)       actPill('gramm', ovSel.gramm);
+    const parts = [];
+    if (ovSel.anwendung)   parts.push(T('ovQueryFor') + ovSel.anwendung);
+    if (ovSel.oberflaeche) { const o = OV_DATA.oberflaeche.opts.find(x => x.v === ovSel.oberflaeche); parts.push(T('ovQueryWith') + (o ? o.l : ovSel.oberflaeche) + T('ovQuerySurface')); }
+    if (ovSel.farbe)       parts.push(T('ovQueryIn') + ovSel.farbe);
+    if (ovSel.gramm)       { const g = OV_DATA.gramm.opts.find(x => x.v === ovSel.gramm); parts.push(T('ovQueryPrefer') + (g ? g.l : ovSel.gramm)); }
+    if (ovSel.druck)       { const d = OV_DATA.druck.opts.find(x => x.v === ovSel.druck); parts.push(T('ovQueryPrinted') + (d ? d.l : ovSel.druck)); }
+    document.getElementById('queryInput').value = T('ovQuerySeek') + parts.join(', ');
+    document.getElementById('scenarioBar').style.display = 'none';
+    runSearch();
+  })();
 }
 
 </script>
