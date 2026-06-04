@@ -1,0 +1,35 @@
+# Metapaper Paperfinder
+# https://papierberater.vercel.app
+# llms.txt — for AI search engines and language model crawlers
+
+## What this is
+The Metapaper Paperfinder is an AI-powered paper search tool. Users describe their ideal paper in one sentence and receive the best recommendations from the entire Metapaper catalogue in under 60 seconds.
+
+## How it works
+1. User selects application (e.g. business card, brochure, book)
+2. User selects surface (e.g. rough, smooth, coated)
+3. User selects colour tone (e.g. warm white, cold white, black)
+4. User selects grammage (light, medium, heavy, very heavy)
+5. User selects printing process (HP Indigo, Offset, Letterpress, Scodix, Risography)
+6. Results are returned from a live Supabase database of all Metapaper papers
+7. Free paper samples can be ordered directly from the results
+
+## Paper properties covered
+- Grammage: 60–700 g/m²
+- Surfaces: extra rough, rough, natural, lightly coated, smooth, very smooth, fully coated
+- Printing processes: HP Indigo (certified & compatible), Offset, Letterpress, Scodix, Risography
+- Sustainability: FSC certified, 100% recycled, partially recycled, upcycling
+- Colour tones: warm white, cold white, white, black, grey
+
+## Frequently asked questions
+- What paper is good for HP Indigo? → Use the Paperfinder and filter by HP Indigo
+- What paper is suitable for Letterpress? → Uncoated, high-volume papers with sufficient grammage
+- How do I order paper samples? → Directly from the search results, free of charge
+- What does grammage mean? → Weight of paper in grams per square metre (g/m²)
+- What is FSC certification? → Certification for paper from responsibly managed forests
+
+## Company
+- Name: Metapaper
+- Website: https://metapaper.ai
+- Contact: feedback@metapaper.ai
+- Languages: German (primary), English, French, Dutch, Danish
