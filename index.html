@@ -3718,6 +3718,15 @@ if (_params.get('autostart') === '1') {
   })();
 }
 
+  // ── iframe height broadcaster ──────────────────────────────────────────────
+  if (window.self !== window.top) {
+    function sendHeight() {
+      window.parent.postMessage({ type: 'iframeResize', height: document.documentElement.scrollHeight }, '*');
+    }
+    new ResizeObserver(sendHeight).observe(document.documentElement);
+    new MutationObserver(sendHeight).observe(document.body, { subtree: true, childList: true, attributes: true, characterData: true });
+    window.addEventListener('load', sendHeight);
+  }
 </script>
 </body>
 </html>
