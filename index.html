@@ -3720,9 +3720,27 @@ if (_params.get('autostart') === '1') {
 
   // ── iframe height broadcaster ──────────────────────────────────────────────
   if (window.self !== window.top) {
-    // Remove min-height:100vh so the iframe doesn't balloon to full viewport
     document.body.style.minHeight = '0';
     document.documentElement.style.minHeight = '0';
+
+    const overlay = document.getElementById('sentenceOverlay');
+
+    // Switch overlay from position:fixed to relative so its content height
+    // drives body.scrollHeight instead of the hidden content behind it
+    overlay.style.position = 'relative';
+    overlay.style.inset    = 'auto';
+
+    // Hide all sibling body elements while overlay is visible
+    const bgEls = [...document.body.children].filter(el => el !== overlay);
+    bgEls.forEach(el => { el._origDisplay = el.style.display; el.style.display = 'none'; });
+
+    // When overlay is dismissed, restore the page content
+    new MutationObserver(function() {
+      if (overlay.style.display === 'none') {
+        bgEls.forEach(el => el.style.display = el._origDisplay);
+      }
+    }).observe(overlay, { attributes: true, attributeFilter: ['style'] });
+
     function sendHeight() {
       window.parent.postMessage({ type: 'iframeResize', height: document.body.scrollHeight }, '*');
     }
