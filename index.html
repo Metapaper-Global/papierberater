@@ -3720,10 +3720,13 @@ if (_params.get('autostart') === '1') {
 
   // ── iframe height broadcaster ──────────────────────────────────────────────
   if (window.self !== window.top) {
+    // Remove min-height:100vh so the iframe doesn't balloon to full viewport
+    document.body.style.minHeight = '0';
+    document.documentElement.style.minHeight = '0';
     function sendHeight() {
-      window.parent.postMessage({ type: 'iframeResize', height: document.documentElement.scrollHeight }, '*');
+      window.parent.postMessage({ type: 'iframeResize', height: document.body.scrollHeight }, '*');
     }
-    new ResizeObserver(sendHeight).observe(document.documentElement);
+    new ResizeObserver(sendHeight).observe(document.body);
     new MutationObserver(sendHeight).observe(document.body, { subtree: true, childList: true, attributes: true, characterData: true });
     window.addEventListener('load', sendHeight);
   }
