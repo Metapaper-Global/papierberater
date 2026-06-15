@@ -2339,12 +2339,11 @@ function makeCardElement(paper, i) {
   ).join('');
   const ecoBlock = paper.eco_info ? '<div class="eco-block">🌿 ' + paper.eco_info + '</div>' : '';
   const rankStr = (paper.rank < 10 ? '0' : '') + paper.rank;
-  const sBtn = paper.sample_url && paper.sample_url.startsWith('http')
-    ? '<a class="link-btn primary" href="' + paper.sample_url + '" target="_blank">' + T('sampleBtn') + '</a>'
-    : '<button class="link-btn secondary" style="opacity:.5;cursor:default;">' + T('sampleRequest') + '</button>';
-  const shBtn = paper.shop_url && paper.shop_url.startsWith('http')
-    ? '<a class="link-btn secondary" href="' + paper.shop_url + '" target="_blank">' + T('shopBtn') + '</a>'
-    : '';
+  const FALLBACK_URL = 'https://www.metapaper.io/konfigurator/';
+  const sBtnUrl = (paper.sample_url && paper.sample_url.startsWith('http')) ? paper.sample_url : FALLBACK_URL;
+  const sBtn = '<a class="link-btn primary" href="' + sBtnUrl + '" target="_blank">' + T('sampleBtn') + '</a>';
+  const shBtnUrl = (paper.shop_url && paper.shop_url.startsWith('http')) ? paper.shop_url : FALLBACK_URL;
+  const shBtn = '<a class="link-btn secondary" href="' + shBtnUrl + '" target="_blank">' + T('shopBtn') + '</a>';
 
   card.innerHTML =
     '<div class="card-header" onclick="toggleCard(this)">' +
