@@ -1195,11 +1195,11 @@ function farbeMatches(p, f) {
   if (f === 'Schwarz') return p.c === 'schwarz';
   // Schwarze Papiere passen auf keinen anderen Farbfilter
   if (p.c === 'schwarz') return false;
-  if (f === 'Coldwhite') return p.wt === 'coldwhite';
+  if (f === 'Coldwhite') return p.wt === 'coldwhite' || p.wt === 'white_coldwhite';
   if (f === 'White-Coldwhite') return p.wt === 'white_coldwhite';
   if (f === 'White') return p.wt === 'white';
   if (f === 'White-Warmwhite') return p.wt === 'white' && p.col && p.col.gelbton;
-  if (f === 'Warmwhite') return p.wt === 'warmwhite';
+  if (f === 'Warmwhite') return p.wt === 'warmwhite' || p.wt === 'white';
   if (f === 'Naturfarben') return p.col.farbig && !p.col.metallic && !p.col.neon && !p.c;
   if (f === 'Gelbtöne') return p.col.gelbton;
   if (f === 'Blautöne') return p.col.blauton;
@@ -1376,8 +1376,8 @@ function scorePaper(paper, p) {
   if (p.warmweiss) {
     if (paper.c === 'schwarz') s -= 80;
     else if (paper.wt === 'warmwhite') s += 30;
+    else if (paper.wt === 'white') s += 15;
     else if (paper.wt === 'coldwhite' || paper.wt === 'white_coldwhite') s -= 15;
-    else if (paper.wt === 'white') s -= 5;
   }
   if (p.kaltweiss) {
     if (paper.c === 'schwarz') s -= 80;
