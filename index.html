@@ -2339,11 +2339,9 @@ function makeCardElement(paper, i) {
   ).join('');
   const ecoBlock = paper.eco_info ? '<div class="eco-block">🌿 ' + paper.eco_info + '</div>' : '';
   const rankStr = (paper.rank < 10 ? '0' : '') + paper.rank;
-  const FALLBACK_URL = 'https://www.metapaper.io/konfigurator/';
-  const sBtnUrl = (paper.sample_url && paper.sample_url.startsWith('http')) ? paper.sample_url : FALLBACK_URL;
-  const sBtn = '<a class="link-btn primary" href="' + sBtnUrl + '" target="_blank">' + T('sampleBtn') + '</a>';
-  const shBtnUrl = (paper.shop_url && paper.shop_url.startsWith('http')) ? paper.shop_url : FALLBACK_URL;
-  const shBtn = '<a class="link-btn secondary" href="' + shBtnUrl + '" target="_blank">' + T('shopBtn') + '</a>';
+  const KONFIGURATOR_URL = 'https://www.metapaper.io/konfigurator/';
+  const sBtn = '<a class="link-btn primary" href="' + KONFIGURATOR_URL + '" target="_blank">' + T('sampleBtn') + '</a>';
+  const shBtn = '<a class="link-btn secondary" href="' + KONFIGURATOR_URL + '" target="_blank">' + T('shopBtn') + '</a>';
 
   card.innerHTML =
     '<div class="card-header" onclick="toggleCard(this)">' +
