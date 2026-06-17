@@ -824,7 +824,7 @@ function mapRow(r) {
   const wtRaw = (r['Weisston (gelblich bis blaeulich)'] || '').toLowerCase().replace(/\s+/g, ' ').trim();
   let wt = '';
   if      (wtRaw.includes('white-coldwhite'))  wt = 'white_coldwhite';
-  else if (wtRaw.includes('white-warmwhite'))  wt = 'white';
+  else if (wtRaw.includes('white-warmwhite'))  wt = 'white_warmwhite';
   else if (wtRaw.includes('warmwhite') || wtRaw.includes('off-white') || wtRaw.includes('ivory') || wtRaw.includes('natural')) wt = 'warmwhite';
   else if (wtRaw.includes('coldwhite') || wtRaw.includes('bluewhite') || wtRaw.includes('greywhite') || wtRaw.includes('grey white') || wtRaw.includes('icewhite')) wt = 'coldwhite';
   else if (wtRaw.includes('white') && !wtRaw.includes('green') && !wtRaw.includes('rose') && !wtRaw.includes('metallic') && !wtRaw.includes('transparent')) wt = 'white';
@@ -1135,7 +1135,7 @@ function surfaceLabel(s) {
   return m[s] || s;
 }
 function whiteToneLabel(wt) {
-  const m = {white:'Weiß',coldwhite:'Kaltweiß',warmwhite:'Warmweiß',white_coldwhite:'Weiß/Kaltweiß'};
+  const m = {white:'Weiß',coldwhite:'Kaltweiß',warmwhite:'Warmweiß',white_coldwhite:'Weiß/Kaltweiß',white_warmwhite:'Weiß/Warmweiß'};
   return m[wt] || wt;
 }
 
@@ -1198,8 +1198,8 @@ function farbeMatches(p, f) {
   if (f === 'Coldwhite') return p.wt === 'coldwhite' || p.wt === 'white_coldwhite';
   if (f === 'White-Coldwhite') return p.wt === 'white_coldwhite';
   if (f === 'White') return p.wt === 'white';
-  if (f === 'White-Warmwhite') return p.wt === 'white' && p.col && p.col.gelbton;
-  if (f === 'Warmwhite') return p.wt === 'warmwhite' || p.wt === 'white';
+  if (f === 'White-Warmwhite') return p.wt === 'white_warmwhite';
+  if (f === 'Warmwhite') return p.wt === 'warmwhite' || p.wt === 'white_warmwhite';
   if (f === 'Naturfarben') return p.col.farbig && !p.col.metallic && !p.col.neon && !p.c;
   if (f === 'Gelbtöne') return p.col.gelbton;
   if (f === 'Blautöne') return p.col.blauton;
@@ -1376,8 +1376,9 @@ function scorePaper(paper, p) {
   if (p.warmweiss) {
     if (paper.c === 'schwarz') s -= 80;
     else if (paper.wt === 'warmwhite') s += 30;
-    else if (paper.wt === 'white') s += 15;
-    else if (paper.wt === 'coldwhite' || paper.wt === 'white_coldwhite') s -= 15;
+    else if (paper.wt === 'white_warmwhite') s += 20;
+    else if (paper.wt === 'white') s -= 20;
+    else if (paper.wt === 'coldwhite' || paper.wt === 'white_coldwhite') s -= 25;
   }
   if (p.kaltweiss) {
     if (paper.c === 'schwarz') s -= 80;
@@ -2793,7 +2794,7 @@ const TEXTS = {
     // Surface labels
     surfLabels: {extrarau:'Extrem rau',rau:'Rau','leicht gestrichen':'Leicht gestrichen',glatt:'Glatt','sehr glatt':'Sehr glatt','voll gestrichen':'Voll gestrichen',natur:'Natur',gepraegt:'Geprägt'},
     // White tone labels
-    wtLabels: {white:'Weiß',coldwhite:'Kaltweiß',warmwhite:'Warmweiß',white_coldwhite:'Weiß/Kaltweiß'},
+    wtLabels: {white:'Weiß',coldwhite:'Kaltweiß',warmwhite:'Warmweiß',white_coldwhite:'Weiß/Kaltweiß',white_warmwhite:'Weiß/Warmweiß'},
     // Color label
     colorSchwarz: 'Farbe: Schwarz',
     colorGrau: 'Farbe: Naturton',
@@ -2964,7 +2965,7 @@ const TEXTS = {
     ovQueryPrinted: 'printed using ',
     ovQuerySeek: "I'm looking for a paper ",
     surfLabels: {extrarau:'Extra rough',rau:'Rough','leicht gestrichen':'Lightly coated',glatt:'Smooth','sehr glatt':'Very smooth','voll gestrichen':'Fully coated',natur:'Natural',gepraegt:'Embossed'},
-    wtLabels: {white:'White',coldwhite:'Cold white',warmwhite:'Warm white',white_coldwhite:'White/Cold white'},
+    wtLabels: {white:'White',coldwhite:'Cold white',warmwhite:'Warm white',white_coldwhite:'White/Cold white',white_warmwhite:'White/Warm white'},
     colorSchwarz: 'Colour: Black',
     colorGrau: 'Colour: Natural tone',
     colorWeisston: 'White tone: ',
@@ -3132,7 +3133,7 @@ const TEXTS = {
     ovQueryPrinted: 'imprimé en ',
     ovQuerySeek: 'Je cherche un papier ',
     surfLabels: {extrarau:'Très rugueux',rau:'Rugueux','leicht gestrichen':'Légèrement couché',glatt:'Lisse','sehr glatt':'Très lisse','voll gestrichen':'Couché',natur:'Naturel',gepraegt:'Gaufré'},
-    wtLabels: {white:'Blanc',coldwhite:'Blanc froid',warmwhite:'Blanc chaud',white_coldwhite:'Blanc/Blanc froid'},
+    wtLabels: {white:'Blanc',coldwhite:'Blanc froid',warmwhite:'Blanc chaud',white_coldwhite:'Blanc/Blanc froid',white_warmwhite:'Blanc/Blanc chaud'},
     colorSchwarz: 'Couleur : Noir',
     colorGrau: 'Couleur : Naturel',
     colorWeisston: 'Ton blanc : ',
@@ -3300,7 +3301,7 @@ const TEXTS = {
     ovQueryPrinted: 'gedrukt met ',
     ovQuerySeek: 'Ik zoek een papier ',
     surfLabels: {extrarau:'Extreem ruw',rau:'Ruw','leicht gestrichen':'Licht gestreken',glatt:'Glad','sehr glatt':'Zeer glad','voll gestrichen':'Volledig gestreken',natur:'Natuurlijk',gepraegt:'Geperst'},
-    wtLabels: {white:'Wit',coldwhite:'Koudwit',warmwhite:'Warmwit',white_coldwhite:'Wit/Koudwit'},
+    wtLabels: {white:'Wit',coldwhite:'Koudwit',warmwhite:'Warmwit',white_coldwhite:'Wit/Koudwit',white_warmwhite:'Wit/Warmwit'},
     colorSchwarz: 'Kleur: Zwart',
     colorGrau: 'Kleur: Naturel',
     colorWeisston: 'Wittoon: ',
@@ -3468,7 +3469,7 @@ const TEXTS = {
     ovQueryPrinted: 'trykt med ',
     ovQuerySeek: 'Jeg leder efter papir ',
     surfLabels: {extrarau:'Ekstremt ru',rau:'Ru','leicht gestrichen':'Let bestrøget',glatt:'Glat','sehr glatt':'Meget glat','voll gestrichen':'Fuldt bestrøget',natur:'Naturlig',gepraegt:'Præget'},
-    wtLabels: {white:'Hvid',coldwhite:'Koldthvid',warmwhite:'Varmhvid',white_coldwhite:'Hvid/Koldthvid'},
+    wtLabels: {white:'Hvid',coldwhite:'Koldthvid',warmwhite:'Varmhvid',white_coldwhite:'Hvid/Koldthvid',white_warmwhite:'Hvid/Varmhvid'},
     colorSchwarz: 'Farve: Sort',
     colorGrau: 'Farve: Naturlig tone',
     colorWeisston: 'Hvidtone: ',
