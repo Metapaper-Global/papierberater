@@ -3620,6 +3620,17 @@ function applyLang(lang) {
   if (t.ovAnwendung) OV_DATA.anwendung.opts = t.ovAnwendung;
   if (t.ovFarbe) OV_DATA.farbe.opts = t.ovFarbe;
 
+  // Update f-anwendung sidebar dropdown with translated, alphabetically sorted options
+  if (t.ovAnwendung) {
+    const sel = document.getElementById('f-anwendung');
+    if (sel) {
+      const currentVal = sel.value;
+      const sorted = t.ovAnwendung.slice().sort((a, b) => a.l.localeCompare(b.l, lang));
+      sel.innerHTML = `<option value="">${t.allAnwendungen || 'Alle Anwendungen'}</option>` +
+        sorted.map(o => `<option value="${o.v}"${currentVal === o.v ? ' selected' : ''}>${o.l}</option>`).join('');
+    }
+  }
+
   // Re-render overlay menus with new labels
   ovBuildMenus();
   // Update currently displayed overlay label text
