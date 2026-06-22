@@ -3617,7 +3617,7 @@ function applyLang(lang) {
   }
   if (t.ovNoPreferenceFarbe) OV_DATA.farbe.placeholder = t.ovNoPreferenceFarbe;
   if (t.ovNoPreferenceGramm) OV_DATA.gramm.placeholder = t.ovNoPreferenceGramm;
-  if (t.ovAnwendung) OV_DATA.anwendung.opts = t.ovAnwendung;
+  if (t.ovAnwendung) OV_DATA.anwendung.opts = t.ovAnwendung.slice().sort((a, b) => a.l.localeCompare(b.l, lang));
   if (t.ovFarbe) OV_DATA.farbe.opts = t.ovFarbe;
 
   // Update f-anwendung sidebar dropdown with translated, alphabetically sorted options
@@ -3625,9 +3625,8 @@ function applyLang(lang) {
     const sel = document.getElementById('f-anwendung');
     if (sel) {
       const currentVal = sel.value;
-      const sorted = t.ovAnwendung.slice().sort((a, b) => a.l.localeCompare(b.l, lang));
       sel.innerHTML = `<option value="">${t.allAnwendungen || 'Alle Anwendungen'}</option>` +
-        sorted.map(o => `<option value="${o.v}"${currentVal === o.v ? ' selected' : ''}>${o.l}</option>`).join('');
+        OV_DATA.anwendung.opts.map(o => `<option value="${o.v}"${currentVal === o.v ? ' selected' : ''}>${o.l}</option>`).join('');
     }
   }
 
