@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gewichts- & Dickenrechner · Metapaper</title>
+<link rel="stylesheet" href="https://use.typekit.net/qex7ber.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#F7F7F5; --surface:#FFFFFF;
+  --green:#3D7A3D; --green-light:#E8F2E8; --green-text:#2D5E2D;
+  --ink:#1A1A18; --ink-muted:#6B6B68;
+  --border:rgba(0,0,0,0.08); --shadow:rgba(0,0,0,0.06);
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.06),0 2px 8px rgba(0,0,0,0.04);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.08),0 1px 4px rgba(0,0,0,0.04);
+  --radius:12px; --radius-sm:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;min-height:100vh;}
+
+/* HEADER */
+header{padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:64px;background:var(--surface);}
+.logo-block{display:flex;align-items:center;gap:12px;}
+.logo-name{font-family:'houschka-pro','Houschka Pro','Inter',sans-serif;font-size:1.1rem;font-weight:700;color:var(--green);letter-spacing:-.01em;}
+.logo-tagline{font-size:.82rem;color:var(--ink-muted);padding-left:16px;border-left:1px solid var(--border);}
+.header-actions{display:flex;align-items:center;gap:8px;}
+.back-link{font-size:.83rem;font-weight:600;color:var(--green);text-decoration:none;display:flex;align-items:center;gap:4px;margin-right:4px;transition:opacity .15s;}
+.back-link:hover{opacity:.75;}
+.hdr-btn{font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;padding:7px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:none;color:var(--ink-muted);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.hdr-btn:hover{background:var(--bg);color:var(--ink);border-color:rgba(0,0,0,.18);}
+.hdr-btn-primary{background:var(--green);color:#fff;border-color:var(--green);}
+.hdr-btn-primary:hover{background:#2D5E2D;border-color:#2D5E2D;color:#fff;}
+.autosave-dot{width:6px;height:6px;border-radius:50%;background:var(--green);opacity:0;transition:opacity .4s;flex-shrink:0;}
+.autosave-dot.visible{opacity:1;}
+
+/* PROJECTS PANEL */
+.projects-panel{display:none;position:fixed;top:64px;right:40px;width:300px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-md);z-index:500;overflow:hidden;}
+.projects-panel.open{display:block;}
+.projects-panel-header{padding:12px 16px;border-bottom:1px solid var(--border);font-size:.75rem;font-weight:600;color:var(--ink-muted);display:flex;justify-content:space-between;align-items:center;}
+.projects-panel-close{background:none;border:none;cursor:pointer;color:var(--ink-muted);font-size:1rem;line-height:1;padding:0 2px;}
+.projects-panel-close:hover{color:var(--ink);}
+.project-item{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);gap:10px;cursor:pointer;transition:background .12s;}
+.project-item:hover{background:var(--bg);}
+.project-item:last-child{border-bottom:none;}
+.project-item-info{flex:1;min-width:0;}
+.project-item-name{font-size:.88rem;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.project-item-date{font-size:.72rem;color:var(--ink-muted);margin-top:1px;}
+.project-item-del{background:none;border:none;cursor:pointer;color:var(--ink-muted);font-size:.85rem;padding:2px 5px;border-radius:var(--radius-sm);flex-shrink:0;opacity:.5;transition:all .12s;}
+.project-item-del:hover{opacity:1;color:#c0392b;}
+.projects-empty{padding:24px 16px;text-align:center;font-size:.8rem;color:var(--ink-muted);}
+.projects-new-btn{display:block;width:100%;padding:11px 16px;background:none;border:none;border-top:1px solid var(--border);font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;color:var(--green);cursor:pointer;text-align:left;transition:background .12s;}
+.projects-new-btn:hover{background:var(--green-light);}
+
+/* MAIN */
+.main{max-width:860px;margin:0 auto;padding:44px 40px 80px;}
+.page-eyebrow{font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:8px;}
+.page-title{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin-bottom:8px;}
+.page-sub{color:var(--ink-muted);font-size:.88rem;line-height:1.6;max-width:520px;margin-bottom:36px;}
+
+/* PROJECT NAME */
+.project-name-wrap{margin-bottom:32px;}
+.project-name-wrap label{display:block;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-muted);margin-bottom:6px;}
+.project-name-input{font-family:'Inter',sans-serif;font-size:1.1rem;font-weight:700;background:none;border:none;border-bottom:2px solid var(--border);padding:4px 0 6px;width:100%;color:var(--ink);outline:none;transition:border-color .2s;}
+.project-name-input:focus{border-bottom-color:var(--green);}
+
+/* COMPONENT CARD */
+.component-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;box-shadow:var(--shadow-sm);}
+.card-header{display:flex;align-items:center;gap:10px;padding:12px 18px;background:var(--bg);border-radius:var(--radius) var(--radius) 0 0;}
+.card-num{font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-muted);min-width:22px;}
+.card-name-input{flex:1;font-family:'Inter',sans-serif;font-size:.95rem;font-weight:700;background:none;border:none;color:var(--ink);outline:none;min-width:0;}
+.card-name-input::placeholder{color:var(--ink-muted);font-weight:400;}
+.card-delete{background:none;border:none;color:var(--ink-muted);cursor:pointer;font-size:1.2rem;line-height:1;padding:2px 6px;border-radius:var(--radius-sm);transition:all .15s;flex-shrink:0;}
+.card-delete:hover{color:#c0392b;background:rgba(192,57,43,.08);}
+
+/* Two-row grid: 3 cols each */
+.card-body{padding:18px 18px 0;}
+.card-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px;}
+@media(max-width:600px){.card-row{grid-template-columns:1fr 1fr;}}
+
+.field-group{display:flex;flex-direction:column;gap:5px;}
+.field-label{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-muted);}
+.field-input{font-family:'Inter',sans-serif;font-size:.88rem;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 11px;color:var(--ink);outline:none;width:100%;transition:border-color .15s,box-shadow .15s;}
+.field-input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(61,122,61,.12);}
+.field-input:disabled{opacity:.4;cursor:not-allowed;}
+.field-select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B6B68' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;cursor:pointer;}
+.field-select:disabled{opacity:.35;cursor:not-allowed;}
+.field-hint{font-size:.7rem;color:var(--ink-muted);}
+
+/* Seiten input */
+.seiten-row{display:flex;align-items:center;gap:8px;}
+.seiten-input{font-family:'Inter',sans-serif;font-size:.88rem;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 11px;color:var(--ink);outline:none;width:80px;text-align:right;transition:border-color .15s,box-shadow .15s;}
+.seiten-input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(61,122,61,.12);}
+.seiten-unit{font-size:.72rem;color:var(--ink-muted);}
+.warn-odd{font-size:.68rem;color:#c0392b;margin-top:3px;}
+
+/* Paper match display */
+.paper-match{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 11px;min-height:36px;display:flex;align-items:center;gap:6px;}
+.paper-match-name{font-size:.85rem;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.paper-match-meta{font-size:.7rem;color:var(--ink-muted);white-space:nowrap;flex-shrink:0;}
+.paper-match-empty{font-size:.8rem;color:var(--ink-muted);font-style:italic;}
+.paper-match-multi{font-size:.65rem;color:var(--ink-muted);margin-top:2px;}
+
+/* CARD RESULT */
+.card-result{display:flex;border-top:1px solid var(--border);margin-top:0;border-radius:0 0 var(--radius) var(--radius);overflow:hidden;}
+.card-result-item{flex:1;padding:12px 18px;border-right:1px solid var(--border);}
+.card-result-item:last-child{border-right:none;}
+.res-label{font-size:.68rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-muted);display:block;margin-bottom:3px;}
+.res-value{font-size:1.05rem;font-weight:700;color:var(--ink);}
+
+/* ADD BUTTON */
+.add-btn{width:100%;padding:13px;background:none;border:1.5px dashed var(--border);border-radius:var(--radius);font-family:'Inter',sans-serif;font-size:.8rem;font-weight:600;letter-spacing:.04em;color:var(--ink-muted);cursor:pointer;transition:all .15s;margin-bottom:32px;}
+.add-btn:hover{border-color:var(--green);color:var(--green);background:var(--green-light);}
+
+/* TOTAL PANEL */
+.total-panel{background:var(--ink);color:#fff;border-radius:var(--radius);padding:28px;position:relative;overflow:hidden;}
+.total-label{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;opacity:.45;margin-bottom:22px;}
+.total-numbers{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;}
+.total-num-label{font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;opacity:.45;display:block;margin-bottom:4px;}
+.total-num-value{font-size:2.2rem;font-weight:800;letter-spacing:-.03em;line-height:1;}
+.total-num-unit{font-size:.75rem;opacity:.55;margin-left:4px;}
+.total-breakdown{border-top:1px solid rgba(255,255,255,.1);padding-top:16px;}
+.bd-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:.82rem;opacity:.65;border-bottom:1px solid rgba(255,255,255,.06);}
+.bd-row:last-child{border-bottom:none;opacity:.8;font-weight:600;}
+.bd-row span:last-child{opacity:.9;font-weight:600;}
+.total-copy-btn{position:absolute;top:28px;right:28px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.7);font-family:'Inter',sans-serif;font-size:.72rem;font-weight:600;padding:5px 12px;border-radius:20px;cursor:pointer;transition:all .15s;}
+.total-copy-btn:hover{background:rgba(255,255,255,.2);color:#fff;}
+
+/* LOADING + EMPTY */
+.loading-state{text-align:center;padding:80px 0;color:var(--ink-muted);font-size:.8rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;}
+.loading-dot{display:inline-block;animation:blink 1.2s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:.2}50%{opacity:1}}
+.empty-state{text-align:center;padding:48px;color:var(--ink-muted);background:var(--surface);border:1.5px dashed var(--border);border-radius:var(--radius);margin-bottom:14px;}
+.empty-state p{font-size:.85rem;margin-top:6px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-block">
+    <span class="logo-name">metapaper.ai</span>
+    <span class="logo-tagline">Gewichts- &amp; Dickenrechner</span>
+  </div>
+  <div class="header-actions">
+    <div class="autosave-dot" id="autosave-dot" title="Automatisch gespeichert"></div>
+    <a class="back-link" href="toolbox.html">← Tool-Box</a>
+    <button class="hdr-btn" onclick="toggleProjectsPanel()">Projekte ▾</button>
+    <button class="hdr-btn hdr-btn-primary" onclick="saveProject()">Projekt speichern</button>
+  </div>
+</header>
+
+<!-- PROJECTS PANEL -->
+<div class="projects-panel" id="projects-panel">
+  <div class="projects-panel-header">
+    Gespeicherte Projekte
+    <button class="projects-panel-close" onclick="toggleProjectsPanel()">×</button>
+  </div>
+  <div id="projects-list"></div>
+  <button class="projects-new-btn" onclick="newProject()">+ Neues leeres Projekt</button>
+</div>
+
+<div class="main">
+  <div id="loading-state" class="loading-state">
+    Papierdatenbank wird geladen<span class="loading-dot">…</span>
+  </div>
+
+  <div id="app" style="display:none;">
+    <p class="page-eyebrow">Druckkalkulation</p>
+    <h1 class="page-title">Gewicht &amp; Dicke</h1>
+    <p class="page-sub">Wähle Oberfläche, Färbung und Grammatur – das passende Papier aus dem Metapaper-Sortiment wird automatisch zugeordnet.</p>
+
+    <div class="project-name-wrap">
+      <label>Projektname</label>
+      <input class="project-name-input" id="project-name" placeholder="z. B. Broschüre Frühjahr 2026" />
+    </div>
+
+    <div id="components-list"></div>
+    <button class="add-btn" onclick="addComponent()">+ Komponente hinzufügen</button>
+    <div id="total-panel"></div>
+  </div>
+</div>
+
+<script>
+// ─── SUPABASE ────────────────────────────────────────────────────────────────
+const SB_URL = 'https://utpshgqhyijggfubzifp.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV0cHNoZ3FoeWlqZ2dmdWJ6aWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5Nzk4NjIsImV4cCI6MjA5MzU1NTg2Mn0.8B1Yg7rC1YTxxyrF_cT8ieeXitDbwQ_-ZHrkA_ScN2w';
+
+// ─── FORMATS ─────────────────────────────────────────────────────────────────
+const FORMATS = [
+  { id:'a4',    label:'A4  (210 × 297 mm)', w:210, h:297 },
+  { id:'a5',    label:'A5  (148 × 210 mm)', w:148, h:210 },
+  { id:'a3',    label:'A3  (297 × 420 mm)', w:297, h:420 },
+  { id:'a6',    label:'A6  (105 × 148 mm)', w:105, h:148 },
+  { id:'b4',    label:'B4  (250 × 353 mm)', w:250, h:353 },
+  { id:'b5',    label:'B5  (176 × 250 mm)', w:176, h:250 },
+  { id:'sq210', label:'Quadrat 210 × 210 mm', w:210, h:210 },
+  { id:'sq148', label:'Quadrat 148 × 148 mm', w:148, h:148 },
+  { id:'vk',    label:'Visitenkarte (85 × 55 mm)', w:85,  h:55  },
+  { id:'dl',    label:'DL  (220 × 110 mm)', w:220, h:110 },
+  { id:'custom',label:'Benutzerdefiniert',   w:0,   h:0   },
+];
+
+// ─── LABELS ───────────────────────────────────────────────────────────────────
+const SURFACE_ORDER  = ['extrarau','rau','glatt','sehrglatt','gepraegt','leichtgestrichen','vollgestrichen','natur'];
+const SURFACE_LABELS = {
+  extrarau:'Extrem rau', rau:'Rau', glatt:'Glatt / Smooth',
+  sehrglatt:'Sehr glatt', gepraegt:'Geprägt',
+  leichtgestrichen:'Leicht gestrichen', vollgestrichen:'Voll gestrichen',
+  natur:'Natur / Ungestrichen',
+};
+const COLOR_ORDER  = ['coldwhite','white','warmwhite','naturfarben','grau','schwarz','farbig','metallic','neon'];
+const COLOR_LABELS = {
+  coldwhite:'Coldwhite / Blauweiß', white:'White / Reinweiß',
+  warmwhite:'Warmweiß / Natürlich', naturfarben:'Naturfarben / Beige',
+  grau:'Grau', schwarz:'Schwarz', farbig:'Farbig / Bunt',
+  metallic:'Metallic / Pearl', neon:'Neon',
+};
+
+// ─── PAPER DATA ───────────────────────────────────────────────────────────────
+let papers = []; // { name, grammage, volume, surface, colorGroup }
+
+function isNeg(val) {
+  if (!val || val.trim() === '') return true;
+  const v = val.trim().toLowerCase();
+  return (
+    v.startsWith('das papier ist nicht') || v.startsWith('das papier ist leider nicht') ||
+    v.startsWith('das papier ist kein')  || v.startsWith('das papier hat keine') ||
+    v.startsWith('das papier hat keinen')|| v.startsWith('das papier hat kein') ||
+    v.startsWith('ist kein') || v.startsWith('ist keine') || v.startsWith('ist nicht') ||
+    v.startsWith('hat keine') || v.startsWith('hat keinen') || v.startsWith('hat kein') ||
+    v.includes('leider nicht') || v.includes('leider kein')
+  );
+}
+
+function mapSurface(r) {
+  if (!isNeg(r['Extrem rau']))        return 'extrarau';
+  if (!isNeg(r['rau']))               return 'rau';
+  if (!isNeg(r['sehr glatt']))        return 'sehrglatt';
+  if (!isNeg(r['glatt (smooth)']))    return 'glatt';
+  if (!isNeg(r['voll gestrichen']))   return 'vollgestrichen';
+  if (!isNeg(r['leicht gestrichen'])) return 'leichtgestrichen';
+  if (!isNeg(r['Gepraegt']))          return 'gepraegt';
+  return 'natur';
+}
+
+function mapColor(r) {
+  if (!isNeg(r['Schwarzes Papier']))                          return 'schwarz';
+  if (!isNeg(r['Neon']))                                      return 'neon';
+  if (!isNeg(r['Metallisierend / Pearl']))                    return 'metallic';
+  if (!isNeg(r['Durchgefaerbtes bzw, farbiges Papier']))      return 'farbig';
+  const wt = (r['Weisston (gelblich bis blaeulich)'] || '').toLowerCase().replace(/\s+/g,' ').trim();
+  if (wt.includes('white-coldwhite'))  return 'coldwhite';
+  if (wt.includes('white-warmwhite'))  return 'warmwhite';
+  if (wt.includes('coldwhite') || wt.includes('bluewhite') || wt.includes('greywhite') || wt.includes('icewhite')) return 'coldwhite';
+  if (wt.includes('warmwhite') || wt.includes('off-white') || wt.includes('ivory') || wt.includes('natural'))      return 'warmwhite';
+  if (wt.includes('white') && !wt.includes('green') && !wt.includes('rose') && !wt.includes('metallic') && !wt.includes('transparent')) return 'white';
+  if (!isNeg(r['Grauton']))            return 'grau';
+  return 'naturfarben';
+}
+
+function parseGrammage(raw) {
+  const m = String(raw || '').match(/(\d+(?:[.,]\d+)?)/);
+  return m ? parseFloat(m[1].replace(',','.')) : 0;
+}
+
+function parseVolume(r) {
+  const raw = r['Volumen'];
+  if (raw === null || raw === undefined || raw === '') return 1.0;
+  const v = parseFloat(String(raw).replace(',', '.'));
+  return isFinite(v) && v > 0 ? v : 1.0;
+}
+
+async function loadPapers() {
+  let all = [], from = 0;
+  while (true) {
+    const res = await fetch(
+      `${SB_URL}/rest/v1/papier_masterliste?select=*&offset=${from}&limit=1000`,
+      { headers:{ apikey:SB_KEY, Authorization:'Bearer '+SB_KEY } }
+    );
+    if (!res.ok) throw new Error('HTTP '+res.status);
+    const rows = await res.json();
+    all = all.concat(rows);
+    if (rows.length < 1000) break;
+    from += 1000;
+  }
+  papers = all
+    .map(r => ({
+      name:       String(r['Brand_Identifier'] || '').trim(),
+      grammage:   parseGrammage(r['Gewicht in g/m2']),
+      volume:     parseVolume(r),
+      surface:    mapSurface(r),
+      colorGroup: mapColor(r),
+    }))
+    .filter(p => p.name && p.grammage > 0);
+}
+
+// ─── PAPER FILTER HELPERS ─────────────────────────────────────────────────────
+function getSurfaces() {
+  const set = new Set(papers.map(p => p.surface));
+  return SURFACE_ORDER.filter(s => set.has(s));
+}
+
+function getColors(surface) {
+  const src = surface ? papers.filter(p => p.surface === surface) : papers;
+  const set = new Set(src.map(p => p.colorGroup));
+  return COLOR_ORDER.filter(c => set.has(c));
+}
+
+function getGrammages(surface, color) {
+  let src = papers;
+  if (surface) src = src.filter(p => p.surface === surface);
+  if (color)   src = src.filter(p => p.colorGroup === color);
+  return [...new Set(src.map(p => p.grammage))].sort((a,b) => a-b);
+}
+
+function getMatchedPapers(surface, color, grammage) {
+  let src = papers;
+  if (surface)  src = src.filter(p => p.surface === surface);
+  if (color)    src = src.filter(p => p.colorGroup === color);
+  if (grammage) src = src.filter(p => p.grammage === grammage);
+  return src;
+}
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let idCounter = 0;
+let components = [];
+
+function newComp(name, opts = {}) {
+  const id = ++idCounter;
+  const fmt = FORMATS.find(f => f.id === (opts.formatId || 'a4')) || FORMATS[0];
+  return {
+    id, name: name || 'Komponente ' + id,
+    selSurface:  opts.selSurface  || '',
+    selColor:    opts.selColor    || '',
+    selGrammage: opts.selGrammage || 0,
+    paperName:   opts.paperName   || '',
+    grammage:    opts.grammage    || 120,
+    volume:      opts.volume      || 1.0,
+    formatId: fmt.id, formatW: fmt.w, formatH: fmt.h,
+    customW: 210, customH: 297,
+    qty: opts.qty !== undefined ? opts.qty : 32,
+  };
+}
+
+// ─── CALCULATIONS ─────────────────────────────────────────────────────────────
+function getSheets(c) { return c.qty / 2; }
+function getAreaM2(c) {
+  const w = c.formatId === 'custom' ? c.customW : c.formatW;
+  const h = c.formatId === 'custom' ? c.customH : c.formatH;
+  return (w/1000) * (h/1000);
+}
+function calcWeight(c)    { return getSheets(c) * getAreaM2(c) * c.grammage; }
+function calcThickness(c) { return getSheets(c) * c.grammage * c.volume / 1000; }
+
+// ─── FORMATTING ───────────────────────────────────────────────────────────────
+function fmtNum(n, d=1) { return isFinite(n) ? n.toFixed(d).replace('.',',') : '–'; }
+function fmtWeight(g)   { return isFinite(g) ? (g>=1000 ? fmtNum(g/1000,3)+' kg' : fmtNum(g,1)+' g') : '–'; }
+function fmtMm(mm)      { return isFinite(mm)? (mm>=10  ? fmtNum(mm,1)+' mm' : fmtNum(mm,2)+' mm') : '–'; }
+function escH(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ─── PAPER SELECTION HANDLERS ─────────────────────────────────────────────────
+function onSurfaceChange(id, val) {
+  const c = components.find(x => x.id === id);
+  if (!c) return;
+  c.selSurface  = val;
+  c.selColor    = '';   // reset downstream
+  c.selGrammage = 0;
+  c.paperName   = '';
+  rerenderSelectors(id);
+  updateResults(id);
+  autoSave();
+}
+
+function onColorChange(id, val) {
+  const c = components.find(x => x.id === id);
+  if (!c) return;
+  c.selColor    = val;
+  c.selGrammage = 0;   // reset downstream
+  c.paperName   = '';
+  rerenderSelectors(id);
+  updateResults(id);
+  autoSave();
+}
+
+function onGrammageChange(id, val) {
+  const c = components.find(x => x.id === id);
+  if (!c) return;
+  c.selGrammage = val;
+  // Auto-pick paper
+  const matched = getMatchedPapers(c.selSurface, c.selColor, val);
+  if (matched.length > 0) {
+    c.grammage  = matched[0].grammage;
+    c.volume    = matched[0].volume;
+    c.paperName = matched[0].name + (matched.length > 1 ? ` (+${matched.length-1})` : '');
+  } else {
+    c.grammage  = val || c.grammage;
+    c.paperName = '';
+  }
+  rerenderSelectors(id);
+  updateResults(id);
+  autoSave();
+}
+
+// Re-render just the three dropdowns + paper-match of one card (keeps qty/format intact)
+function rerenderSelectors(id) {
+  const c = components.find(x => x.id === id);
+  if (!c) return;
+
+  const selSurf = document.getElementById('sel-surf-'+id);
+  const selCol  = document.getElementById('sel-col-'+id);
+  const selGram = document.getElementById('sel-gram-'+id);
+  const matchEl = document.getElementById('paper-match-'+id);
+  if (!selSurf || !selCol || !selGram || !matchEl) return;
+
+  // Surface options (static)
+  selSurf.innerHTML =
+    '<option value="">— Oberfläche wählen —</option>' +
+    getSurfaces().map(s =>
+      `<option value="${s}" ${s===c.selSurface?'selected':''}>${escH(SURFACE_LABELS[s]||s)}</option>`
+    ).join('');
+
+  // Color options (filtered by surface)
+  const colors = getColors(c.selSurface);
+  selCol.disabled = !c.selSurface;
+  selCol.innerHTML =
+    '<option value="">— Färbung wählen —</option>' +
+    colors.map(col =>
+      `<option value="${col}" ${col===c.selColor?'selected':''}>${escH(COLOR_LABELS[col]||col)}</option>`
+    ).join('');
+
+  // Grammage options (filtered)
+  const grams = getGrammages(c.selSurface, c.selColor);
+  selGram.disabled = !c.selColor;
+  selGram.innerHTML =
+    '<option value="0">— Grammatur wählen —</option>' +
+    grams.map(g =>
+      `<option value="${g}" ${g===c.selGrammage?'selected':''}>${g} g/m²</option>`
+    ).join('');
+
+  // Paper match
+  const matched = getMatchedPapers(c.selSurface, c.selColor, c.selGrammage);
+  if (c.selGrammage && matched.length > 0) {
+    matchEl.innerHTML =
+      `<span class="paper-match-name">${escH(matched[0].name)}</span>` +
+      `<span class="paper-match-meta">Vol ${matched[0].volume}</span>` +
+      (matched.length > 1 ? `<span class="paper-match-multi">+${matched.length-1} weitere</span>` : '');
+  } else if (c.selGrammage && matched.length === 0) {
+    matchEl.innerHTML = '<span class="paper-match-empty">Keine Übereinstimmung</span>';
+  } else {
+    matchEl.innerHTML = '<span class="paper-match-empty">–</span>';
+  }
+}
+
+// ─── FIELD UPDATES ────────────────────────────────────────────────────────────
+function updateField(id, key, value) {
+  const c = components.find(x => x.id === id);
+  if (!c) return;
+  c[key] = value;
+  updateResults(id);
+  autoSave();
+}
+
+function onFormatChange(id, fmtId) {
+  const c = components.find(x => x.id === id);
+  if (!c) return;
+  c.formatId = fmtId;
+  const fmt = FORMATS.find(f => f.id === fmtId);
+  if (fmt) { c.formatW = fmt.w; c.formatH = fmt.h; }
+  const cr = document.getElementById('custom-row-'+id);
+  if (cr) cr.style.display = fmtId==='custom' ? 'flex' : 'none';
+  updateResults(id);
+  autoSave();
+}
+
+function addComponent() {
+  const presets = [
+    { name:'Umschlagspapier',   qty:2,  grammage:300 },
+    { name:'Inhaltspapier 1',  qty:32, grammage:120 },
+    { name:'Inhaltspapier 2',  qty:16, grammage:120 },
+    { name:'Beileger',         qty:2,  grammage:135 },
+  ];
+  const p = presets[components.length] || {};
+  components.push(newComp(p.name, p));
+  renderComponents();
+  renderTotal();
+  autoSave();
+}
+
+function removeComponent(id) {
+  components = components.filter(x => x.id !== id);
+  renderComponents();
+  renderTotal();
+  autoSave();
+}
+
+// ─── RESULT UPDATE (no full re-render) ────────────────────────────────────────
+function updateResults(id) {
+  const c = components.find(x => x.id === id);
+  if (!c) return;
+  const wEl = document.getElementById('rv-weight-'+id);
+  const tEl = document.getElementById('rv-thick-'+id);
+  if (wEl) wEl.textContent = fmtWeight(calcWeight(c));
+  if (tEl) tEl.textContent = fmtMm(calcThickness(c));
+  // odd warning
+  const owEl = document.getElementById('odd-warn-'+id);
+  if (owEl) owEl.style.display = (c.qty % 2 !== 0) ? 'block' : 'none';
+  renderTotal();
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function renderCard(c, idx) {
+  const isCustom = c.formatId === 'custom';
+  const formatOpts = FORMATS.map(f =>
+    `<option value="${f.id}" ${f.id===c.formatId?'selected':''}>${escH(f.label)}</option>`
+  ).join('');
+
+  // Compute initial dropdown options
+  const surfaces = getSurfaces();
+  const colors   = getColors(c.selSurface);
+  const grams    = getGrammages(c.selSurface, c.selColor);
+  const matched  = getMatchedPapers(c.selSurface, c.selColor, c.selGrammage);
+
+  const surfOpts =
+    '<option value="">— Oberfläche wählen —</option>' +
+    surfaces.map(s => `<option value="${s}" ${s===c.selSurface?'selected':''}>${escH(SURFACE_LABELS[s]||s)}</option>`).join('');
+  const colOpts =
+    '<option value="">— Färbung wählen —</option>' +
+    colors.map(col => `<option value="${col}" ${col===c.selColor?'selected':''}>${escH(COLOR_LABELS[col]||col)}</option>`).join('');
+  const gramOpts =
+    '<option value="0">— Grammatur wählen —</option>' +
+    grams.map(g => `<option value="${g}" ${g===c.selGrammage?'selected':''}>${g} g/m²</option>`).join('');
+
+  let matchHtml;
+  if (c.selGrammage && matched.length > 0) {
+    matchHtml = `<span class="paper-match-name">${escH(matched[0].name)}</span><span class="paper-match-meta">Vol ${matched[0].volume}</span>` +
+      (matched.length > 1 ? `<span class="paper-match-multi">+${matched.length-1} weitere</span>` : '');
+  } else if (c.selGrammage) {
+    matchHtml = '<span class="paper-match-empty">Keine Übereinstimmung</span>';
+  } else {
+    matchHtml = '<span class="paper-match-empty">–</span>';
+  }
+
+  return `<div class="component-card" id="card-${c.id}">
+    <div class="card-header">
+      <span class="card-num">#${idx+1}</span>
+      <input class="card-name-input" value="${escH(c.name)}"
+        placeholder="z. B. Umschlagspapier, Inhaltspapier …"
+        oninput="updateField(${c.id},'name',this.value)" />
+      <button class="card-delete" onclick="removeComponent(${c.id})" title="Entfernen">×</button>
+    </div>
+
+    <div class="card-body">
+      <!-- Row 1: Oberfläche · Färbung · Grammatur -->
+      <div class="card-row">
+        <div class="field-group">
+          <span class="field-label">Oberfläche</span>
+          <select class="field-input field-select" id="sel-surf-${c.id}"
+            onchange="onSurfaceChange(${c.id},this.value)">${surfOpts}</select>
+        </div>
+        <div class="field-group">
+          <span class="field-label">Färbung</span>
+          <select class="field-input field-select" id="sel-col-${c.id}"
+            ${!c.selSurface?'disabled':''}
+            onchange="onColorChange(${c.id},this.value)">${colOpts}</select>
+        </div>
+        <div class="field-group">
+          <span class="field-label">Grammatur</span>
+          <select class="field-input field-select" id="sel-gram-${c.id}"
+            ${!c.selColor?'disabled':''}
+            onchange="onGrammageChange(${c.id},+this.value)">${gramOpts}</select>
+        </div>
+      </div>
+
+      <!-- Row 2: Format · Seitenanzahl · Papier -->
+      <div class="card-row">
+        <div class="field-group">
+          <span class="field-label">Format</span>
+          <select class="field-input field-select" onchange="onFormatChange(${c.id},this.value)">
+            ${formatOpts}
+          </select>
+          <div id="custom-row-${c.id}" style="display:${isCustom?'flex':'none'};gap:6px;margin-top:5px;">
+            <div style="flex:1;min-width:0;">
+              <input type="number" class="field-input" placeholder="B mm" value="${c.customW||''}"
+                oninput="updateField(${c.id},'customW',+this.value)" />
+              <div style="font-size:.48rem;color:var(--ink-muted);text-align:center;margin-top:2px;">Breite mm</div>
+            </div>
+            <div style="flex:1;min-width:0;">
+              <input type="number" class="field-input" placeholder="H mm" value="${c.customH||''}"
+                oninput="updateField(${c.id},'customH',+this.value)" />
+              <div style="font-size:.48rem;color:var(--ink-muted);text-align:center;margin-top:2px;">Höhe mm</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label">Seitenanzahl</span>
+          <div class="seiten-row">
+            <input type="number" class="seiten-input" value="${c.qty}" min="1" max="9999"
+              oninput="updateField(${c.id},'qty',+this.value)" />
+            <span class="seiten-unit">Seiten</span>
+          </div>
+          <div class="warn-odd" id="odd-warn-${c.id}"
+            style="display:${c.qty%2!==0?'block':'none'};">⚠ Ungerade Seitenanzahl</div>
+        </div>
+
+        <div class="field-group">
+          <span class="field-label">Zugeordnetes Papier</span>
+          <div class="paper-match" id="paper-match-${c.id}">${matchHtml}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-result">
+      <div class="card-result-item">
+        <span class="res-label">Gewicht</span>
+        <span class="res-value" id="rv-weight-${c.id}">${fmtWeight(calcWeight(c))}</span>
+      </div>
+      <div class="card-result-item">
+        <span class="res-label">Dicke / Rücken</span>
+        <span class="res-value" id="rv-thick-${c.id}">${fmtMm(calcThickness(c))}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderComponents() {
+  const el = document.getElementById('components-list');
+  if (components.length === 0) {
+    el.innerHTML = `<div class="empty-state">
+      <strong>Noch keine Komponenten</strong>
+      <p>Füge Umschlagspapier, Inhaltspapier oder weitere Bestandteile hinzu.</p>
+    </div>`;
+    return;
+  }
+  el.innerHTML = components.map((c,i) => renderCard(c,i)).join('');
+}
+
+function renderTotal() {
+  const el = document.getElementById('total-panel');
+  if (components.length === 0) { el.innerHTML = ''; return; }
+  const totalW = components.reduce((s,c) => s + calcWeight(c),    0);
+  const totalT = components.reduce((s,c) => s + calcThickness(c), 0);
+  const breakdown = components.length > 1
+    ? components.map(c => `<div class="bd-row"><span>${escH(c.name)}</span><span>${fmtWeight(calcWeight(c))} · ${fmtMm(calcThickness(c))}</span></div>`).join('') +
+      `<div class="bd-row"><span>Gesamt</span><span>${fmtWeight(totalW)} · ${fmtMm(totalT)}</span></div>`
+    : '';
+  el.innerHTML = `<div class="total-panel">
+    <div class="total-label">Gesamtergebnis</div>
+    <button class="total-copy-btn" onclick="copyResults()">Kopieren</button>
+    <div class="total-numbers">
+      <div>
+        <span class="total-num-label">Gesamtgewicht</span>
+        <div><span class="total-num-value">${totalW>=1000?fmtNum(totalW/1000,3):fmtNum(totalW,0)}</span>
+          <span class="total-num-unit">${totalW>=1000?'kg':'g'}</span></div>
+      </div>
+      <div>
+        <span class="total-num-label">Rückenbreite</span>
+        <div><span class="total-num-value">${fmtNum(totalT,1)}</span>
+          <span class="total-num-unit">mm</span></div>
+      </div>
+    </div>
+    ${breakdown ? `<div class="total-breakdown">${breakdown}</div>` : ''}
+  </div>`;
+}
+
+// ─── COPY TO CLIPBOARD ────────────────────────────────────────────────────────
+function copyResults() {
+  const pname = document.getElementById('project-name')?.value || 'Printprojekt';
+  const totalW = components.reduce((s,c) => s + calcWeight(c),    0);
+  const totalT = components.reduce((s,c) => s + calcThickness(c), 0);
+  const lines = [
+    pname, '─'.repeat(40),
+    ...components.map(c =>
+      `${c.name}: ${fmtWeight(calcWeight(c))} · Dicke ${fmtMm(calcThickness(c))}` +
+      (c.paperName ? ` (${c.paperName.split(' (+')[0]}, ${c.grammage} g/m²)` : ` (${c.grammage} g/m², Vol ${c.volume})`)),
+    '─'.repeat(40),
+    `Gesamt:  ${fmtWeight(totalW)} · Rücken ${fmtMm(totalT)}`,
+  ];
+  navigator.clipboard.writeText(lines.join('\n')).then(() => {
+    const btn = document.querySelector('.total-copy-btn');
+    if (btn) { btn.textContent = '✓ Kopiert'; setTimeout(() => btn.textContent = 'Kopieren', 2000); }
+  });
+}
+
+// ─── LOCALSTORAGE ─────────────────────────────────────────────────────────────
+const LS_SESSION  = 'kalk_session';
+const LS_PROJECTS = 'kalk_projects';
+let autoSaveTimer = null;
+
+function getSessionState() {
+  return {
+    projectName: document.getElementById('project-name')?.value || '',
+    components:  components.map(c => ({ ...c })),
+    idCounter,
+  };
+}
+
+function applyState(state) {
+  if (!state) return;
+  idCounter  = state.idCounter || 0;
+  components = (state.components || []).map(c => ({ ...c }));
+  const pn = document.getElementById('project-name');
+  if (pn) pn.value = state.projectName || '';
+  renderComponents();
+  renderTotal();
+}
+
+function autoSave() {
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(() => {
+    try {
+      localStorage.setItem(LS_SESSION, JSON.stringify(getSessionState()));
+      const dot = document.getElementById('autosave-dot');
+      if (dot) { dot.classList.add('visible'); setTimeout(() => dot.classList.remove('visible'), 1200); }
+    } catch(e) {}
+  }, 600);
+}
+
+function saveProject() {
+  const name = document.getElementById('project-name')?.value.trim() || 'Unbenanntes Projekt';
+  const projects = loadProjectList();
+  const existing = projects.find(p => p.name === name);
+  const entry = { id: existing?.id || Date.now().toString(), name, savedAt: new Date().toISOString(), state: getSessionState() };
+  if (existing) Object.assign(existing, entry); else projects.unshift(entry);
+  try {
+    localStorage.setItem(LS_PROJECTS, JSON.stringify(projects));
+    const btn = document.querySelector('.hdr-btn-primary');
+    if (btn) { btn.textContent = '✓ Gespeichert'; setTimeout(() => btn.textContent = 'Speichern', 1800); }
+    renderProjectsList();
+  } catch(e) {}
+}
+
+function loadProjectList() {
+  try { return JSON.parse(localStorage.getItem(LS_PROJECTS)) || []; } catch(e) { return []; }
+}
+
+function loadProject(id) {
+  const p = loadProjectList().find(x => x.id === id);
+  if (!p) return;
+  applyState(p.state);
+  autoSave();
+  toggleProjectsPanel();
+}
+
+function deleteProject(id, e) {
+  e.stopPropagation();
+  localStorage.setItem(LS_PROJECTS, JSON.stringify(loadProjectList().filter(p => p.id !== id)));
+  renderProjectsList();
+}
+
+function newProject() {
+  idCounter  = 0;
+  components = [
+    newComp('Umschlagspapier',  { qty:2,  grammage:300 }),
+    newComp('Inhaltspapier 1', { qty:32, grammage:120 }),
+  ];
+  const pn = document.getElementById('project-name');
+  if (pn) pn.value = '';
+  renderComponents();
+  renderTotal();
+  autoSave();
+  toggleProjectsPanel();
+}
+
+function toggleProjectsPanel() {
+  const panel = document.getElementById('projects-panel');
+  const isOpen = panel.classList.toggle('open');
+  if (isOpen) renderProjectsList();
+}
+
+function renderProjectsList() {
+  const el = document.getElementById('projects-list');
+  const projects = loadProjectList();
+  if (projects.length === 0) {
+    el.innerHTML = '<div class="projects-empty">Noch keine gespeicherten Projekte.</div>';
+    return;
+  }
+  el.innerHTML = projects.map(p => {
+    const date = new Date(p.savedAt).toLocaleDateString('de-DE',{ day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit' });
+    return `<div class="project-item" onclick="loadProject('${p.id}')">
+      <div class="project-item-info">
+        <div class="project-item-name">${escH(p.name)}</div>
+        <div class="project-item-date">${date}</div>
+      </div>
+      <button class="project-item-del" onclick="deleteProject('${p.id}',event)" title="Löschen">×</button>
+    </div>`;
+  }).join('');
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+async function init() {
+  try { await loadPapers(); }
+  catch(e) { document.getElementById('loading-state').textContent = 'Fehler beim Laden: ' + e.message; return; }
+
+  document.getElementById('loading-state').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
+  const saved = localStorage.getItem(LS_SESSION);
+  if (saved) {
+    try { applyState(JSON.parse(saved)); }
+    catch(e) { loadDefaults(); }
+  } else {
+    loadDefaults();
+  }
+
+  document.getElementById('project-name').addEventListener('input', autoSave);
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#projects-panel') && !e.target.closest('.hdr-btn')) {
+      document.getElementById('projects-panel')?.classList.remove('open');
+    }
+  });
+}
+
+function loadDefaults() {
+  idCounter  = 0;
+  components = [
+    newComp('Umschlagspapier',  { qty:2,  grammage:300 }),
+    newComp('Inhaltspapier 1', { qty:32, grammage:120 }),
+  ];
+  renderComponents();
+  renderTotal();
+}
+
+init();
+</script>
+</body>
+</html>

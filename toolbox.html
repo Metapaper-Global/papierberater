@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tool-Box — Metapaper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://use.typekit.net/qex7ber.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F7F7F5;
+      --surface: #FFFFFF;
+      --green: #3D7A3D;
+      --green-light: #E8F2E8;
+      --green-text: #2D5E2D;
+      --ink: #1A1A18;
+      --ink-muted: #6B6B68;
+      --border: rgba(0,0,0,0.08);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      font-family: 'houschka-pro', 'Houschka Pro', 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+    }
+
+    .logo {
+      font-family: 'houschka-pro','Houschka Pro','Inter',sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--green);
+      letter-spacing: -0.01em;
+      text-decoration: none;
+    }
+
+    /* Lang switcher */
+    .lang-switcher {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 3px;
+    }
+    .lang-btn {
+      font-family: 'Inter', sans-serif;
+      font-size: .66rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+      color: var(--ink-muted);
+      background: none;
+      border: none;
+      padding: 4px 7px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .lang-btn:hover { color: var(--ink); background: rgba(0,0,0,.05); }
+    .lang-btn.active { color: var(--ink); font-weight: 700; text-decoration: underline; background: none; }
+
+    /* Main layout */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      padding: 60px 40px;
+      gap: 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Left column */
+    .hero {
+      flex: 0 0 30%;
+      max-width: 30%;
+      position: sticky;
+      top: 40px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--green-light);
+      color: var(--green-text);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      margin-bottom: 24px;
+      letter-spacing: 0.01em;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.6rem, 2.5vw, 2.4rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+
+    .hero p {
+      font-size: 0.9rem;
+      color: var(--ink-muted);
+      line-height: 1.6;
+    }
+
+    /* Right column — grid */
+    .grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 28px 24px 24px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      cursor: pointer;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .card.coming-soon {
+      opacity: 0.55;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .icon-wrap {
+      width: 48px;
+      height: 48px;
+      background: var(--green-light);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .icon-wrap svg {
+      width: 22px;
+      height: 22px;
+      color: var(--green);
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+
+    .card-desc {
+      font-size: 0.82rem;
+      color: var(--ink-muted);
+      line-height: 1.55;
+      flex: 1;
+    }
+
+    .card-link {
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: var(--green);
+      text-decoration: none;
+      margin-top: 4px;
+    }
+
+    .card.coming-soon .card-link {
+      color: var(--ink-muted);
+    }
+
+    /* Responsive */
+    @media (max-width: 960px) {
+      main {
+        flex-direction: column;
+        padding: 40px 24px;
+        gap: 40px;
+        align-items: flex-start;
+      }
+
+      .hero {
+        flex: none;
+        max-width: 100%;
+        position: static;
+      }
+    }
+
+    @media (max-width: 520px) {
+      header {
+        padding: 16px 20px;
+      }
+
+      main {
+        padding: 32px 20px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a class="logo" href="index.html">metapaper.ai</a>
+    <div class="lang-switcher" id="langSwitcher">
+      <button class="lang-btn" data-lang="de">DE</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="fr">FR</button>
+      <button class="lang-btn" data-lang="nl">NL</button>
+      <button class="lang-btn" data-lang="da">DA</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Left: Hero -->
+    <div class="hero">
+      <div class="badge">🔧 Tool-Box</div>
+      <h1 data-i18n="heroTitle">Praktische Tools rund um dein Papier auf einen Blick.</h1>
+      <p data-i18n="heroSub">Tips und Tricks für deine tägliche Arbeit mit Metapaper.</p>
+    </div>
+
+    <!-- Right: Card Grid -->
+    <div class="grid">
+
+      <!-- Card 1: Buchrücken & Gewicht -->
+      <a class="card" href="kalkulator.html">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="4" width="4" height="4" rx="0.5" fill="currentColor"/>
+            <rect x="10" y="4" width="4" height="4" rx="0.5" fill="currentColor"/>
+            <rect x="4" y="10" width="4" height="4" rx="0.5" fill="currentColor"/>
+            <rect x="10" y="10" width="4" height="4" rx="0.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="card-title" data-i18n="tool1Title">Buchrücken &amp; Gewicht berechnen</div>
+        <div class="card-desc" data-i18n="tool1Desc">Dicke des Buchrückens und Gewicht des Printprodukts berechnen.</div>
+        <span class="card-link" data-i18n="open">Öffnen →</span>
+      </a>
+
+      <!-- Card 2: Umrechner -->
+      <a class="card" href="umrechner.html">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <polyline points="5,11 2,11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <polyline points="5,8 2,11 5,14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <line x1="2" y1="11" x2="20" y2="11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <polyline points="17,8 20,11 17,14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="card-title" data-i18n="tool2Title">Umrechner: Bogen ↔ Gewicht</div>
+        <div class="card-desc" data-i18n="tool2Desc">Beliebige Bogenanzahl in das entsprechende Gewicht umrechnen.</div>
+        <span class="card-link" data-i18n="open">Öffnen →</span>
+      </a>
+
+      <!-- Card 3: Nutzen-Rechner -->
+      <a class="card" href="nutzen.html">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="6" cy="7" r="2.2" stroke="currentColor" stroke-width="1.8" fill="none"/>
+            <circle cx="6" cy="15" r="2.2" stroke="currentColor" stroke-width="1.8" fill="none"/>
+            <line x1="7.8" y1="8.4" x2="20" y2="14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="7.8" y1="13.6" x2="20" y2="8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="card-title" data-i18n="tool3Title">Nutzen-Rechner</div>
+        <div class="card-desc" data-i18n="tool3Desc">Optimale Ausnutzung des Papierbogens für dein Wunschformat berechnen.</div>
+        <span class="card-link" data-i18n="open">Öffnen →</span>
+      </a>
+
+      <!-- Card 4: Druckdaten-Check -->
+      <a class="card" href="druckdaten.html">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 3h8l4 4v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/>
+            <polyline points="13,3 13,7 17,7" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/>
+            <polyline points="8,12 10.5,14.5 14.5,10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="card-title" data-i18n="tool4Title">Druckdaten-Check</div>
+        <div class="card-desc" data-i18n="tool4Desc">Druckdaten für dein Printprojekt überprüfen.</div>
+        <span class="card-link" data-i18n="open">Öffnen →</span>
+      </a>
+
+      <!-- Card 5: Preisumrechner -->
+      <a class="card coming-soon" href="#">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="11" cy="11" r="8.5" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M11 7v1.5M11 13.5V15M8.5 9.5a2.5 2 0 013.5-.5 2 2 0 010 4 2 2 0 000 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="card-title" data-i18n="tool5Title">Preisumrechner: 1.000 Bogen ↔ 100 kg</div>
+        <div class="card-desc" data-i18n="tool5Desc">Papierpreise zwischen Bogen- und Gewichtseinheiten umrechnen.</div>
+        <span class="card-link" data-i18n="soon">Bald verfügbar</span>
+      </a>
+
+      <!-- Card 6: Portorechner -->
+      <a class="card coming-soon" href="#">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="6" width="18" height="13" rx="1.5" stroke="currentColor" stroke-width="1.8"/>
+            <polyline points="2,7 11,13.5 20,7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="card-title" data-i18n="tool6Title">Portorechner</div>
+        <div class="card-desc" data-i18n="tool6Desc">Porto für Sendungen mit deinen Druckprodukten schnell berechnen.</div>
+        <span class="card-link" data-i18n="soon">Bald verfügbar</span>
+      </a>
+
+      <!-- Card 7: CO2-Transport-Rechner -->
+      <a class="card coming-soon" href="#">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 14l4-8 4 6 3-4 4 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="11" cy="18" r="1.5" fill="currentColor"/>
+            <path d="M7 18h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="card-title" data-i18n="tool7Title">CO2-Transport-Rechner</div>
+        <div class="card-desc" data-i18n="tool7Desc">CO₂-Emissionen für den Transport deiner Druckprodukte berechnen.</div>
+        <span class="card-link" data-i18n="soon">Bald verfügbar</span>
+      </a>
+
+      <!-- Card 8: Metapaper Projekterfassung -->
+      <a class="card coming-soon" href="#">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="3" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/>
+            <line x1="7" y1="8" x2="15" y2="8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="7" y1="11" x2="15" y2="11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="7" y1="14" x2="11" y2="14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="card-title" data-i18n="tool8Title">Metapaper Projekterfassung</div>
+        <div class="card-desc" data-i18n="tool8Desc">Druckprojekte strukturiert erfassen und Spezifikationen festhalten.</div>
+        <span class="card-link" data-i18n="soon">Bald verfügbar</span>
+      </a>
+
+    </div>
+  </main>
+
+  <script>
+    const TEXTS = {
+      de: {
+        heroTitle: 'Praktische Tools rund um dein Papier auf einen Blick.',
+        heroSub: 'Tips und Tricks für deine tägliche Arbeit mit Metapaper.',
+        open: 'Öffnen →',
+        soon: 'Bald verfügbar',
+        tool1Title: 'Buchrücken & Gewicht berechnen',
+        tool1Desc: 'Dicke des Buchrückens und Gewicht des Printprodukts berechnen.',
+        tool2Title: 'Umrechner: Bogen ↔ Gewicht',
+        tool2Desc: 'Beliebige Bogenanzahl in das entsprechende Gewicht umrechnen.',
+        tool3Title: 'Nutzen-Rechner',
+        tool3Desc: 'Optimale Ausnutzung des Papierbogens für dein Wunschformat berechnen.',
+        tool4Title: 'Druckdaten-Check',
+        tool4Desc: 'Druckdaten für dein Printprojekt überprüfen.',
+        tool5Title: 'Preisumrechner: 1.000 Bogen ↔ 100 kg',
+        tool5Desc: 'Papierpreise zwischen Bogen- und Gewichtseinheiten umrechnen.',
+        tool6Title: 'Portorechner',
+        tool6Desc: 'Porto für Sendungen mit deinen Druckprodukten schnell berechnen.',
+        tool7Title: 'CO2-Transport-Rechner',
+        tool7Desc: 'CO₂-Emissionen für den Transport deiner Druckprodukte berechnen.',
+        tool8Title: 'Metapaper Projekterfassung',
+        tool8Desc: 'Druckprojekte strukturiert erfassen und Spezifikationen festhalten.',
+      },
+      en: {
+        heroTitle: 'Practical tools for your paper at a glance.',
+        heroSub: 'Tips and tricks for your daily work with Metapaper.',
+        open: 'Open →',
+        soon: 'Coming soon',
+        tool1Title: 'Spine & Weight Calculator',
+        tool1Desc: 'Calculate the spine width and weight of your printed product.',
+        tool2Title: 'Converter: Sheets ↔ Weight',
+        tool2Desc: 'Convert any number of sheets into the corresponding weight.',
+        tool3Title: 'Imposition Calculator',
+        tool3Desc: 'Calculate the optimal use of the paper sheet for your desired format.',
+        tool4Title: 'Print Data Check',
+        tool4Desc: 'Check your print data for your print project.',
+        tool5Title: 'Price Converter: 1,000 Sheets ↔ 100 kg',
+        tool5Desc: 'Convert paper prices between sheet and weight units.',
+        tool6Title: 'Postage Calculator',
+        tool6Desc: 'Quickly calculate postage for mailings with your printed products.',
+        tool7Title: 'CO2 Transport Calculator',
+        tool7Desc: 'Calculate CO₂ emissions for transporting your printed products.',
+        tool8Title: 'Metapaper Project Form',
+        tool8Desc: 'Record print projects in a structured way and capture specifications.',
+      },
+      fr: {
+        heroTitle: 'Outils pratiques pour votre papier en un coup d'œil.',
+        heroSub: 'Conseils et astuces pour votre travail quotidien avec Metapaper.',
+        open: 'Ouvrir →',
+        soon: 'Bientôt disponible',
+        tool1Title: 'Calculer le dos et le poids',
+        tool1Desc: 'Calculer l'épaisseur du dos et le poids du produit imprimé.',
+        tool2Title: 'Convertisseur : Feuilles ↔ Poids',
+        tool2Desc: 'Convertir un nombre de feuilles en poids correspondant.',
+        tool3Title: 'Calculateur de rendement',
+        tool3Desc: 'Calculer l'utilisation optimale de la feuille pour le format souhaité.',
+        tool4Title: 'Vérification des données d'impression',
+        tool4Desc: 'Vérifier vos données d'impression pour votre projet.',
+        tool5Title: 'Convertisseur de prix : 1 000 feuilles ↔ 100 kg',
+        tool5Desc: 'Convertir les prix du papier entre feuilles et unités de poids.',
+        tool6Title: 'Calculateur d'affranchissement',
+        tool6Desc: 'Calculer rapidement l'affranchissement pour vos envois imprimés.',
+        tool7Title: 'Calculateur CO2 Transport',
+        tool7Desc: 'Calculer les émissions CO₂ pour le transport de vos imprimés.',
+        tool8Title: 'Saisie de projet Metapaper',
+        tool8Desc: 'Enregistrer les projets d'impression et consigner les spécifications.',
+      },
+      nl: {
+        heroTitle: 'Handige tools voor je papier in één oogopslag.',
+        heroSub: 'Tips en trucs voor je dagelijkse werk met Metapaper.',
+        open: 'Openen →',
+        soon: 'Binnenkort beschikbaar',
+        tool1Title: 'Rug & Gewicht berekenen',
+        tool1Desc: 'Dikte van de boekrug en gewicht van het drukwerk berekenen.',
+        tool2Title: 'Omrekenen: Vellen ↔ Gewicht',
+        tool2Desc: 'Een willekeurig aantal vellen omrekenen naar het bijbehorende gewicht.',
+        tool3Title: 'Nutberekening',
+        tool3Desc: 'Optimale benutting van het papiervel voor je gewenste formaat berekenen.',
+        tool4Title: 'Drukbestand controle',
+        tool4Desc: 'Je drukbestanden voor je printproject controleren.',
+        tool5Title: 'Prijsomrekening: 1.000 vellen ↔ 100 kg',
+        tool5Desc: 'Papierprijzen omrekenen tussen vellen- en gewichtseenheden.',
+        tool6Title: 'Portoberekening',
+        tool6Desc: 'Snel porto berekenen voor verzendingen met je drukwerk.',
+        tool7Title: 'CO2-Transport berekening',
+        tool7Desc: 'CO₂-uitstoot berekenen voor het transport van je drukwerk.',
+        tool8Title: 'Metapaper projectopgave',
+        tool8Desc: 'Drukprojecten gestructureerd vastleggen en specificaties bijhouden.',
+      },
+      da: {
+        heroTitle: 'Praktiske værktøjer til dit papir samlet på ét sted.',
+        heroSub: 'Tips og tricks til dit daglige arbejde med Metapaper.',
+        open: 'Åbn →',
+        soon: 'Kommer snart',
+        tool1Title: 'Bogryg & Vægt beregner',
+        tool1Desc: 'Beregn bogrygstykkelse og vægt på dit trykte produkt.',
+        tool2Title: 'Omregner: Ark ↔ Vægt',
+        tool2Desc: 'Omregn et vilkårligt antal ark til den tilsvarende vægt.',
+        tool3Title: 'Ark-udnyttelse',
+        tool3Desc: 'Beregn den optimale udnyttelse af papirarket til dit ønskede format.',
+        tool4Title: 'Trykdata kontrol',
+        tool4Desc: 'Kontroller dine trykdata til dit trykte projekt.',
+        tool5Title: 'Prisomregner: 1.000 ark ↔ 100 kg',
+        tool5Desc: 'Omregn papirpriser mellem ark- og vægtenheder.',
+        tool6Title: 'Portoberegner',
+        tool6Desc: 'Beregn hurtigt porto for forsendelser med dine tryksager.',
+        tool7Title: 'CO2-Transport beregner',
+        tool7Desc: 'Beregn CO₂-udledning ved transport af dine trykte produkter.',
+        tool8Title: 'Metapaper projektering',
+        tool8Desc: 'Registrer trykprojekter struktureret og noter specifikationer.',
+      },
+    };
+
+    function getLang() {
+      const p = new URLSearchParams(location.search).get('lang');
+      if (p && TEXTS[p]) return p;
+      const stored = localStorage.getItem('mp_lang');
+      if (stored && TEXTS[stored]) return stored;
+      const nav = (navigator.language || 'de').slice(0,2).toLowerCase();
+      return TEXTS[nav] ? nav : 'de';
+    }
+
+    function applyLang(lang) {
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        if (TEXTS[lang] && TEXTS[lang][key]) el.textContent = TEXTS[lang][key];
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      document.documentElement.lang = lang;
+      localStorage.setItem('mp_lang', lang);
+    }
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+
+    applyLang(getLang());
+  </script>
+
+</body>
+</html>

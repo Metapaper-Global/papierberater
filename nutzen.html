@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nutzen-Rechner — Metapaper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://use.typekit.net/qex7ber.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F7F7F5;
+      --surface: #FFFFFF;
+      --green: #3D7A3D;
+      --green-light: #E8F2E8;
+      --green-text: #2D5E2D;
+      --ink: #1A1A18;
+      --ink-muted: #6B6B68;
+      --border: rgba(0,0,0,0.08);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      font-family: 'houschka-pro','Houschka Pro','Inter',sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--green);
+      letter-spacing: -0.01em;
+    }
+
+    .tagline {
+      font-size: 0.82rem;
+      color: var(--ink-muted);
+      padding-left: 16px;
+    }
+
+    .back-link {
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: var(--green);
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+
+    .back-link:hover {
+      opacity: 0.75;
+    }
+
+    /* Main */
+    main {
+      flex: 1;
+      padding: 48px 24px 64px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+
+    /* Input card */
+    .input-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 32px 36px 28px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+      width: 100%;
+      max-width: 520px;
+    }
+
+    .card-header {
+      margin-bottom: 24px;
+    }
+
+    .card-header h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .card-header p {
+      font-size: 0.88rem;
+      color: var(--ink-muted);
+      line-height: 1.5;
+    }
+
+    .inputs-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--ink-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .input-suffix {
+      position: relative;
+    }
+
+    .input-suffix input {
+      width: 100%;
+      padding: 10px 36px 10px 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      color: var(--ink);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      -moz-appearance: textfield;
+    }
+
+    .input-suffix input::-webkit-outer-spin-button,
+    .input-suffix input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+
+    .input-suffix input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(61,122,61,0.12);
+    }
+
+    .input-suffix .suffix {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.72rem;
+      color: var(--ink-muted);
+      pointer-events: none;
+      font-weight: 500;
+    }
+
+    /* Results card */
+    .results-card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 28px 36px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+      width: 100%;
+      max-width: 520px;
+    }
+
+    .results-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--ink-muted);
+      margin-bottom: 16px;
+    }
+
+    /* Result rows */
+    .result-row {
+      display: flex;
+      align-items: center;
+      padding: 11px 14px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 6px;
+      gap: 12px;
+      transition: background 0.15s;
+    }
+
+    .result-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .result-row.best {
+      background: var(--green-light);
+      border: 1px solid rgba(61,122,61,0.18);
+    }
+
+    .result-row:not(.best) {
+      background: var(--bg);
+      border: 1px solid transparent;
+    }
+
+    .format-name {
+      font-size: 0.82rem;
+      color: var(--ink-muted);
+      flex: 0 0 130px;
+      font-weight: 500;
+    }
+
+    .result-row.best .format-name {
+      color: var(--green-text);
+    }
+
+    .nutzen-count {
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      flex: 0 0 48px;
+      text-align: right;
+    }
+
+    .result-row.best .nutzen-count {
+      color: var(--green-text);
+    }
+
+    .nutzen-label {
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      font-weight: 500;
+    }
+
+    .orientation-tag {
+      margin-left: auto;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      background: rgba(0,0,0,0.05);
+      color: var(--ink-muted);
+      white-space: nowrap;
+    }
+
+    .result-row.best .orientation-tag {
+      background: rgba(61,122,61,0.15);
+      color: var(--green-text);
+    }
+
+    .best-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--green-text);
+      background: rgba(61,122,61,0.2);
+      padding: 2px 7px;
+      border-radius: 9999px;
+    }
+
+    .zero-row {
+      color: var(--ink-muted);
+      opacity: 0.5;
+    }
+
+    .zero-row .nutzen-count {
+      color: var(--ink-muted);
+    }
+
+    @media (max-width: 540px) {
+      header {
+        padding: 14px 20px;
+      }
+
+      .input-card,
+      .results-card {
+        padding: 24px 18px;
+      }
+
+      .inputs-row {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .format-name {
+        flex: 0 0 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-left">
+      <span class="logo">metapaper.ai</span>
+      <span class="tagline">Nutzen-Rechner</span>
+    </div>
+    <a class="back-link" href="toolbox.html">← Tool-Box</a>
+  </header>
+
+  <main>
+    <!-- Input Card -->
+    <div class="input-card">
+      <div class="card-header">
+        <h1>Nutzen-Rechner</h1>
+        <p>Berechne die optimale Ausnutzung des Papierbogens für dein Wunschformat.</p>
+      </div>
+
+      <div class="inputs-row">
+        <div class="form-group">
+          <label for="endW">Endformat Breite</label>
+          <div class="input-suffix">
+            <input type="number" id="endW" min="1" value="210" step="1">
+            <span class="suffix">mm</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="endH">Endformat Höhe</label>
+          <div class="input-suffix">
+            <input type="number" id="endH" min="1" value="297" step="1">
+            <span class="suffix">mm</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="bleed">Beschnitt</label>
+          <div class="input-suffix">
+            <input type="number" id="bleed" min="0" value="3" step="0.5">
+            <span class="suffix">mm</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Card -->
+    <div class="results-card">
+      <div class="results-title">Nutzen pro Bogenformat</div>
+      <div id="resultsContainer"></div>
+    </div>
+  </main>
+
+  <script>
+    const FORMATS = [
+      { name: '102 × 72 cm', w: 1020, h: 720 },
+      { name: '100 × 70 cm', w: 1000, h: 700 },
+      { name: '70 × 50 cm',  w: 700,  h: 500 },
+      { name: '50 × 70 cm',  w: 500,  h: 700 },
+      { name: '50 × 35 cm',  w: 500,  h: 350 },
+      { name: '48 × 33 cm',  w: 480,  h: 330 },
+      { name: '46 × 32 cm',  w: 460,  h: 320 },
+      { name: '45 × 32 cm',  w: 450,  h: 320 },
+      { name: 'A3 (42×29,7)', w: 420, h: 297 },
+    ];
+
+    const endWInput  = document.getElementById('endW');
+    const endHInput  = document.getElementById('endH');
+    const bleedInput = document.getElementById('bleed');
+    const container  = document.getElementById('resultsContainer');
+
+    function calcNutzen() {
+      const ew = parseFloat(endWInput.value) || 0;
+      const eh = parseFloat(endHInput.value) || 0;
+      const bl = parseFloat(bleedInput.value) || 0;
+
+      if (ew <= 0 || eh <= 0) {
+        container.innerHTML = '<p style="color:var(--ink-muted);font-size:0.85rem;">Bitte gültige Maße eingeben.</p>';
+        return;
+      }
+
+      const slotW = ew + 2 * bl;
+      const slotH = eh + 2 * bl;
+
+      // Calculate nutzen for all formats
+      const results = FORMATS.map(f => {
+        // Normal orientation
+        const normalCols = Math.floor(f.w / slotW);
+        const normalRows = Math.floor(f.h / slotH);
+        const normalCount = normalCols * normalRows;
+
+        // Rotated orientation (swap end dimensions)
+        const rotCols = Math.floor(f.w / slotH);
+        const rotRows = Math.floor(f.h / slotW);
+        const rotCount = rotCols * rotRows;
+
+        const best = Math.max(normalCount, rotCount);
+        const isRotated = rotCount > normalCount;
+        const isEqual   = rotCount === normalCount && normalCount > 0;
+
+        return {
+          name: f.name,
+          count: best,
+          isRotated,
+          isEqual,
+          cols: isRotated ? rotCols : normalCols,
+          rows: isRotated ? rotRows : normalRows,
+        };
+      });
+
+      // Sort descending by count
+      results.sort((a, b) => b.count - a.count);
+      const maxCount = results[0].count;
+
+      container.innerHTML = '';
+
+      results.forEach(r => {
+        const row = document.createElement('div');
+        row.className = 'result-row' + (r.count === maxCount && r.count > 0 ? ' best' : '') + (r.count === 0 ? ' zero-row' : '');
+
+        let orientLabel = '';
+        if (r.count > 0) {
+          if (r.isEqual) {
+            orientLabel = 'beide gleich';
+          } else {
+            orientLabel = r.isRotated ? 'gedreht' : 'normal';
+          }
+        }
+
+        row.innerHTML = `
+          <span class="format-name">${r.name}</span>
+          <span class="nutzen-count">${r.count}</span>
+          <span class="nutzen-label">Nutzen</span>
+          ${orientLabel ? `<span class="orientation-tag">${orientLabel}</span>` : ''}
+          ${r.count === maxCount && r.count > 0 ? '<span class="best-badge">Beste Ausnutzung</span>' : ''}
+        `;
+
+        container.appendChild(row);
+      });
+    }
+
+    [endWInput, endHInput, bleedInput].forEach(el => {
+      el.addEventListener('input', calcNutzen);
+    });
+
+    calcNutzen();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Druckdaten-Check — Metapaper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://use.typekit.net/qex7ber.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F7F7F5;
+      --surface: #FFFFFF;
+      --green: #3D7A3D;
+      --green-light: #E8F2E8;
+      --green-text: #2D5E2D;
+      --ink: #1A1A18;
+      --ink-muted: #6B6B68;
+      --border: rgba(0,0,0,0.08);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      font-family: 'houschka-pro','Houschka Pro','Inter',sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--green);
+      letter-spacing: -0.01em;
+    }
+
+    .tagline {
+      font-size: 0.82rem;
+      color: var(--ink-muted);
+      padding-left: 16px;
+    }
+
+    .back-link {
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: var(--green);
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+
+    .back-link:hover {
+      opacity: 0.75;
+    }
+
+    /* Main */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px 64px;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 48px 40px 40px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 20px;
+    }
+
+    /* Document icon */
+    .doc-icon {
+      width: 72px;
+      height: 72px;
+      background: var(--green-light);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .doc-icon svg {
+      width: 36px;
+      height: 36px;
+      color: var(--green);
+    }
+
+    /* Coming soon badge */
+    .coming-soon {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #FFF3CD;
+      color: #856404;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 5px 12px;
+      border-radius: 9999px;
+      border: 1px solid rgba(133,100,4,0.15);
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--ink);
+      line-height: 1.2;
+    }
+
+    .description {
+      font-size: 0.9rem;
+      color: var(--ink-muted);
+      line-height: 1.65;
+      max-width: 360px;
+    }
+
+    /* Feature list */
+    .feature-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .feature-pill {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--ink-muted);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 9999px;
+    }
+
+    /* Upload placeholder */
+    .upload-area {
+      width: 100%;
+      border: 2px dashed rgba(0,0,0,0.14);
+      border-radius: var(--radius);
+      padding: 36px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      cursor: not-allowed;
+      opacity: 0.45;
+      margin-top: 8px;
+      background: var(--bg);
+    }
+
+    .upload-icon {
+      width: 40px;
+      height: 40px;
+      color: var(--ink-muted);
+    }
+
+    .upload-text {
+      font-size: 0.85rem;
+      color: var(--ink-muted);
+      font-weight: 500;
+    }
+
+    .upload-subtext {
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      opacity: 0.7;
+    }
+
+    @media (max-width: 540px) {
+      header {
+        padding: 14px 20px;
+      }
+
+      .card {
+        padding: 36px 24px 32px;
+      }
+
+      h1 {
+        font-size: 1.3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-left">
+      <span class="logo">metapaper.ai</span>
+      <span class="tagline">Druckdaten-Check</span>
+    </div>
+    <a class="back-link" href="toolbox.html">← Tool-Box</a>
+  </header>
+
+  <main>
+    <div class="card">
+
+      <!-- Icon -->
+      <div class="doc-icon">
+        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 5h13l7 7v19a1.5 1.5 0 01-1.5 1.5H8A1.5 1.5 0 016.5 30V6.5A1.5 1.5 0 018 5z"
+                stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/>
+          <path d="M21 5v7h7" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/>
+          <polyline points="13,19 17,23 23,16" stroke="currentColor" stroke-width="2.2"
+                    stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+      </div>
+
+      <!-- Badge -->
+      <div class="coming-soon">Demnächst verfügbar</div>
+
+      <!-- Title -->
+      <h1>Druckdaten-Check</h1>
+
+      <!-- Description -->
+      <p class="description">
+        Dieser Check wird in Kürze verfügbar sein. Hier kannst du deine Druckdaten auf Druckfähigkeit überprüfen — Farbmodus, Auflösung, Beschnitt und mehr.
+      </p>
+
+      <!-- Feature pills -->
+      <div class="feature-list">
+        <span class="feature-pill">Farbmodus</span>
+        <span class="feature-pill">Auflösung</span>
+        <span class="feature-pill">Beschnitt</span>
+        <span class="feature-pill">Schriften</span>
+        <span class="feature-pill">Transparenzen</span>
+      </div>
+
+      <!-- Upload placeholder -->
+      <div class="upload-area">
+        <svg class="upload-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 22l6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="20" y1="16" x2="20" y2="30" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M10 32a8 8 0 01-2-15.5A10 10 0 0128.4 14 7 7 0 0132 27H10z"
+                stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/>
+        </svg>
+        <span class="upload-text">PDF hier ablegen oder klicken</span>
+        <span class="upload-subtext">Noch nicht verfügbar</span>
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>

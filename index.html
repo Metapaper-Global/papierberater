@@ -127,6 +127,7 @@
 }
 </script>
 
+<link rel="stylesheet" href="https://use.typekit.net/qex7ber.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -137,44 +138,65 @@
   --paper-shadow:rgba(0,0,0,0.06);--rule:rgba(0,0,0,0.08);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--cream);color:var(--ink);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;}
+body{background:var(--cream);color:var(--ink);font-family:'houschka-pro','Houschka Pro','Inter',sans-serif;min-height:100vh;overflow-x:hidden;}
 
 /* ── BANNER ── */
 .demo-banner{
   position:relative;z-index:10;
   background:var(--green);color:#fff;
-  padding:10px 40px;
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
   font-family:'Inter',sans-serif;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;
 }
+.demo-banner-inner{max-width:1400px;margin:0 auto;padding:10px 32px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .demo-banner-left{display:flex;align-items:center;gap:10px;}
 .demo-pill{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);padding:3px 10px;border-radius:6px;font-size:.6rem;}
 .demo-banner-right{display:flex;align-items:center;gap:12px;}
 
 /* ── HEADER ── */
-header{position:relative;z-index:1;border-bottom:1px solid var(--rule);padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:68px;}
-.logo-block{display:flex;align-items:baseline;gap:12px;}
-.logo-name{font-family:'Inter',sans-serif;font-size:1.2rem;font-weight:900;letter-spacing:-.02em;text-decoration:none;color:inherit;}
-.logo-tagline{font-family:'Inter',sans-serif;font-size:.62rem;color:var(--ink-muted);letter-spacing:.08em;text-transform:uppercase;}
+header{position:sticky;top:0;z-index:200;background:rgba(247,247,245,0.97);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--rule);}
+.header-inner{height:62px;max-width:1400px;margin:0 auto;padding:0 32px;display:flex;align-items:center;}
+.logo-switch{display:flex;align-items:center;flex-shrink:0;}
+.logo-item{display:inline-flex;align-items:center;gap:7px;text-decoration:none;padding:4px 10px;border-radius:8px;transition:opacity .15s;position:relative;}
+.logo-io{opacity:.55;}
+.logo-io:hover{opacity:.8;}
+.logo-ai{opacity:.55;}.logo-ai:hover{opacity:.8;}
+.mp-mark{flex-shrink:0;}
+.logo-text{font-family:'houschka-pro','Houschka Pro','Inter',sans-serif;font-weight:800;font-size:1.08rem;letter-spacing:-.01em;white-space:nowrap;line-height:1;}
+.logo-text .meta{color:var(--green);}
+.logo-text .paper{color:var(--ink);}
+.logo-divider{width:1px;height:20px;background:var(--rule);margin:0 2px;flex-shrink:0;}
+.logo-active-dot{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--green);}
+.main-nav{flex:1;display:flex;align-items:center;justify-content:center;gap:2px;}
+.nav-link{font-family:'houschka-pro','Houschka Pro','Inter',sans-serif;font-size:.95rem;font-weight:600;color:var(--ink-muted);text-decoration:none;padding:7px 14px;border-radius:8px;transition:background .15s,color .15s;white-space:nowrap;}
+.nav-link:hover{background:rgba(105,190,37,.12);color:#4d8e1b;}
+.nav-link.active{background:var(--green);color:#fff;}
+.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;border-radius:6px;color:var(--ink);align-items:center;justify-content:center;}
+.hamburger:hover{background:rgba(0,0,0,.06);}
+.hamburger svg{display:block;}
+.mobile-menu-nav{display:none;background:rgba(247,247,245,.98);backdrop-filter:blur(12px);border-bottom:1px solid var(--rule);padding:16px 24px 20px;}
+.mobile-menu-nav.open{display:block;}
+.mobile-nav-links{display:flex;flex-direction:column;gap:2px;margin-bottom:16px;}
+.mobile-nav-link{font-family:'houschka-pro','Houschka Pro','Inter',sans-serif;font-size:1rem;font-weight:600;color:var(--ink);text-decoration:none;padding:10px 12px;border-radius:8px;display:block;transition:background .12s,color .12s;}
+.mobile-nav-link:hover{background:rgba(105,190,37,.12);color:#4d8e1b;}
+.mobile-nav-link.active{background:var(--green);color:#fff;}
+@media(max-width:860px){.main-nav{display:none;}.hamburger{display:inline-flex;}}
+@media(max-width:480px){.header-inner{padding:0 16px;}.logo-text{font-size:.95rem;}}
 .header-right{display:flex;align-items:center;gap:8px;}
 .header-badge{font-family:'Inter',sans-serif;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);padding:3px 9px;border-radius:6px;}
 .db-live{display:flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);}
-.db-dot{width:6px;height:6px;border-radius:50%;background:#5A9A5A;animation:blink 2s ease-in-out infinite;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
 
 /* ── HERO ── */
-.hero{position:relative;z-index:1;padding:44px 40px 32px;max-width:860px;margin:0 auto;text-align:center;}
+.hero{position:relative;z-index:1;padding:44px 32px 32px;max-width:1400px;margin:0 auto;text-align:center;}
 .hero-eyebrow{font-family:'Inter',sans-serif;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:14px;}
 .hero-title{font-family:'Inter',sans-serif;font-size:clamp(2.2rem,4.5vw,3.8rem);font-weight:900;line-height:1.0;letter-spacing:-.03em;margin-bottom:14px;}
 .hero-title em{font-style:italic;color:var(--accent);}
 .hero-sub{font-size:.9rem;color:var(--ink-light);line-height:1.65;max-width:460px;margin:0 auto 24px;font-weight:300;}
 .db-stats{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;}
-.stat-pill{display:inline-flex;align-items:center;gap:6px;font-family:'Inter',sans-serif;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);border:1px solid var(--rule);padding:4px 10px;border-radius:6px;}
-.stat-dot{width:5px;height:5px;border-radius:50%;}
-.dot-green{background:#5A9A5A;}.dot-blue{background:#5A7A9A;}.dot-orange{background:var(--accent);}.dot-purple{background:var(--demo);}
+.stat-pill{display:inline-flex;align-items:center;gap:6px;font-family:'Inter',sans-serif;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);border:1px solid var(--rule);padding:4px 10px;border-radius:9999px;}
 
 /* ── LAYOUT: SIDEBAR + MAIN ── */
-.main-layout{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 40px 40px;display:grid;grid-template-columns:260px 1fr;gap:24px;align-items:start;}
+.main-layout{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:0 56px 40px;display:grid;grid-template-columns:260px 1fr;gap:24px;align-items:start;}
 @media(max-width:780px){.main-layout{grid-template-columns:1fr;}}
 
 /* ── FILTER SIDEBAR ── */
@@ -189,7 +211,7 @@ header{position:relative;z-index:1;border-bottom:1px solid var(--rule);padding:0
 .floating-reset{position:fixed;bottom:24px;right:32px;z-index:200;background:var(--ink);color:var(--cream);border:none;border-radius:20px;padding:10px 22px;font-family:'Inter',sans-serif;font-size:.75rem;letter-spacing:.06em;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;transform:translateY(8px);}
 .floating-reset.visible{opacity:1;pointer-events:auto;transform:translateY(0);}
 .floating-reset:hover{background:#3A2E22;}
-.filter-group{margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--rule);}
+.filter-group{margin-bottom:18px;padding-bottom:18px;}
 .filter-group:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
 .filter-group-label{font-family:'Inter',sans-serif;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
 .filter-clear{font-size:.5rem;cursor:pointer;color:var(--ink-muted);opacity:.6;background:none;border:none;letter-spacing:.08em;text-transform:uppercase;font-family:'Inter',sans-serif;}
@@ -199,8 +221,7 @@ header{position:relative;z-index:1;border-bottom:1px solid var(--rule);padding:0
 .filter-select:focus{border-color:var(--green);}
 
 .filter-pills{display:flex;flex-wrap:wrap;gap:5px;}
-.filter-pill{font-family:'Inter',sans-serif;font-size:.6rem;letter-spacing:.04em;border:1px solid var(--rule);background:transparent;color:var(--ink-muted);padding:4px 9px;border-radius:6px;cursor:pointer;transition:all .15s;white-space:nowrap;}
-.filter-pill:hover{border-color:var(--ink-muted);color:var(--ink);}
+.filter-pill{font-family:'Inter',sans-serif;font-size:.6rem;letter-spacing:.04em;border:1px solid var(--rule);background:transparent;color:var(--ink-muted);padding:4px 9px;border-radius:6px;white-space:nowrap;}
 .filter-pill.active{background:var(--ink);color:var(--cream);border-color:var(--ink);}
 .filter-pill.active.eco{background:var(--green);border-color:var(--green);}
 
@@ -254,15 +275,15 @@ textarea:focus{border-bottom-color:var(--accent);}
 
 /* ── RESULTS ── */
 .results-section{position:relative;z-index:1;padding-bottom:40px;display:none;}
-.results-header{display:flex;align-items:baseline;gap:12px;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--rule);}
+.results-header{display:flex;align-items:baseline;gap:12px;margin-bottom:20px;padding-bottom:12px;}
 .results-title{font-family:'Inter',sans-serif;font-size:1.2rem;font-weight:700;font-style:italic;}
-.results-count{font-family:'Inter',sans-serif;font-size:.58rem;color:var(--ink-muted);letter-spacing:.08em;text-transform:uppercase;}
-.demo-response-badge{font-family:'Inter',sans-serif;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:6px;background:var(--demo-bg);color:var(--demo);border:1px solid var(--demo-border);margin-left:auto;}
+.results-count{font-family:'Inter',sans-serif;font-size:.58rem;color:var(--ink-muted);letter-spacing:.08em;text-transform:uppercase;margin-left:auto;}
+.demo-response-badge{font-family:'Inter',sans-serif;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:6px;background:var(--demo-bg);color:var(--demo);border:1px solid var(--demo-border);}
 
 /* ── PAPER CARD ── */
 .paper-card{background:var(--warm-white);border:1px solid var(--rule);border-radius:8px;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 8px var(--paper-shadow);animation:cardIn .4s ease both;}
 @keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.card-header{display:flex;align-items:center;padding:14px 18px 12px;border-bottom:1px solid var(--rule);cursor:pointer;gap:12px;}
+.card-header{display:flex;align-items:center;padding:14px 18px 12px;gap:12px;}
 .card-number{font-family:'Inter',sans-serif;font-size:1.8rem;font-weight:900;color:var(--accent-light);line-height:1;flex-shrink:0;width:32px;font-style:italic;}
 .card-title-block{flex:1;min-width:0;}
 .card-name{font-family:'Inter',sans-serif;font-size:1.05rem;font-weight:700;color:var(--ink);letter-spacing:-.01em;}
@@ -271,7 +292,7 @@ textarea:focus{border-bottom-color:var(--accent);}
 .tag.match{background:#FFF3E0;color:var(--accent);border-color:#FFDDB0;}
 .tag.eco{background:var(--green-bg);color:var(--green);border-color:var(--green-border);}
 .tag.indigo{background:#EEF3FF;color:#3A5A9A;border-color:#C0D0EE;}
-.card-toggle{font-size:1rem;color:var(--ink-muted);transition:transform .25s;flex-shrink:0;}
+.card-toggle{font-size:1.4rem;color:var(--ink-muted);transition:transform .25s;flex-shrink:0;}
 .card-toggle.open{transform:rotate(180deg);}
 .ai-score{display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;min-width:58px;padding:4px 8px;border-radius:8px;border:1px solid var(--rule);background:var(--warm-white);}
 .ai-score-label{font-family:'Inter',sans-serif;font-size:.46rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);white-space:nowrap;}
@@ -282,19 +303,20 @@ textarea:focus{border-bottom-color:var(--accent);}
 .ai-score.mid{border-color:#FFDDB0;background:#FFF3E0;}
 .ai-score.low .ai-score-val{color:var(--ink-muted);}
 
-.card-body{padding:14px 18px 4px;display:none;}
+.card-body{padding:14px 18px 4px;display:block;}
+.card-toggle{display:none;}
 .card-body.open{display:block;}
 .card-section{margin-bottom:12px;}
 .card-section-label{font-family:'Inter',sans-serif;font-size:.54rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:4px;display:block;}
 .card-section p{font-size:.84rem;line-height:1.6;color:var(--ink-light);}
 .why-block{background:var(--cream);border-left:3px solid var(--accent);padding:8px 11px;border-radius:0 2px 2px 0;font-size:.84rem;line-height:1.6;color:var(--ink);margin-bottom:12px;}
-.specs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(115px,1fr));gap:7px;margin-bottom:12px;}
-.spec-item{background:var(--cream);padding:6px 9px;border-radius:6px;border:1px solid var(--rule);}
-.spec-label{font-family:'Inter',sans-serif;font-size:.49rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);display:block;margin-bottom:2px;}
-.spec-val{font-family:'Inter',sans-serif;font-size:.77rem;color:var(--ink);font-weight:500;}
+.specs-grid{display:flex;flex-wrap:wrap;gap:16px 24px;margin-bottom:12px;}
+.spec-item{padding:0;}
+.spec-label{font-family:'Inter',sans-serif;font-size:.49rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);display:block;margin-bottom:3px;}
+.spec-val{font-family:'Inter',sans-serif;font-size:.82rem;color:var(--ink);font-weight:600;}
 .eco-block{background:var(--green-bg);border:1px solid var(--green-border);border-radius:6px;padding:8px 11px;font-size:.82rem;line-height:1.55;color:#4d8e1b;margin-bottom:12px;}
 .upgrade-block{background:#FFF8F0;border:1px solid #FFE0C0;border-radius:6px;padding:7px 11px;font-size:.78rem;line-height:1.5;color:#7A4A10;margin-bottom:12px;}
-.card-links{display:flex;gap:7px;padding:10px 18px 14px;border-top:1px solid var(--rule);flex-wrap:wrap;}
+.card-links{display:flex;gap:7px;padding:10px 18px 14px;flex-wrap:wrap;}
 .link-btn{font-family:'Inter',sans-serif;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;padding:7px 14px;border-radius:6px;text-decoration:none;cursor:pointer;border:none;transition:all .15s;display:flex;align-items:center;gap:5px;}
 .link-btn.primary{background:var(--green);color:#fff;}
 .link-btn.primary:hover{background:#4d8e1b;}
@@ -342,7 +364,7 @@ textarea:focus{border-bottom-color:var(--accent);}
 
 /* ── REFINEMENT PANEL ── */
 .refinement-panel{background:var(--warm-white);border:2px solid var(--green-border);border-radius:8px;padding:24px;margin-top:20px;box-shadow:0 2px 20px var(--paper-shadow);}
-.refine-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--rule);}
+.refine-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px;padding-bottom:16px;}
 .refine-icon{font-size:1.5rem;line-height:1.1;flex-shrink:0;}
 .refine-title{font-family:'Inter',sans-serif;font-size:1.05rem;font-weight:800;color:var(--ink);letter-spacing:-.01em;margin-bottom:4px;}
 .refine-sub{font-family:'Inter',sans-serif;font-size:.82rem;color:var(--ink-light);line-height:1.5;}
@@ -351,8 +373,7 @@ textarea:focus{border-bottom-color:var(--accent);}
 .refine-cat-label{font-family:'Inter',sans-serif;font-size:.55rem;letter-spacing:.13em;text-transform:uppercase;color:var(--green);margin-bottom:2px;font-weight:700;}
 .refine-cat-sub{font-family:'Inter',sans-serif;font-size:.84rem;color:var(--ink);margin-bottom:9px;line-height:1.4;}
 .refine-pills{display:flex;flex-wrap:wrap;gap:5px;}
-.refine-pill{font-family:'Inter',sans-serif;font-size:.6rem;letter-spacing:.04em;border:1px solid var(--rule);background:transparent;color:var(--ink-muted);padding:5px 11px;border-radius:6px;cursor:pointer;transition:all .15s;white-space:nowrap;}
-.refine-pill:hover{border-color:var(--ink-muted);color:var(--ink);}
+.refine-pill{font-family:'Inter',sans-serif;font-size:.6rem;letter-spacing:.04em;border:1px solid var(--rule);background:transparent;color:var(--ink-muted);padding:5px 11px;border-radius:6px;white-space:nowrap;}
 .refine-pill.active{background:var(--ink);color:var(--cream);border-color:var(--ink);}
 .refine-pill-skip{border-style:dashed;opacity:.65;}
 .refine-pill-skip.active{background:var(--ink-muted);color:var(--cream);border-color:var(--ink-muted);border-style:solid;opacity:1;}
@@ -365,13 +386,13 @@ textarea:focus{border-bottom-color:var(--accent);}
 
 /* ── SENTENCE OVERLAY ── */
 #sentenceOverlay{position:fixed;inset:0;z-index:9999;background:#ffffff;display:flex;flex-direction:column;}
-.ov-stage{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:16px 32px 12px;text-align:center;}
-.ov-eyebrow{font-family:'Inter',sans-serif;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:12px;}
+.ov-stage{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:72px 32px 56px;text-align:center;}
+.ov-eyebrow{font-family:'Inter',sans-serif;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:32px;}
 .ov-sentence{font-family:'Inter',sans-serif;font-size:clamp(1.15rem,2.4vw,1.85rem);font-weight:800;line-height:1.5;letter-spacing:-.02em;color:var(--ink);max-width:820px;margin-bottom:18px;}
 .ws{position:relative;display:inline-block;}
 .ws-btn{display:inline-flex;align-items:baseline;gap:3px;font-family:'Inter',sans-serif;font-size:inherit;font-weight:800;color:var(--green);background:transparent;border:none;border-bottom:2px solid var(--green);cursor:pointer;padding:0 2px;line-height:inherit;letter-spacing:inherit;transition:color .15s,border-color .15s;white-space:nowrap;}
 .ws-btn:hover,.ws-btn.open{color:#4d8e1b;border-color:#4d8e1b;}
-.ws-arrow{font-size:.5em;opacity:.7;margin-left:2px;transition:transform .15s;}
+.ws-arrow{font-size:.7em;opacity:.7;margin-left:2px;transition:transform .15s;}
 .ws-btn.open .ws-arrow{transform:rotate(180deg);}
 .ws-menu{position:absolute;left:50%;transform:translateX(-50%);top:calc(100% + 8px);background:var(--warm-white);border:1px solid var(--rule);border-radius:8px;box-shadow:0 6px 24px rgba(26,18,8,.15);min-width:190px;max-height:300px;overflow-y:auto;z-index:200;display:none;text-align:left;}
 .ws-menu.open{display:block;animation:wsIn .15s ease;}
@@ -385,16 +406,22 @@ textarea:focus{border-bottom-color:var(--accent);}
 .ov-hint{font-family:'Inter',sans-serif;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);margin-top:10px;}
 .ov-advanced{background:transparent;border:1px solid var(--rule);color:var(--ink-muted);font-family:'Inter',sans-serif;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;padding:8px 20px;border-radius:6px;margin-top:10px;transition:all .2s;}
 .ov-advanced:hover{border-color:var(--ink-muted);color:var(--ink);}
-.ov-footer{border-top:1px solid var(--rule);padding:14px 40px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap;}
-.ov-stat{display:inline-flex;align-items:center;gap:7px;font-family:'Inter',sans-serif;font-size:.72rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);background:var(--cream);border:1px solid var(--rule);padding:7px 14px;border-radius:20px;}
-.ov-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.ov-footer{padding:14px 40px 24px;display:flex;justify-content:center;align-items:center;gap:0;flex-wrap:wrap;}
+.ov-stat{font-family:'Inter',sans-serif;font-size:.68rem;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-muted);}
+.ov-stat+.ov-stat::before{content:'·';margin:0 10px;color:var(--ink-muted);opacity:.5;}
 .ws-menu::-webkit-scrollbar{width:4px;}.ws-menu::-webkit-scrollbar-thumb{background:var(--rule);border-radius:6px;}
 
 /* ── LANG SWITCHER ── */
-.lang-switcher{display:flex;align-items:center;gap:2px;background:var(--cream);border:1px solid var(--rule);border-radius:8px;padding:3px;margin-left:12px;}
-.lang-btn{font-family:'Inter',sans-serif;font-size:.66rem;font-weight:600;letter-spacing:.04em;color:var(--ink-muted);background:none;border:none;padding:4px 7px;border-radius:5px;cursor:pointer;transition:background .15s,color .15s;}
-.lang-btn:hover{color:var(--ink);background:rgba(0,0,0,.05);}
-.lang-btn.active{background:var(--green);color:#fff;}
+.lang-switcher{position:relative;}
+.lang-selected-btn{font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:.04em;color:var(--ink-muted);background:var(--cream);border:1px solid var(--rule);border-radius:8px;padding:6px 10px 6px 13px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .15s,color .15s;white-space:nowrap;}
+.lang-selected-btn:hover{background:rgba(105,190,37,.12);color:#4d8e1b;}
+.lang-arrow{font-size:.6rem;opacity:.6;transition:transform .15s;}
+.lang-switcher.open .lang-arrow{transform:rotate(180deg);}
+.lang-dropdown{display:none;position:absolute;right:0;top:calc(100% + 6px);background:var(--warm-white);border:1px solid var(--rule);border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.1);overflow:hidden;min-width:160px;z-index:300;}
+.lang-switcher.open .lang-dropdown{display:block;}
+.lang-opt{font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;color:var(--ink-muted);background:none;border:none;width:100%;text-align:left;padding:9px 14px;cursor:pointer;display:flex;align-items:center;transition:background .12s,color .12s;}
+.lang-opt:hover{background:rgba(105,190,37,.12);color:#4d8e1b;}
+.lang-opt.active{color:var(--green);font-weight:700;}
 </style>
 </head>
 <body>
@@ -408,16 +435,6 @@ textarea:focus{border-bottom-color:var(--accent);}
       <span>Alle Metapaper Papiere · Echte Datenbank · Intelligente Filtersuche</span>
     </div>
   </div>
-  <!-- Header -->
-  <header>
-    <div class="logo-block">
-      <a class="logo-name" href="toolbox.html">60 seconds to paper</a>
-    </div>
-    <div class="header-right">
-      <div class="db-live"><span class="db-dot"></span>Live DB</div>
-      <div class="header-badge" style="color:var(--green);border-color:var(--green);">metapaper.io</div>
-    </div>
-  </header>
   <!-- Stage -->
   <div class="ov-stage">
     <div class="ov-eyebrow" data-i18n="ovEyebrow">Beschreibe deinen Papierwunsch in einem Satz</div>
@@ -435,42 +452,91 @@ textarea:focus{border-bottom-color:var(--accent);}
       <span>.</span>
     </div>
     <button class="ov-cta" onclick="startFromOverlay()" data-i18n="ovCta">Papiersuche starten</button>
-    <div class="ov-hint" data-i18n="ovHint">Wähle deine Anforderungen und finde dein Papier in 60 Sekunden</div>
     <button class="ov-advanced" onclick="goToAdvancedSearch()" data-i18n="ovAdvanced">Go to Advanced Search →</button>
   </div>
   <div class="ov-footer">
-    <span class="ov-stat"><span class="ov-dot" style="background:#5A9A5A;"></span><span data-i18n="stat1">Alle Metapaper Papiere</span></span>
-    <span class="ov-stat"><span class="ov-dot" style="background:#5A7A9A;"></span><span data-i18n="stat2">Direkte Musterbestellung</span></span>
-    <span class="ov-stat"><span class="ov-dot" style="background:var(--accent);"></span><span data-i18n="stat3">Direkt im Shop bestellen</span></span>
+    <span class="ov-stat"><span data-i18n="liveDb">Live Datenbank</span></span>
+    <span class="ov-stat"><span data-i18n="stat1">Alle Metapaper Papiere</span></span>
+    <span class="ov-stat"><span data-i18n="stat2">Direkte Musterbestellung</span></span>
+    <span class="ov-stat"><span data-i18n="stat3">Direkt im Shop bestellen</span></span>
   </div>
 </div>
 <!-- ══ END OVERLAY ══ -->
 
-<!-- BANNER -->
-<div class="demo-banner">
-  <div class="demo-banner-left">
-    <span class="demo-pill">Live DB</span>
-    <span>Alle Metapaper-Papiere · Echte Datenbank · Intelligente Filtersuche</span>
-  </div>
-  <div class="demo-banner-right">
-    <span id="dbCount" style="opacity:.8;"></span>
-  </div>
-</div>
+<span id="dbCount" style="display:none;"></span>
 
 <header>
-  <div class="logo-block">
-    <a class="logo-name" href="toolbox.html">60 seconds to paper</a>
-    <div class="logo-tagline"><span style="opacity:.6;">(Beta)</span></div>
+  <div class="header-inner">
+
+    <!-- LEFT: Logo switch -->
+    <div class="logo-switch">
+      <a class="logo-item logo-io" href="https://metapaper.io">
+        <svg class="mp-mark" viewBox="0 0 84 80" height="17" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M2,13 H68 Q82,13 82,3" stroke="#69be25" stroke-width="6.5" fill="none" stroke-linecap="round"/>
+          <rect x="2" y="20" width="80" height="6.5" fill="#69be25"/>
+          <rect x="2" y="30" width="80" height="6.5" fill="#69be25"/>
+          <rect x="2" y="40" width="80" height="6.5" fill="#1A1A18"/>
+          <rect x="2" y="50" width="80" height="6.5" fill="#1A1A18"/>
+          <rect x="2" y="60" width="80" height="6.5" fill="#1A1A18"/>
+          <rect x="2" y="70" width="80" height="6.5" fill="#1A1A18"/>
+        </svg>
+        <span class="logo-text"><span class="meta">META</span><span class="paper">PAPER</span></span>
+      </a>
+      <div class="logo-divider"></div>
+      <a class="logo-item logo-ai" href="https://www.metapaper.ai" target="_blank" rel="noopener">
+        <svg class="mp-mark" viewBox="0 0 84 80" height="17" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M2,13 H68 Q82,13 82,3" stroke="#69be25" stroke-width="6.5" fill="none" stroke-linecap="round"/>
+          <rect x="2" y="20" width="80" height="6.5" fill="#69be25"/>
+          <rect x="2" y="30" width="80" height="6.5" fill="#69be25"/>
+          <rect x="2" y="40" width="80" height="6.5" fill="#1A1A18"/>
+          <rect x="2" y="50" width="80" height="6.5" fill="#1A1A18"/>
+          <rect x="2" y="60" width="80" height="6.5" fill="#1A1A18"/>
+          <rect x="2" y="70" width="80" height="6.5" fill="#1A1A18"/>
+        </svg>
+        <span class="logo-text"><span class="meta">META</span><span class="paper">PAPER.AI</span></span>
+        <span class="logo-active-dot"></span>
+      </a>
+    </div>
+
+    <!-- CENTER: Main nav -->
+    <nav class="main-nav" aria-label="Hauptnavigation">
+      <a class="nav-link active" href="https://papierberater.vercel.app">Paperfinder</a>
+      <a class="nav-link" href="https://tool-box.metapaper.ai/#metamate">MetaMate</a>
+      <a class="nav-link" href="https://tool-box.metapaper.ai/toolbox">Tool-Box</a>
+    </nav>
+
+    <!-- RIGHT: Language + hamburger -->
+    <div class="header-right">
+      <div class="lang-switcher" id="langSwitcher">
+        <button class="lang-selected-btn" id="langSelectedBtn" onclick="document.getElementById('langSwitcher').classList.toggle('open')">
+          <span id="langSelectedLabel">DE</span>
+          <span class="lang-arrow">▾</span>
+        </button>
+        <div class="lang-dropdown" id="langDropdown">
+          <button class="lang-btn lang-opt" data-lang="de">Deutsch</button>
+          <button class="lang-btn lang-opt" data-lang="en">English</button>
+          <button class="lang-btn lang-opt" data-lang="fr">Français</button>
+          <button class="lang-btn lang-opt" data-lang="nl">Nederlands</button>
+          <button class="lang-btn lang-opt" data-lang="da">Dansk</button>
+        </div>
+      </div>
+      <button class="hamburger" id="hamburgerBtn" onclick="document.getElementById('mobileMenuNav').classList.toggle('open')" aria-label="Menü öffnen">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect y="4" width="22" height="2" rx="1" fill="currentColor"/>
+          <rect y="10" width="22" height="2" rx="1" fill="currentColor"/>
+          <rect y="16" width="22" height="2" rx="1" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
+
   </div>
-  <div class="header-right">
-    <div class="db-live"><span class="db-dot"></span>Live DB</div>
-    <div class="header-badge" style="color:var(--green);border-color:var(--green);">metapaper.io</div>
-    <div class="lang-switcher" id="langSwitcher">
-      <button class="lang-btn" data-lang="de">DE</button>
-      <button class="lang-btn" data-lang="en">EN</button>
-      <button class="lang-btn" data-lang="fr">FR</button>
-      <button class="lang-btn" data-lang="nl">NL</button>
-      <button class="lang-btn" data-lang="da">DA</button>
+
+  <!-- Mobile menu -->
+  <div class="mobile-menu-nav" id="mobileMenuNav">
+    <div class="mobile-nav-links">
+      <a class="mobile-nav-link active" href="https://papierberater.vercel.app">Paperfinder</a>
+      <a class="mobile-nav-link" href="https://tool-box.metapaper.ai/#metamate">MetaMate</a>
+      <a class="mobile-nav-link" href="https://tool-box.metapaper.ai/toolbox">Tool-Box</a>
     </div>
   </div>
 </header>
@@ -478,11 +544,6 @@ textarea:focus{border-bottom-color:var(--accent);}
 <section class="hero">
   <h1 class="hero-title" data-i18n="heroTitle">Finde dein Papier in<br>weniger als <em style="color:var(--green);font-style:normal;">60 Sekunden.</em></h1>
   <p class="hero-sub" data-i18n="heroSub">Suche dein Papier über Anwendung, Druckverfahren, Grammatur, Oberfläche, Veredelungen oder Nachhaltigkeit – und erhalte die besten Empfehlungen aus dem Metapaper-Sortiment.</p>
-  <div class="db-stats">
-    <div class="stat-pill"><span class="stat-dot dot-green"></span><span data-i18n="stat1">Alle Metapaper-Papiere</span></div>
-    <div class="stat-pill"><span class="stat-dot dot-blue"></span><span data-i18n="stat2">Direkte Musterbestellung</span></div>
-    <div class="stat-pill"><span class="stat-dot dot-orange"></span><span data-i18n="stat3">Direkt im Shop bestellen</span></div>
-  </div>
 </section>
 
 <div class="main-layout">
@@ -492,7 +553,7 @@ textarea:focus{border-bottom-color:var(--accent);}
   <aside class="filter-sidebar">
 
     <!-- Aktive Filter -->
-    <div id="activeFiltersWrap" style="display:none;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--rule);">
+    <div id="activeFiltersWrap" style="display:none;margin-bottom:14px;padding-bottom:14px;">
       <div class="filter-group-label"><span data-i18n="activeFiltersLabel">Aktive Filter</span>
         <button class="filter-clear" onclick="clearAllFilters()" data-i18n="clearAll">Alle löschen</button>
       </div>
@@ -776,9 +837,17 @@ textarea:focus{border-bottom-color:var(--accent);}
 </div><!-- /main-layout -->
 
 <script>
+// ─── SUPABASE CONFIG ───
+const SUPABASE_URL = 'https://utpshgqhyijggfubzifp.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV0cHNoZ3FoeWlqZ2dmdWJ6aWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5Nzk4NjIsImV4cCI6MjA5MzU1NTg2Mn0.8B1Yg7rC1YTxxyrF_cT8ieeXitDbwQ_-ZHrkA_ScN2w';
+function sbHeaders() {
+  return { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' };
+}
+
 // ─── DATENBANK ───
 let DB = [];
 let DB_LOADED = false;
+let CORRECTIONS = []; // { parsed_query, correct_papers, boost_score }
 
 // Hilfsfunktion: Textwert aus Supabase → boolean
 function isPos(val) {
@@ -942,9 +1011,6 @@ async function loadDatabase() {
     }
   } catch(e) {}
 
-  const SUPABASE_URL = 'https://utpshgqhyijggfubzifp.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV0cHNoZ3FoeWlqZ2dmdWJ6aWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc5Nzk4NjIsImV4cCI6MjA5MzU1NTg2Mn0.8B1Yg7rC1YTxxyrF_cT8ieeXitDbwQ_-ZHrkA_ScN2w';
-
   try {
     let allRows = [];
     let from = 0;
@@ -952,7 +1018,7 @@ async function loadDatabase() {
     while (true) {
       const response = await fetch(
         `${SUPABASE_URL}/rest/v1/papier_masterliste?select=*&offset=${from}&limit=${pageSize}`,
-        { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
+        { headers: sbHeaders() }
       );
       if (!response.ok) throw new Error('HTTP ' + response.status);
       const rows = await response.json();
@@ -973,6 +1039,65 @@ async function loadDatabase() {
 
 loadDatabase();
 
+// ─── FEEDBACK LOOP ───
+async function loadCorrections() {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/search_corrections?select=parsed_query,correct_papers,boost_score&status=eq.incorrect&correct_papers=not.is.null&limit=500`,
+      { headers: sbHeaders() }
+    );
+    if (res.ok) CORRECTIONS = await res.json();
+  } catch(e) { console.warn('Corrections nicht geladen:', e); }
+}
+loadCorrections();
+
+async function logSearch(query, parsedQuery, results) {
+  try {
+    const topResults = results.slice(0, 5).map((p, i) => ({
+      rank: i + 1, brand_id: p.id, name: p.name, score: p.score
+    }));
+    const lang = (typeof currentLang !== 'undefined' ? currentLang : 'de');
+    await fetch(`${SUPABASE_URL}/rest/v1/search_logs`, {
+      method: 'POST',
+      headers: { ...sbHeaders(), 'Prefer': 'return=representation' },
+      body: JSON.stringify({
+        query,
+        parsed_query: parsedQuery,
+        top_results: topResults,
+        result_count: results.length,
+        lang
+      })
+    });
+  } catch(e) { console.warn('logSearch Fehler:', e); }
+}
+
+// Wie stark stimmen zwei parsedQuery-Objekte überein (0–1)?
+function correctionOverlap(corrPQ, currentPQ) {
+  const boolKeys = ['riso','indigo','offset','letterpress','scodix','inkjet','toner','heissfolie',
+    'extrarau','rau','glatt','sehrGlatt','schwarz','weiss','warmweiss','kaltweiss','naturfarben',
+    'recycling','recycling100','fsc','blauEngel','upcycling','nachhaltig',
+    'visitenkarte','broschure','fanzine','magazin','kunstbuch','einladung','verpackung','nachhaltigkeitsbericht',
+    'dick','leicht','guenstig'];
+  const active = boolKeys.filter(k => corrPQ[k]);
+  if (!active.length) return 0;
+  const matches = active.filter(k => currentPQ[k]);
+  return matches.length / active.length;
+}
+
+// Gibt Correction-Boost-Map zurück: { brand_id: extraScore }
+function buildCorrectionBoosts(currentPQ) {
+  const boosts = {};
+  for (const c of CORRECTIONS) {
+    if (!c.parsed_query || !c.correct_papers?.length) continue;
+    const overlap = correctionOverlap(c.parsed_query, currentPQ);
+    if (overlap < 0.5) continue; // nur bei mindestens 50% Übereinstimmung
+    const boost = Math.round((c.boost_score || 30) * overlap);
+    for (const brandId of c.correct_papers) {
+      boosts[brandId] = (boosts[brandId] || 0) + boost;
+    }
+  }
+  return boosts;
+}
 
 // dbCount intentionally left empty
 
@@ -1801,14 +1926,22 @@ function searchPapers(query) {
     p.visitenkarte || p.broschure || p.fanzine || p.magazin || p.kunstbuch || p.einladung || p.verpackung || p.nachhaltigkeitsbericht ||
     p.weights.length > 0 || p.minWeight || scodixActive;
 
+  const corrBoosts = buildCorrectionBoosts(p);
+
   let scored;
   if (hasContext) {
-    scored = filtered.map(paper => ({ paper, score: scorePaper(paper, p) }));
+    scored = filtered.map(paper => ({
+      paper,
+      score: scorePaper(paper, p) + (corrBoosts[paper.n] || 0)
+    }));
     scored.sort((a, b) => b.score - a.score);
     const pos = scored.filter(x => x.score > 0);
     scored = (pos.length >= 3 ? pos : scored).slice(0, 25);
   } else {
-    scored = filtered.map(paper => ({ paper, score: paper.bs ? 10 : 5 }));
+    scored = filtered.map(paper => ({
+      paper,
+      score: (paper.bs ? 10 : 5) + (corrBoosts[paper.n] || 0)
+    }));
     scored.sort((a, b) => b.score - a.score);
     scored = scored.slice(0, 25);
   }
@@ -1890,6 +2023,7 @@ function runSearch() {
       document.getElementById('responseBadge').textContent = T('liveDbBadge');
       renderResults(result, query);
       currentSearch = { scoredCandidates: result.scoredCandidates, parsedQuery: result.parsedQuery };
+      logSearch(query, result.parsedQuery, result.papers);
       if (result.papers.length > 4) {
         const questions = buildRefinementQuestions(result.parsedQuery, result.scoredCandidates);
         showRefinementPanel(questions, result.papers.length);
@@ -2684,6 +2818,7 @@ ovBuildMenus();
 
 const TEXTS = {
   de: {
+    liveDb: 'Live Datenbank',
     ovEyebrow: 'Beschreibe deinen Papierwunsch in einem Satz',
     ovBeforeAnwendung: 'Ich suche ein Papier für eine ',
     ovBetweenAO: ', mit einer ',
@@ -2863,6 +2998,7 @@ const TEXTS = {
   },
 
   en: {
+    liveDb: 'Live Database',
     ovEyebrow: 'Describe your paper in one sentence',
     ovBeforeAnwendung: "I'm looking for a paper for ",
     ovBetweenAO: ', with a ',
@@ -3031,6 +3167,7 @@ const TEXTS = {
   },
 
   fr: {
+    liveDb: 'Base de données en direct',
     ovEyebrow: 'Décris ton papier en une phrase',
     ovBeforeAnwendung: 'Je cherche un papier pour ',
     ovBetweenAO: ', avec une surface ',
@@ -3199,6 +3336,7 @@ const TEXTS = {
   },
 
   nl: {
+    liveDb: 'Live Database',
     ovEyebrow: 'Beschrijf jouw papier in één zin',
     ovBeforeAnwendung: 'Ik zoek een papier voor ',
     ovBetweenAO: ', met een ',
@@ -3367,6 +3505,7 @@ const TEXTS = {
   },
 
   da: {
+    liveDb: 'Live Database',
     ovEyebrow: 'Beskriv dit papir i én sætning',
     ovBeforeAnwendung: 'Jeg leder efter papir til ',
     ovBetweenAO: ', med en ',
@@ -3552,16 +3691,21 @@ function getLang() {
   return 'de';
 }
 
-function applyLang(lang) {
+function applyLang(lang, markActive) {
   if (!TEXTS[lang]) return;
   currentLang = lang;
   document.documentElement.lang = lang;
   localStorage.setItem('mp_lang', lang);
 
   // Update active button
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.lang === lang);
-  });
+  if (markActive) {
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+  }
+  // Sync dropdown label
+  const lbl = document.getElementById('langSelectedLabel');
+  if (lbl) lbl.textContent = lang.toUpperCase();
 
   const t = TEXTS[lang];
 
@@ -3674,12 +3818,18 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
     const url = new URL(window.location.href);
     url.searchParams.set('lang', lang);
     history.replaceState(null, '', url);
-    applyLang(lang);
+    applyLang(lang, true);
+    document.getElementById('langSwitcher')?.classList.remove('open');
   });
+});
+// Close dropdown when clicking outside
+document.addEventListener('click', e => {
+  const switcher = document.getElementById('langSwitcher');
+  if (switcher && !switcher.contains(e.target)) switcher.classList.remove('open');
 });
 
 // Init language
-applyLang(getLang());
+applyLang(getLang(), false);
 
 // Skip overlay if ?advanced=1 or ?autostart=1
 const _params = new URLSearchParams(window.location.search);
@@ -3730,6 +3880,8 @@ if (_params.get('autostart') === '1') {
   if (window.self !== window.top) {
     document.body.style.minHeight = '0';
     document.documentElement.style.minHeight = '0';
+    document.body.style.background = '#ffffff';
+    document.documentElement.style.background = '#ffffff';
 
     const overlay = document.getElementById('sentenceOverlay');
 

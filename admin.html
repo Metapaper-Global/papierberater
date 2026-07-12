@@ -444,7 +444,7 @@
       <input type="text" id="cfg-pk" value="Brand_Identifier" placeholder="Brand_Identifier" />
     </div>
 
-    <button class="btn btn-primary" style="width:100%; justify-content: center; margin-top: 0.5rem;" onclick="connect()">
+    <button class="btn btn-primary" id="connect-btn" style="width:100%; justify-content: center; margin-top: 0.5rem;" onclick="connect()">
       Verbinden
     </button>
     <p id="cfg-error" style="color: var(--danger); font-size: 12px; margin-top: 0.75rem; display:none;"></p>
@@ -582,6 +582,9 @@ async function connect() {
     return;
   }
 
+  const btn = document.getElementById('connect-btn');
+  if (btn) { btn.textContent = 'Verbinde…'; btn.disabled = true; }
+
   try {
     supabase = window.supabase.createClient(url, key);
     const { data, error } = await supabase.from(TABLE).select('*').limit(1);
@@ -590,6 +593,7 @@ async function connect() {
     localStorage.setItem('sb_cfg', JSON.stringify({ url, key, TABLE, PK }));
     showApp(url);
   } catch(e) {
+    if (btn) { btn.textContent = 'Verbinden'; btn.disabled = false; }
     showCfgError('Verbindung fehlgeschlagen: ' + e.message);
   }
 }
@@ -774,22 +778,26 @@ function openEditModal(pkVal) {
   document.getElementById('modal').classList.add('open');
 }
 
+function renderField(col, val) {
+  const v = val !== null && val !== undefined ? String(val) : '';
+  const isLong = v.length > 60;
+  const id = colId(col);
+  return `<div class="form-group ${isLong ? 'full' : ''}">
+    <label>${escHtml(col)}</label>
+    ${isLong
+      ? `<textarea id="${id}" rows="2">${escHtml(v)}</textarea>`
+      : `<input type="text" id="${id}" value="${escAttr(v)}" />`}
+  </div>`;
+}
+
 function renderModalFields(row) {
   const container = document.getElementById('modal-fields');
-  // Show all columns in groups: first the PK, then key columns, then rest collapsed
   const keyCols = [PK, ...columns.filter(c => c !== PK).slice(0, 9)];
   const restCols = columns.filter(c => !keyCols.includes(c));
 
   let html = '<div class="form-grid">';
   keyCols.forEach(col => {
-    const val = row[col] !== undefined ? row[col] : '';
-    const isLong = String(val).length > 60;
-    html += `<div class="form-group ${isLong ? 'full' : ''}">
-      <label>${escHtml(col)}</label>
-      ${isLong
-        ? `<textarea id="${colId(col)}" rows="3">${escHtml(String(val))}</textarea>`
-        : `<input type="text" id="${colId(col)}" value="${escAttr(String(val !== null ? val : ''))}" />`}
-    </div>`;
+    html += renderField(col, row[col] !== undefined ? row[col] : '');
   });
   html += '</div>';
 
@@ -800,23 +808,32 @@ function renderModalFields(row) {
       </summary>
       <div class="form-grid" style="margin-top:0.75rem;">`;
     restCols.forEach(col => {
-      const val = row[col] !== undefined ? row[col] : '';
-      const isLong = String(val).length > 60;
-      html += `<div class="form-group ${isLong ? 'full' : ''}">
-        <label>${escHtml(col)}</label>
-        ${isLong
-          ? `<textarea id="${colId(col)}" rows="2">${escHtml(String(val !== null ? val : ''))}</textarea>`
-          : `<input type="text" id="${colId(col)}" value="${escAttr(String(val !== null ? val : ''))}" />`}
-      </div>`;
+      html += renderField(col, row[col] !== undefined ? row[col] : '');
     });
     html += '</div></details>';
   }
 
   container.innerHTML = html;
+
+  // Highlight PK field when adding new product
+  if (!editMode) {
+    const pkEl = document.getElementById(colId(PK));
+    if (pkEl) pkEl.focus();
+  }
 }
 
 async function saveRow() {
   const saveBtn = document.getElementById('save-btn');
+
+  // Validierung: PK muss beim Anlegen gesetzt sein
+  if (!editMode) {
+    const pkEl = document.getElementById(colId(PK));
+    if (!pkEl || !pkEl.value.trim()) {
+      toast('error', 'Bitte den Primary Key (' + PK + ') ausfüllen.');
+      return;
+    }
+  }
+
   saveBtn.textContent = 'Speichern…';
   saveBtn.disabled = true;
 
@@ -907,6 +924,8 @@ window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('cfg-key').value = cfg.key;
       document.getElementById('cfg-table').value = cfg.TABLE;
       document.getElementById('cfg-pk').value = cfg.PK;
+      // Auto-connect if credentials are saved
+      connect();
     } catch(e) {}
   }
 });

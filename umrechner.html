@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Umrechner: Bogen → Gewicht — Metapaper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://use.typekit.net/qex7ber.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F7F7F5;
+      --surface: #FFFFFF;
+      --green: #3D7A3D;
+      --green-light: #E8F2E8;
+      --green-text: #2D5E2D;
+      --ink: #1A1A18;
+      --ink-muted: #6B6B68;
+      --border: rgba(0,0,0,0.08);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      font-family: 'houschka-pro','Houschka Pro','Inter',sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--green);
+      letter-spacing: -0.01em;
+    }
+
+    .tagline {
+      font-size: 0.82rem;
+      color: var(--ink-muted);
+      padding-left: 16px;
+    }
+
+    .back-link {
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: var(--green);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: opacity 0.15s;
+    }
+
+    .back-link:hover {
+      opacity: 0.75;
+    }
+
+    /* Main */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 48px 24px 64px;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 36px 36px 32px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+      width: 100%;
+      max-width: 520px;
+    }
+
+    .card-header {
+      margin-bottom: 28px;
+    }
+
+    .card-header h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .card-header p {
+      font-size: 0.88rem;
+      color: var(--ink-muted);
+      line-height: 1.5;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--ink-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 7px;
+    }
+
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 11px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      color: var(--ink);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="number"]:focus,
+    select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(61,122,61,0.12);
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B6B68' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 38px;
+      cursor: pointer;
+    }
+
+    /* Custom size row */
+    .custom-inputs {
+      display: none;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .custom-inputs.visible {
+      display: flex;
+    }
+
+    .custom-inputs .form-group {
+      flex: 1;
+      margin-bottom: 0;
+    }
+
+    .input-suffix {
+      position: relative;
+    }
+
+    .input-suffix input {
+      padding-right: 44px;
+    }
+
+    .input-suffix .suffix {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+      pointer-events: none;
+      font-weight: 500;
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 28px 0;
+    }
+
+    /* Result box */
+    .result-box {
+      background: var(--green-light);
+      border-radius: var(--radius);
+      padding: 24px 24px 20px;
+      border: 1px solid rgba(61,122,61,0.15);
+    }
+
+    .result-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--green-text);
+      margin-bottom: 8px;
+      opacity: 0.8;
+    }
+
+    .result-value {
+      font-size: 3rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      color: var(--green-text);
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+
+    .result-unit {
+      font-size: 1.2rem;
+      font-weight: 600;
+      opacity: 0.75;
+      margin-left: 4px;
+    }
+
+    .result-formula {
+      font-size: 0.75rem;
+      color: var(--green-text);
+      opacity: 0.65;
+      font-family: 'Courier New', monospace;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 14px 20px;
+      }
+
+      .card {
+        padding: 28px 22px 24px;
+      }
+
+      .result-value {
+        font-size: 2.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-left">
+      <span class="logo">metapaper.ai</span>
+      <span class="tagline">Bogen → Gewicht</span>
+    </div>
+    <a class="back-link" href="toolbox.html">← Tool-Box</a>
+  </header>
+
+  <main>
+    <div class="card">
+      <div class="card-header">
+        <h1>Umrechner: Bogen → Gewicht</h1>
+        <p>Berechne das Gewicht einer beliebigen Bogenanzahl.</p>
+      </div>
+
+      <!-- Bogenanzahl -->
+      <div class="form-group">
+        <label for="sheets">Bogenanzahl</label>
+        <input type="number" id="sheets" min="1" value="1000">
+      </div>
+
+      <!-- Format -->
+      <div class="form-group">
+        <label for="format">Format</label>
+        <select id="format">
+          <option value="102,72">102 × 72 cm</option>
+          <option value="100,70">100 × 70 cm</option>
+          <option value="70,100">70 × 100 cm</option>
+          <option value="50,70">50 × 70 cm</option>
+          <option value="50,35">50 × 35 cm</option>
+          <option value="48,33">48 × 33 cm</option>
+          <option value="46,32">46 × 32 cm</option>
+          <option value="45,32">45 × 32 cm</option>
+          <option value="42,29.7">A3 (42 × 29,7 cm)</option>
+          <option value="custom">Sonderformat</option>
+        </select>
+
+        <div class="custom-inputs" id="customInputs">
+          <div class="form-group">
+            <label for="customW">Breite</label>
+            <div class="input-suffix">
+              <input type="number" id="customW" min="1" value="60" step="0.1">
+              <span class="suffix">cm</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="customH">Höhe</label>
+            <div class="input-suffix">
+              <input type="number" id="customH" min="1" value="45" step="0.1">
+              <span class="suffix">cm</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grammatur -->
+      <div class="form-group">
+        <label for="grammage">Grammatur</label>
+        <div class="input-suffix">
+          <input type="number" id="grammage" min="1" value="90" step="1">
+          <span class="suffix">g/m²</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Result -->
+      <div class="result-box">
+        <div class="result-label">Gewicht</div>
+        <div class="result-value" id="resultValue">—<span class="result-unit">kg</span></div>
+        <div class="result-formula" id="resultFormula">Bogen × (B × H) × Grammatur / 1.000</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const sheetsInput   = document.getElementById('sheets');
+    const formatSelect  = document.getElementById('format');
+    const customInputs  = document.getElementById('customInputs');
+    const customW       = document.getElementById('customW');
+    const customH       = document.getElementById('customH');
+    const grammageInput = document.getElementById('grammage');
+    const resultValue   = document.getElementById('resultValue');
+    const resultFormula = document.getElementById('resultFormula');
+
+    function getDimensions() {
+      const val = formatSelect.value;
+      if (val === 'custom') {
+        return [parseFloat(customW.value) || 0, parseFloat(customH.value) || 0];
+      }
+      const parts = val.split(',');
+      return [parseFloat(parts[0]), parseFloat(parts[1])];
+    }
+
+    function calculate() {
+      const sheets  = parseFloat(sheetsInput.value)  || 0;
+      const [w, h]  = getDimensions();
+      const grammage = parseFloat(grammageInput.value) || 0;
+
+      // weight_kg = sheets × (width_m) × (height_m) × grammage / 1000
+      // width and height are in cm, so divide by 100 to get metres, area in m²
+      const weightKg = sheets * (w / 100) * (h / 100) * grammage / 1000;
+
+      resultValue.innerHTML = isFinite(weightKg) && sheets > 0
+        ? weightKg.toFixed(2) + '<span class="result-unit">kg</span>'
+        : '—<span class="result-unit">kg</span>';
+
+      const wLabel = formatSelect.value === 'custom' ? (customW.value || '?') : w;
+      const hLabel = formatSelect.value === 'custom' ? (customH.value || '?') : h;
+      resultFormula.textContent =
+        `${sheets} × (${wLabel} cm × ${hLabel} cm) × ${grammage} g/m² ÷ 1.000 = ${isFinite(weightKg) ? weightKg.toFixed(2) : '—'} kg`;
+    }
+
+    formatSelect.addEventListener('change', () => {
+      if (formatSelect.value === 'custom') {
+        customInputs.classList.add('visible');
+      } else {
+        customInputs.classList.remove('visible');
+      }
+      calculate();
+    });
+
+    [sheetsInput, grammageInput, customW, customH].forEach(el => {
+      el.addEventListener('input', calculate);
+    });
+
+    calculate();
+  </script>
+
+</body>
+</html>
