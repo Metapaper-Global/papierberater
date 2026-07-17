@@ -461,9 +461,13 @@ function filterPapers(logId, query) {
     dropdown.innerHTML = '<div class="paper-dropdown-empty">Keine Treffer</div>';
   } else {
     dropdown.innerHTML = matches.map(id =>
-      `<div class="paper-dropdown-item" onmousedown="addPaper('${logId}', ${JSON.stringify(id)})">${escH(id)}</div>`
+      `<div class="paper-dropdown-item" data-paperid="${escH(id)}">${escH(id)}</div>`
     ).join('');
   }
+  dropdown.onmousedown = function(e) {
+    const item = e.target.closest('.paper-dropdown-item[data-paperid]');
+    if (item) { e.preventDefault(); addPaper(logId, item.dataset.paperid); }
+  };
   dropdown.classList.add('open');
 }
 
