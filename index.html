@@ -1026,7 +1026,7 @@ async function loadDatabase() {
       if (rows.length < pageSize) break;
       from += pageSize;
     }
-    DB = allRows.map(mapRow);
+    DB = allRows.map(mapRow).filter(p => !p.n.toUpperCase().includes('MUNKEN LYNX'));
     DB_LOADED = true;
     // Im Cache speichern
     try {
@@ -1053,7 +1053,7 @@ loadCorrections();
 
 async function logSearch(query, parsedQuery, results) {
   try {
-    const topResults = results.slice(0, 5).map((p, i) => ({
+    const topResults = results.slice(0, 50).map((p, i) => ({
       rank: i + 1, brand_id: p.id, name: p.name, score: p.score
     }));
     const lang = (typeof currentLang !== 'undefined' ? currentLang : 'de');
