@@ -1919,6 +1919,30 @@ function searchPapers(query) {
     const hi = p.maxWeight || 9999;
     filtered = filtered.filter(x => x.w >= lo && x.w <= hi);
   }
+
+  // Oberfläche als harter Vorfilter — nur wenn ausschliesslich nach einer Oberfläche gesucht wird
+  // (kein Druckverfahren, kein Gewicht, keine Farbe, keine Nachhaltigkeit, kein Anwendungsfall)
+  // → deaktiviert wenn nach einer "Alternative" gefragt wird
+  const asksAlternative = /alternativ|ersatz|ähnlich(e[srm]?\b)?|andere[rs]?\s*(option|papier|oberfläche|lösung)/i.test(query);
+  const surfaceOnlyQuery = (p.extrarau || p.rau || p.glatt || p.sehrGlatt) &&
+    !p.riso && !p.indigo && !p.offset && !p.letterpress && !p.scodix && !p.inkjet && !p.toner && !p.heissfolie &&
+    !p.schwarz && !p.weiss && !p.warmweiss && !p.kaltweiss && !p.naturfarben &&
+    !p.recycling && !p.recycling100 && !p.fsc && !p.blauEngel && !p.upcycling && !p.nachhaltig &&
+    !p.visitenkarte && !p.broschure && !p.fanzine && !p.magazin && !p.kunstbuch && !p.einladung &&
+    !p.verpackung && !p.nachhaltigkeitsbericht && !p.flyer && !p.karte && !p.umschlag &&
+    p.weights.length === 0 && !p.minWeight && !p.maxWeight && !p.dick && !p.leicht &&
+    !activeFilters.oberflaeche.length;
+  const conflictingSurfaces = (p.extrarau || p.rau) && (p.glatt || p.sehrGlatt);
+  if (surfaceOnlyQuery && !asksAlternative && !conflictingSurfaces) {
+    filtered = filtered.filter(paper => {
+      if (p.extrarau)        return paper.s === 'extrarau';
+      if (p.sehrGlatt)       return paper.s === 'sehr glatt' || paper.s === 'voll gestrichen';
+      if (p.glatt)           return paper.s === 'glatt' || paper.s === 'leicht gestrichen' || paper.s === 'sehr glatt';
+      if (p.rau)             return paper.s === 'rau' || paper.s === 'extrarau' || paper.s === 'natur';
+      return true;
+    });
+  }
+
   const scodixActive = p.scodix || activeFilters.druck.some(d => d === 'Scodix' || d === 'MGI');
   const hasContext = p.riso || p.indigo || p.offset || p.letterpress || p.scodix || p.inkjet || p.toner || p.heissfolie ||
     p.extrarau || p.rau || p.glatt || p.sehrGlatt || p.schwarz || p.warmweiss || p.kaltweiss || p.naturfarben ||
