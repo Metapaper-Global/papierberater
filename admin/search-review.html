@@ -545,8 +545,8 @@ async function saveCorrection(logId) {
   if (res.ok) {
     const rows = await res.json();
     corrections[logId] = Array.isArray(rows) ? rows[0] : rows;
+    delete cardPapers[logId]; // force re-init from saved data
     document.getElementById('card-' + logId).outerHTML = renderCard(allLogs.find(l => l.id === logId));
-    // Re-init state for re-rendered card
     initCardPapers(logId, log);
     renderPaperList(logId);
     showToast('Korrektur gespeichert');
