@@ -1429,6 +1429,7 @@ function parseQuery(query) {
     p.minWeight = 120; p.maxWeight = 200;
   }
 
+  if (/wasserzeichen|watermark|filigrane|watermerk/i.test(q)) p.wasserzeichen = true;
   if (/riso|risograph/.test(q)) p.riso = true;
   if (/hp.?indigo|hp indigo/.test(q)) p.indigo = true;
   if (/\boffset\b/.test(q)) p.offset = true;
@@ -2075,7 +2076,8 @@ function searchPapers(query) {
     total_db: DB.length,
     parsedQuery: p,
     scoredCandidates: scored,
-    unknownProduct
+    unknownProduct,
+    wasserzeichen: p.wasserzeichen || false
   };
 }
 
@@ -2150,6 +2152,12 @@ function renderResults(data, query) {
 
   const container = document.getElementById('cardsContainer');
   container.innerHTML = '';
+
+  if (data.wasserzeichen) {
+    container.innerHTML = '<div class="no-results"><div class="no-results-title">' + T('wasserzeichenTitle') + '</div><div class="no-results-sub">' + T('wasserzeichenSub') + '</div></div>';
+    document.getElementById('resultsSection').style.display = 'block';
+    return;
+  }
 
   if (data.unknownProduct) {
     container.innerHTML = '<div class="no-results"><div class="no-results-title">' + T('unknownProductTitle') + '</div><div class="no-results-sub">' + T('unknownProductSub') + '</div></div>';
@@ -2972,6 +2980,8 @@ const TEXTS = {
     filtersBlockedTitle: 'Keine Ergebnisse mit diesen Filtern',
     filtersBlockedSub: 'Deine aktiven Sidebar-Filter schränken die Ergebnisse zu stark ein.',
     filtersBlockedBtn: 'Filter zurücksetzen und erneut suchen',
+    wasserzeichenTitle: 'Papiere mit Wasserzeichen führen wir nicht.',
+    wasserzeichenSub: 'Unser Sortiment enthält keine Papiere mit eingearbeitetem Wasserzeichen. Für weitere Fragen: <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a>',
     unknownProductTitle: 'Dieses Papier kenne ich leider nicht.',
     unknownProductSub: 'Deine Suchanfrage stimmt mit keinem Metapaper-Produkt überein. Bitte frag uns direkt an: <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a>',
     sampleBtn: '🎯 Muster bestellen',
@@ -3158,6 +3168,8 @@ const TEXTS = {
     filtersBlockedTitle: 'No results with these filters',
     filtersBlockedSub: 'Your active sidebar filters are narrowing the results too much.',
     filtersBlockedBtn: 'Reset filters and search again',
+    wasserzeichenTitle: 'We don\'t carry papers with watermarks.',
+    wasserzeichenSub: 'Our range does not include papers with embedded watermarks. For further questions: <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a>',
     unknownProductTitle: 'I don\'t recognise this paper.',
     unknownProductSub: 'Your search doesn\'t match any Metapaper product. Please contact us directly: <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a>',
     sampleBtn: '🎯 Order sample',
@@ -3333,6 +3345,8 @@ const TEXTS = {
     filtersBlockedTitle: 'Aucun résultat avec ces filtres',
     filtersBlockedSub: 'Vos filtres actifs restreignent trop les résultats.',
     filtersBlockedBtn: 'Réinitialiser les filtres et rechercher',
+    wasserzeichenTitle: 'Nous ne proposons pas de papiers avec filigrane.',
+    wasserzeichenSub: 'Notre gamme ne comprend pas de papiers avec filigrane intégré. Pour toute question : <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a>',
     unknownProductTitle: 'Je ne connais pas ce papier.',
     unknownProductSub: 'Votre recherche ne correspond à aucun produit Metapaper. Contactez-nous directement : <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a>',
     sampleBtn: '🎯 Commander un échantillon',
@@ -3508,6 +3522,8 @@ const TEXTS = {
     filtersBlockedTitle: 'Geen resultaten met deze filters',
     filtersBlockedSub: 'Uw actieve filters beperken de resultaten te veel.',
     filtersBlockedBtn: 'Filters wissen en opnieuw zoeken',
+    wasserzeichenTitle: 'Papieren met watermerk voeren wij niet.',
+    wasserzeichenSub: 'Ons assortiment bevat geen papieren met ingewerkt watermerk. Voor verdere vragen: <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a>',
     unknownProductTitle: 'Dit papier ken ik niet.',
     unknownProductSub: 'Uw zoekopdracht komt niet overeen met een Metapaper-product. Neem direct contact op: <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a>',
     sampleBtn: '🎯 Staal bestellen',
@@ -3683,6 +3699,8 @@ const TEXTS = {
     filtersBlockedTitle: 'Ingen resultater med disse filtre',
     filtersBlockedSub: 'Dine aktive filtre begrænser resultaterne for meget.',
     filtersBlockedBtn: 'Nulstil filtre og søg igen',
+    wasserzeichenTitle: 'Vi fører ikke papirer med vandmærke.',
+    wasserzeichenSub: 'Vores sortiment indeholder ikke papirer med integreret vandmærke. Kontakt os: <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a>',
     unknownProductTitle: 'Dette papir kender jeg ikke.',
     unknownProductSub: 'Din søgning matcher ikke noget Metapaper-produkt. Kontakt os direkte: <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a>',
     sampleBtn: '🎯 Bestil prøve',
