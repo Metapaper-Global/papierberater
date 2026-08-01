@@ -191,6 +191,10 @@
     <option value="code_fix">⚙ Fix im Code</option>
   </select>
   <input id="filterQuery" type="text" placeholder="Suche in Queries…" oninput="renderFiltered()" style="width:200px">
+  <select id="sortBy" onchange="renderFiltered()">
+    <option value="result_count_asc">Ergebnisse (0 zuerst)</option>
+    <option value="date_desc">Datum (neu zuerst)</option>
+  </select>
   <span id="countLabel" style="font-size:12px;color:var(--text-muted)"></span>
 </div>
 
@@ -277,6 +281,12 @@ function renderFiltered() {
   else if (filterStatus === 'incorrect') logs = logs.filter(l => corrections[l.id]?.status === 'incorrect');
   else if (filterStatus === 'code_fix') logs = logs.filter(l => corrections[l.id]?.status === 'code_fix');
   if (q) logs = logs.filter(l => l.query.toLowerCase().includes(q));
+
+  const sortBy = document.getElementById('sortBy').value;
+  if (sortBy === 'result_count_asc') {
+    logs = [...logs].sort((a, b) => (a.result_count ?? 0) - (b.result_count ?? 0));
+  }
+  // date_desc: already loaded in that order, no re-sort needed
 
   document.getElementById('countLabel').textContent = logs.length + ' Einträge';
   const main = document.getElementById('main');

@@ -904,7 +904,7 @@ function mapRow(r) {
   // Druckverfahren
   const hiRaw = r['Eignung fuer HP Indigo'] || '';
   const hi   = hiRaw.includes('hervorragend');            // zertifiziert
-  const hiOk = !hi && hiRaw.includes('bedruckbar') && isPos(hiRaw); // bedruckbar, nicht zertifiziert
+  const hiOk = !hi && hiRaw.includes('bedruckbar') && !hiRaw.includes('nicht bedruckbar') && isPos(hiRaw); // bedruckbar, nicht zertifiziert
   const risoRaw = r['Eignung fuer den Riso'] || '';
   const r_      = isPos(risoRaw);
   const rTop    = r_ && (risoRaw.includes('hervorragend') || risoRaw.includes('perfekt'));
