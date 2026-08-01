@@ -39,12 +39,16 @@
     padding: 6px 10px; border: 1px solid var(--border); border-radius: var(--radius);
     font-size: 13px; background: var(--bg); color: var(--text); font-family: inherit;
   }
+  --purple: #5b21b6;
+  --purple-light: #ede9fe;
+
   .badge {
     font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px;
     background: var(--amber-light); color: var(--amber);
   }
   .badge.green { background: var(--green-light); color: var(--green); }
   .badge.red { background: var(--red-light); color: var(--red); }
+  .badge.purple { background: var(--purple-light); color: var(--purple); }
 
   main { max-width: 1100px; margin: 0 auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
 
@@ -89,6 +93,7 @@
   .btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .btn-correct { background: var(--green-light); color: var(--green); }
   .btn-incorrect { background: var(--red-light); color: var(--red); }
+  .btn-code-fix { background: var(--purple-light); color: var(--purple); }
   .btn-save { background: #1a1916; color: #fff; }
 
   .correction-form {
@@ -183,6 +188,7 @@
     <option value="all">Alle</option>
     <option value="correct">✓ Korrekt</option>
     <option value="incorrect">✗ Falsch</option>
+    <option value="code_fix">⚙ Fix im Code</option>
   </select>
   <input id="filterQuery" type="text" placeholder="Suche in Queries…" oninput="renderFiltered()" style="width:200px">
   <span id="countLabel" style="font-size:12px;color:var(--text-muted)"></span>
@@ -269,6 +275,7 @@ function renderFiltered() {
   if (filterStatus === 'pending') logs = logs.filter(l => !corrections[l.id]);
   else if (filterStatus === 'correct') logs = logs.filter(l => corrections[l.id]?.status === 'correct');
   else if (filterStatus === 'incorrect') logs = logs.filter(l => corrections[l.id]?.status === 'incorrect');
+  else if (filterStatus === 'code_fix') logs = logs.filter(l => corrections[l.id]?.status === 'code_fix');
   if (q) logs = logs.filter(l => l.query.toLowerCase().includes(q));
 
   document.getElementById('countLabel').textContent = logs.length + ' Einträge';
@@ -307,6 +314,7 @@ function renderCard(log) {
   let statusBadge = '<span class="badge">Offen</span>';
   if (corr?.status === 'correct') statusBadge = '<span class="badge green">✓ Korrekt</span>';
   if (corr?.status === 'incorrect') statusBadge = '<span class="badge red">✗ Falsch</span>';
+  if (corr?.status === 'code_fix') statusBadge = '<span class="badge purple">⚙ Fix im Code</span>';
 
   const allResults = log.top_results || [];
   const topsFirst = allResults.slice(0, 5).map(r =>
@@ -347,6 +355,7 @@ function renderCard(log) {
     <div class="review-actions">
       <button class="btn btn-correct" onclick="markCorrect('${log.id}')">✓ Korrekt</button>
       <button class="btn btn-incorrect" onclick="openForm('${log.id}')">✗ Falsch — Korrektur eingeben</button>
+      <button class="btn btn-code-fix" onclick="markCodeFix('${log.id}')">⚙ Falsch — Fix im Code</button>
     </div>
 
     <div class="correction-form${isIncorrect ? ' open' : ''}" id="form-${log.id}">
@@ -511,6 +520,32 @@ async function markCorrect(logId) {
     delete cardPapers[logId];
     document.getElementById('card-' + logId).outerHTML = renderCard(allLogs.find(l => l.id === logId));
     showToast('Als korrekt markiert ✓');
+  } else {
+    showToast('Fehler: ' + res.status, true);
+  }
+}
+
+// ── Mark code fix ──
+async function markCodeFix(logId) {
+  const existing = corrections[logId];
+  let res;
+  if (existing) {
+    res = await fetch(`${SUPABASE_URL}/rest/v1/search_corrections?id=eq.${existing.id}`, {
+      method: 'PATCH', headers: sbH({ 'Prefer': 'return=representation' }),
+      body: JSON.stringify({ status: 'code_fix', correct_papers: null, notes: 'Fix im Code' })
+    });
+  } else {
+    res = await fetch(`${SUPABASE_URL}/rest/v1/search_corrections`, {
+      method: 'POST', headers: sbH({ 'Prefer': 'return=representation' }),
+      body: JSON.stringify({ search_log_id: logId, status: 'code_fix', notes: 'Fix im Code' })
+    });
+  }
+  if (res.ok) {
+    const rows = await res.json();
+    corrections[logId] = Array.isArray(rows) ? rows[0] : rows;
+    delete cardPapers[logId];
+    document.getElementById('card-' + logId).outerHTML = renderCard(allLogs.find(l => l.id === logId));
+    showToast('Als "Fix im Code" markiert ⚙');
   } else {
     showToast('Fehler: ' + res.status, true);
   }
