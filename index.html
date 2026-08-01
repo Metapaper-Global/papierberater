@@ -1412,6 +1412,9 @@ function parseQuery(query) {
     if (/so dünn wie möglich|möglichst dünn/.test(q)) { p.minWeight = 40; p.maxWeight = 100; }
     else { p.minWeight = 60; p.maxWeight = 130; }
   }
+  if (p.buch && !p.dick && !p.leicht && !p.minWeight && !p.maxWeight && p.weights.length === 0) {
+    p.minWeight = 120; p.maxWeight = 200;
+  }
 
   if (/riso|risograph/.test(q)) p.riso = true;
   if (/hp.?indigo|hp indigo/.test(q)) p.indigo = true;
@@ -1554,11 +1557,6 @@ function scorePaper(paper, p) {
   if (p.magazin && (paper.uc.includes('magazin_inhalt') || paper.uc.includes('magazin_cover'))) s += 20;
   if (p.kunstbuch && paper.uc.includes('kunstbuch_inhalt')) s += 20;
   if (p.buch && (paper.uc.includes('softcover_inhalt') || paper.uc.includes('hardcover_inhalt') || paper.uc.includes('kunstbuch_inhalt') || paper.uc.includes('magazin_inhalt'))) s += 20;
-  if (p.buch && !p.dick && !p.leicht && !p.minWeight && !p.maxWeight && p.weights.length === 0) {
-    if (paper.w >= 120 && paper.w <= 200) s += 15;
-    else if (paper.w > 250) s -= 10;
-    else if (paper.w < 90) s -= 10;
-  }
   if (p.einladung && paper.uc.includes('einladung')) s += 20;
   if (p.verpackung && paper.uc.includes('verpackung')) s += 20;
   if (p.nachhaltigkeitsbericht && paper.uc.includes('nachhaltigkeitsbericht')) s += 25;
