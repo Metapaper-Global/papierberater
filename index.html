@@ -1403,13 +1403,14 @@ function parseQuery(query) {
   }
 
   if (/\bdick(e[srmn]?)?\b|schwer(e[srmn]?)?\b|heavy|voluminös|stark(e[srmn]?)?\b|grob(e[srmn]?)?\b|thick/.test(q)) p.dick = true;
-  if (/\bleicht(e[srmn]?)?\b|dünn(e[srmn]?)?\b|thin|light\b/.test(q)) p.leicht = true;
+  if (/\bleicht(e[srmn]?)?\b|dünn(e[srmn]?)?\b|thin|light\b|so dünn wie möglich|möglichst dünn/.test(q)) p.leicht = true;
   // Wenn "dick" ohne explizite Grammatur → schweres Gewicht annehmen
   if (p.dick && !p.minWeight && !p.maxWeight && p.weights.length === 0) {
     p.minWeight = 220; p.maxWeight = 600;
   }
   if (p.leicht && !p.minWeight && !p.maxWeight && p.weights.length === 0) {
-    p.minWeight = 60; p.maxWeight = 130;
+    if (/so dünn wie möglich|möglichst dünn/.test(q)) { p.minWeight = 40; p.maxWeight = 100; }
+    else { p.minWeight = 60; p.maxWeight = 130; }
   }
 
   if (/riso|risograph/.test(q)) p.riso = true;
