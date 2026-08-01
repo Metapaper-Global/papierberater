@@ -1925,6 +1925,13 @@ function searchPapers(query) {
     filtered = filtered.filter(x => druckChecks.every(fn => fn(x)));
   }
 
+  // Recycling als harter Vorfilter — wenn explizit nach Recycling gefragt wird
+  if (p.recycling100 && !activeFilters.nachhaltig.includes('Recycling 100%')) {
+    filtered = filtered.filter(x => x.su.includes('100% Recycling'));
+  } else if (p.recycling && !activeFilters.nachhaltig.length) {
+    filtered = filtered.filter(x => x.su.some(s => s.includes('Recycling')));
+  }
+
   // Grammatur aus Query als harter Vorfilter
   if ((p.minWeight || p.maxWeight) && !activeFilters.gramm.length) {
     const lo = p.minWeight || 0;
