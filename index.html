@@ -1442,8 +1442,10 @@ function parseQuery(query) {
   if (/gestrichen(e[msrn]?)?\b|coated/.test(q) && !/ungestrichen/.test(q)) p.gestrichen = true;
 
   if (/schwarz(e[msrn]?)?\b|black/.test(q)) p.schwarz = true;
-  if (/warmwei[ß]|warm.?white|gelblich|ivory/.test(q)) p.warmweiss = true;
-  if (/kaltwei[ß]|cold.?white|kühl/.test(q)) p.kaltweiss = true;
+  if (/white.?warmwhite|warmwhite.?white|weiß.?warmweiß|warmweiß.?weiß/i.test(q)) { p.warmweiss = true; p.weissWarmweiss = true; }
+  else if (/warmwei[ß]|warm.?white|gelblich|ivory/.test(q)) p.warmweiss = true;
+  if (/white.?coldwhite|coldwhite.?white|weiß.?kaltweiß|kaltweiß.?weiß/i.test(q)) { p.kaltweiss = true; p.weissKaltweiss = true; }
+  else if (/kaltwei[ß]|cold.?white|kühl/.test(q)) p.kaltweiss = true;
   if (!p.warmweiss && !p.kaltweiss && /\bwhite\b|\bwei[ß]\b/.test(q)) p.weiss = true;
   if (/\bnatur\b|natural|beige|off.?white|naturfarb/.test(q)) p.naturfarben = true;
 
@@ -1503,7 +1505,7 @@ function scorePaper(paper, p) {
   }
   if (p.sehrGlatt) {
     if (paper.s === 'sehr glatt' || paper.s === 'voll gestrichen') s += 30;
-    else if (paper.s === 'glatt') s += 15;
+    else if (paper.s === 'glatt' || paper.s === 'leicht gestrichen') s += 15;
     else if (paper.s === 'rau' || paper.s === 'extrarau') s -= 40;
     else s -= 20;
   } else if (p.glatt && !p.rau) {
@@ -1530,14 +1532,30 @@ function scorePaper(paper, p) {
   }
   if (p.warmweiss) {
     if (paper.c === 'schwarz') s -= 80;
-    else if (paper.wt === 'warmwhite') s += 30;
-    else if (paper.wt === 'white_warmwhite') s += 25;
-    else if (paper.wt === 'white') s -= 20;
-    else if (paper.wt === 'coldwhite' || paper.wt === 'white_coldwhite') s -= 25;
+    else if (p.weissWarmweiss) {
+      // Explizit "White-Warmwhite" gesucht → white_warmwhite zuerst
+      if (paper.wt === 'white_warmwhite') s += 35;
+      else if (paper.wt === 'white') s += 15;
+      else if (paper.wt === 'warmwhite') s += 15;
+      else if (paper.wt === 'white_coldwhite' || paper.wt === 'coldwhite') s -= 25;
+    } else {
+      if (paper.wt === 'warmwhite') s += 30;
+      else if (paper.wt === 'white_warmwhite') s += 25;
+      else if (paper.wt === 'white') s -= 20;
+      else if (paper.wt === 'coldwhite' || paper.wt === 'white_coldwhite') s -= 25;
+    }
   }
   if (p.kaltweiss) {
     if (paper.c === 'schwarz') s -= 80;
-    else if (paper.wt === 'coldwhite' || paper.wt === 'white_coldwhite') s += 20;
+    else if (p.weissKaltweiss) {
+      // Explizit "White-Coldwhite" gesucht → white_coldwhite zuerst
+      if (paper.wt === 'white_coldwhite') s += 35;
+      else if (paper.wt === 'white') s += 15;
+      else if (paper.wt === 'coldwhite') s += 15;
+      else if (paper.wt === 'white_warmwhite' || paper.wt === 'warmwhite') s -= 25;
+    } else {
+      if (paper.wt === 'coldwhite' || paper.wt === 'white_coldwhite') s += 20;
+    }
   }
   if (p.naturfarben) {
     if (paper.c === 'grau') s += 15;
