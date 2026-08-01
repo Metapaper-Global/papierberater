@@ -894,7 +894,8 @@ function mapRow(r) {
   let wt = '';
   if      (wtRaw.includes('white-coldwhite'))  wt = 'white_coldwhite';
   else if (wtRaw.includes('white-warmwhite'))  wt = 'white_warmwhite';
-  else if (wtRaw.includes('warmwhite') || wtRaw.includes('off-white') || wtRaw.includes('ivory') || wtRaw.includes('natural')) wt = 'warmwhite';
+  else if (wtRaw.includes('off-white') || wtRaw.includes('ivory')) wt = 'white_warmwhite';
+  else if (wtRaw.includes('warmwhite') || wtRaw.includes('natural')) wt = 'warmwhite';
   else if (wtRaw.includes('coldwhite') || wtRaw.includes('bluewhite') || wtRaw.includes('greywhite') || wtRaw.includes('grey white') || wtRaw.includes('icewhite')) wt = 'coldwhite';
   else if (wtRaw.includes('white') && !wtRaw.includes('green') && !wtRaw.includes('rose') && !wtRaw.includes('metallic') && !wtRaw.includes('transparent')) wt = 'white';
 
@@ -1509,7 +1510,18 @@ function scorePaper(paper, p) {
     if (paper.c === 'schwarz') s -= 80;
     else if (paper.wt === 'coldwhite' || paper.wt === 'white_coldwhite') s += 20;
   }
-  if (p.naturfarben && paper.c === 'grau') s += 15;
+  if (p.naturfarben) {
+    if (paper.c === 'grau') s += 15;
+    if (paper.wt === 'warmwhite' || paper.wt === 'white_warmwhite') s += 20;
+    else if (paper.wt === 'white') s -= 10;
+    else if (paper.wt === 'coldwhite' || paper.wt === 'white_coldwhite') s -= 20;
+  }
+
+  // Default: kein Weißton / keine Färbung angegeben → White als Standard bevorzugen
+  if (!p.schwarz && !p.weiss && !p.warmweiss && !p.kaltweiss && !p.naturfarben) {
+    if (paper.wt === 'white') s += 15;
+    else if (paper.c === 'schwarz' || paper.col.farbig) s -= 15;
+  }
 
   // Sustainability
   if (p.recycling100) { s += paper.su.includes('100% Recycling') ? 35 : (paper.su.some(x => x.includes('Recycling')) ? 15 : -15); }
@@ -1950,6 +1962,12 @@ function searchPapers(query) {
     p.visitenkarte || p.broschure || p.fanzine || p.magazin || p.kunstbuch || p.einladung || p.verpackung || p.nachhaltigkeitsbericht ||
     p.weights.length > 0 || p.minWeight || scodixActive;
 
+  // Unbekannte Produkt-Anfrage erkennen: kein Kontext erkannt + verbleibende Wörter nach Füllwörtern entfernen
+  const fillerRe = /\b(ich|suche|ein|eine|einen|einem|für|fur|nach|auf|der|die|das|hätte|hatte|gerne|brauche|benötige|bin|welches|welche|welchen|etwas|bitte|mir|wäre|ware|wir|sie|können|konnen|möchte|mochte|würde|wurde|empfehlen|empfehlung|auch|noch|sehr|mein|meine|bitte|toll|schön|schon|gutes|gute|schönes|schöne|passendes|passende)\b/gi;
+  const strippedQuery = query.replace(fillerRe, '').replace(/[,.\-–]/g, ' ').replace(/\s+/g, ' ').trim();
+  const meaningfulWords = strippedQuery.split(' ').filter(w => w.length > 2);
+  const unknownProduct = !hasContext && meaningfulWords.length >= 2;
+
   const corrBoosts = buildCorrectionBoosts(p);
 
   let scored;
@@ -1997,7 +2015,8 @@ function searchPapers(query) {
     total_filtered: filtered.length,
     total_db: DB.length,
     parsedQuery: p,
-    scoredCandidates: scored
+    scoredCandidates: scored,
+    unknownProduct
   };
 }
 
@@ -2072,6 +2091,12 @@ function renderResults(data, query) {
 
   const container = document.getElementById('cardsContainer');
   container.innerHTML = '';
+
+  if (data.unknownProduct) {
+    container.innerHTML = '<div class="no-results"><div class="no-results-title">' + T('unknownProductTitle') + '</div><div class="no-results-sub">' + T('unknownProductSub') + '</div></div>';
+    document.getElementById('resultsSection').style.display = 'block';
+    return;
+  }
 
   if (!data.papers.length) {
     const hints = [];
@@ -2888,6 +2913,8 @@ const TEXTS = {
     analysisLabel: 'Analyse der Anfrage',
     noResultsTitle: 'Keine passenden Papiere gefunden',
     noResultsSub: 'Keine passenden Papiere für diese Anfrage gefunden. Versuche weniger Filter oder eine andere Formulierung.',
+    unknownProductTitle: 'Dieses Papier kenne ich leider nicht.',
+    unknownProductSub: 'Deine Suchanfrage stimmt mit keinem Metapaper-Produkt überein. Bitte frag uns direkt an: <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a>',
     sampleBtn: '🎯 Muster bestellen',
     sampleRequest: '🎯 Muster auf Anfrage',
     shopBtn: '🛒 Online kaufen',
@@ -3068,6 +3095,8 @@ const TEXTS = {
     analysisLabel: 'Query analysis',
     noResultsTitle: 'No matching papers found',
     noResultsSub: 'No matching papers found for this query. Try fewer filters or a different wording.',
+    unknownProductTitle: 'I don\'t recognise this paper.',
+    unknownProductSub: 'Your search doesn\'t match any Metapaper product. Please contact us directly: <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a>',
     sampleBtn: '🎯 Order sample',
     sampleRequest: '🎯 Sample on request',
     shopBtn: '🛒 Buy online',
@@ -3237,6 +3266,8 @@ const TEXTS = {
     analysisLabel: 'Analyse de la demande',
     noResultsTitle: 'Aucun papier correspondant trouvé',
     noResultsSub: 'Aucun papier correspondant à cette demande. Essayez moins de filtres ou une autre formulation.',
+    unknownProductTitle: 'Je ne connais pas ce papier.',
+    unknownProductSub: 'Votre recherche ne correspond à aucun produit Metapaper. Contactez-nous directement : <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a>',
     sampleBtn: '🎯 Commander un échantillon',
     sampleRequest: '🎯 Échantillon sur demande',
     shopBtn: '🛒 Acheter en ligne',
@@ -3406,6 +3437,8 @@ const TEXTS = {
     analysisLabel: 'Analyse van de zoekopdracht',
     noResultsTitle: 'Geen passende papieren gevonden',
     noResultsSub: 'Geen passende papieren gevonden voor deze zoekopdracht. Probeer minder filters of een andere omschrijving.',
+    unknownProductTitle: 'Dit papier ken ik niet.',
+    unknownProductSub: 'Uw zoekopdracht komt niet overeen met een Metapaper-product. Neem direct contact op: <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a>',
     sampleBtn: '🎯 Staal bestellen',
     sampleRequest: '🎯 Staal op aanvraag',
     shopBtn: '🛒 Online kopen',
@@ -3575,6 +3608,8 @@ const TEXTS = {
     analysisLabel: 'Analyse af forespørgsel',
     noResultsTitle: 'Ingen matchende papirer fundet',
     noResultsSub: 'Ingen matchende papirer fundet for denne søgning. Prøv færre filtre eller en anden formulering.',
+    unknownProductTitle: 'Dette papir kender jeg ikke.',
+    unknownProductSub: 'Din søgning matcher ikke noget Metapaper-produkt. Kontakt os direkte: <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a>',
     sampleBtn: '🎯 Bestil prøve',
     sampleRequest: '🎯 Prøve på forespørgsel',
     shopBtn: '🛒 Køb online',
