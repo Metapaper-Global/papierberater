@@ -1417,7 +1417,7 @@ function parseQuery(query) {
   if (/hei[sß]folie|folienpr[aä]g|hotfoil|heissfolie/.test(q)) p.heissfolie = true;
 
   if (/extrem.?rau|very.?rough/.test(q)) { p.extrarau = true; p.rau = true; }
-  else if (/\brau(e[msrn]?)?\b|rough|ungestrichen|strukturiert|körnung/.test(q)) p.rau = true;
+  else if (/\brau(e[msrn]?)?\b|rough|ungestrichen|strukturiert|körnung|griffig/.test(q)) p.rau = true;
   if (/sehr.?glatt|extra.?glatt|hochglanz|satin/.test(q)) p.sehrGlatt = true;
   else if (/\bglatt(e[msrn]?)?\b|\bsmooth\b/.test(q)) p.glatt = true;
 
