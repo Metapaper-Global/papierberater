@@ -943,6 +943,7 @@ function mapRow(r) {
   if (isPos(r['Kunstbuch Inhalt']))                 uc.push('kunstbuch_inhalt');
   if (isPos(r['Kunstbuch Umschlag']))               uc.push('kunstbuch_umschlag');
   if (isPos(r['Hardcover - Inhalt']))               uc.push('hardcover_inhalt');
+  if (isPos(r['Hardcover - ueberzugsmaterial']))    uc.push('hardcover_umschlag');
   if (isPos(r['Nachhaltigkeitsbericht']))           uc.push('nachhaltigkeitsbericht');
   if (isPos(r['Geschaeftsbericht']))                uc.push('geschaeftsbericht');
   if (isPos(r['Fanzine Inhalt']))                   uc.push('fanzine');
@@ -1356,6 +1357,8 @@ function applyHardFilters(papers) {
     const anw = activeFilters.anwendung;
     if (anw === 'Broschüre' || anw === 'Softcover') {
       res = res.filter(p => p.uc.includes('softcover_inhalt') || p.uc.includes('softcover_umschlag') || p.uc.includes('magazin_inhalt') || p.uc.includes('broschure'));
+    } else if (anw === 'Hardcover') {
+      res = res.filter(p => p.uc.includes('hardcover_inhalt') || p.uc.includes('hardcover_umschlag'));
     } else {
       const uc = ANWENDUNG_UC_MAP[anw] || anw.toLowerCase();
       res = res.filter(p => p.uc.includes(uc));
@@ -1584,7 +1587,7 @@ function scorePaper(paper, p) {
   if (p.fanzine && paper.uc.includes('fanzine')) s += 20;
   if (p.magazin && (paper.uc.includes('magazin_inhalt') || paper.uc.includes('magazin_cover'))) s += 20;
   if (p.kunstbuch && paper.uc.includes('kunstbuch_inhalt')) s += 20;
-  if (p.buch && (paper.uc.includes('softcover_inhalt') || paper.uc.includes('hardcover_inhalt') || paper.uc.includes('kunstbuch_inhalt') || paper.uc.includes('magazin_inhalt'))) s += 20;
+  if (p.buch && (paper.uc.includes('softcover_inhalt') || paper.uc.includes('softcover_umschlag') || paper.uc.includes('hardcover_inhalt') || paper.uc.includes('hardcover_umschlag') || paper.uc.includes('kunstbuch_inhalt') || paper.uc.includes('magazin_inhalt'))) s += 20;
   if (p.einladung && paper.uc.includes('einladung')) s += 20;
   if (p.verpackung && paper.uc.includes('verpackung')) s += 20;
   if (p.nachhaltigkeitsbericht && paper.uc.includes('nachhaltigkeitsbericht')) s += 25;
