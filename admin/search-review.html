@@ -528,7 +528,7 @@ async function markCorrect(logId) {
     const rows = await res.json();
     corrections[logId] = Array.isArray(rows) ? rows[0] : rows;
     delete cardPapers[logId];
-    document.getElementById('card-' + logId).outerHTML = renderCard(allLogs.find(l => l.id === logId));
+    removeOrUpdateCard(logId);
     showToast('Als korrekt markiert ✓');
   } else {
     showToast('Fehler: ' + res.status, true);
@@ -554,7 +554,7 @@ async function markCodeFix(logId) {
     const rows = await res.json();
     corrections[logId] = Array.isArray(rows) ? rows[0] : rows;
     delete cardPapers[logId];
-    document.getElementById('card-' + logId).outerHTML = renderCard(allLogs.find(l => l.id === logId));
+    removeOrUpdateCard(logId);
     showToast('Als "Fix im Code" markiert ⚙');
   } else {
     showToast('Fehler: ' + res.status, true);
@@ -595,12 +595,37 @@ async function saveCorrection(logId) {
     const rows = await res.json();
     corrections[logId] = Array.isArray(rows) ? rows[0] : rows;
     delete cardPapers[logId]; // force re-init from saved data
-    document.getElementById('card-' + logId).outerHTML = renderCard(allLogs.find(l => l.id === logId));
-    initCardPapers(logId, log);
-    renderPaperList(logId);
+    removeOrUpdateCard(logId, true);
     showToast('Korrektur gespeichert');
   } else {
     showToast('Fehler: ' + res.status, true);
+  }
+}
+
+function removeOrUpdateCard(logId, reinitPapers = false) {
+  const filterStatus = document.getElementById('filterStatus').value;
+  const corr = corrections[logId];
+  let shouldShow = true;
+  if (filterStatus === 'pending')   shouldShow = !corr;
+  else if (filterStatus === 'correct')   shouldShow = corr?.status === 'correct';
+  else if (filterStatus === 'incorrect') shouldShow = corr?.status === 'incorrect';
+  else if (filterStatus === 'code_fix')  shouldShow = corr?.status === 'code_fix';
+
+  const card = document.getElementById('card-' + logId);
+  if (!card) return;
+
+  if (!shouldShow) {
+    card.style.transition = 'opacity 0.25s, transform 0.25s';
+    card.style.opacity = '0';
+    card.style.transform = 'translateX(12px)';
+    setTimeout(() => card.remove(), 260);
+  } else {
+    card.outerHTML = renderCard(allLogs.find(l => l.id === logId));
+    if (reinitPapers) {
+      const log = allLogs.find(l => l.id === logId);
+      initCardPapers(logId, log);
+      renderPaperList(logId);
+    }
   }
 }
 
