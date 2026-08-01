@@ -361,6 +361,8 @@ textarea:focus{border-bottom-color:var(--accent);}
 .no-results{padding:32px 20px;text-align:center;color:var(--ink-muted);}
 .no-results-title{font-family:'Inter',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:8px;color:var(--ink-light);}
 .no-results-sub{font-size:.84rem;line-height:1.6;}
+.filter-reset-btn{margin-top:16px;padding:9px 20px;background:var(--ink-light);color:#fff;border:none;border-radius:6px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+.filter-reset-btn:hover{opacity:.85;}
 
 /* ── REFINEMENT PANEL ── */
 .refinement-panel{background:var(--warm-white);border:2px solid var(--green-border);border-radius:8px;padding:24px;margin-top:20px;box-shadow:0 2px 20px var(--paper-shadow);}
@@ -1148,6 +1150,14 @@ function clearAllFilters() {
   document.querySelectorAll('.filter-select').forEach(sel => sel.value = '');
   updateActiveFilterDisplay();
   document.getElementById('queryInput').value = '';
+}
+
+function clearFiltersAndSearch() {
+  Object.keys(activeFilters).forEach(k => { activeFilters[k] = Array.isArray(activeFilters[k]) ? [] : null; });
+  document.querySelectorAll('.filter-pill, .color-swatch').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.filter-select').forEach(sel => sel.value = '');
+  updateActiveFilterDisplay();
+  runSearch();
 }
 
 function updateActiveFilterDisplay() {
@@ -2127,7 +2137,12 @@ function renderResults(data, query) {
   }
 
   if (!data.papers.length) {
-    container.innerHTML = '<div class="no-results"><div class="no-results-title">' + T('noResultsTitle') + '</div><div class="no-results-sub">' + T('noResultsContact') + '</div></div>';
+    const hasActiveFilters = activeFilters.anwendung || activeFilters.druck.length || activeFilters.nachhaltig.length || activeFilters.gramm.length || activeFilters.oberflaeche.length || activeFilters.farbe.length;
+    if (hasActiveFilters) {
+      container.innerHTML = '<div class="no-results"><div class="no-results-title">' + T('filtersBlockedTitle') + '</div><div class="no-results-sub">' + T('filtersBlockedSub') + '</div><button class="filter-reset-btn" onclick="clearFiltersAndSearch()">' + T('filtersBlockedBtn') + '</button></div>';
+    } else {
+      container.innerHTML = '<div class="no-results"><div class="no-results-title">' + T('noResultsTitle') + '</div><div class="no-results-sub">' + T('noResultsContact') + '</div></div>';
+    }
     document.getElementById('resultsSection').style.display = 'block';
     return;
   }
@@ -2933,6 +2948,9 @@ const TEXTS = {
     noResultsTitle: 'Keine passenden Papiere gefunden',
     noResultsSub: 'Keine passenden Papiere für diese Anfrage gefunden. Versuche weniger Filter oder eine andere Formulierung.',
     noResultsContact: 'Leider gibt es zu deiner Anfrage kein passendes Papier. Bitte kontaktiere <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a> — wir helfen dir gerne weiter.',
+    filtersBlockedTitle: 'Keine Ergebnisse mit diesen Filtern',
+    filtersBlockedSub: 'Deine aktiven Sidebar-Filter schränken die Ergebnisse zu stark ein.',
+    filtersBlockedBtn: 'Filter zurücksetzen und erneut suchen',
     unknownProductTitle: 'Dieses Papier kenne ich leider nicht.',
     unknownProductSub: 'Deine Suchanfrage stimmt mit keinem Metapaper-Produkt überein. Bitte frag uns direkt an: <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a>',
     sampleBtn: '🎯 Muster bestellen',
@@ -3116,6 +3134,9 @@ const TEXTS = {
     noResultsTitle: 'No matching papers found',
     noResultsSub: 'No matching papers found for this query. Try fewer filters or a different wording.',
     noResultsContact: 'Unfortunately we have no paper matching your request. Please contact <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a> — we\'re happy to help.',
+    filtersBlockedTitle: 'No results with these filters',
+    filtersBlockedSub: 'Your active sidebar filters are narrowing the results too much.',
+    filtersBlockedBtn: 'Reset filters and search again',
     unknownProductTitle: 'I don\'t recognise this paper.',
     unknownProductSub: 'Your search doesn\'t match any Metapaper product. Please contact us directly: <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a>',
     sampleBtn: '🎯 Order sample',
@@ -3288,6 +3309,9 @@ const TEXTS = {
     noResultsTitle: 'Aucun papier correspondant trouvé',
     noResultsSub: 'Aucun papier correspondant à cette demande. Essayez moins de filtres ou une autre formulation.',
     noResultsContact: 'Malheureusement, aucun papier ne correspond à votre demande. Contactez <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a> — nous sommes là pour vous aider.',
+    filtersBlockedTitle: 'Aucun résultat avec ces filtres',
+    filtersBlockedSub: 'Vos filtres actifs restreignent trop les résultats.',
+    filtersBlockedBtn: 'Réinitialiser les filtres et rechercher',
     unknownProductTitle: 'Je ne connais pas ce papier.',
     unknownProductSub: 'Votre recherche ne correspond à aucun produit Metapaper. Contactez-nous directement : <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a>',
     sampleBtn: '🎯 Commander un échantillon',
@@ -3460,6 +3484,9 @@ const TEXTS = {
     noResultsTitle: 'Geen passende papieren gevonden',
     noResultsSub: 'Geen passende papieren gevonden voor deze zoekopdracht. Probeer minder filters of een andere omschrijving.',
     noResultsContact: 'Helaas is er geen papier dat overeenkomt met uw zoekopdracht. Neem contact op via <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a> — wij helpen u graag.',
+    filtersBlockedTitle: 'Geen resultaten met deze filters',
+    filtersBlockedSub: 'Uw actieve filters beperken de resultaten te veel.',
+    filtersBlockedBtn: 'Filters wissen en opnieuw zoeken',
     unknownProductTitle: 'Dit papier ken ik niet.',
     unknownProductSub: 'Uw zoekopdracht komt niet overeen met een Metapaper-product. Neem direct contact op: <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a>',
     sampleBtn: '🎯 Staal bestellen',
@@ -3632,6 +3659,9 @@ const TEXTS = {
     noResultsTitle: 'Ingen matchende papirer fundet',
     noResultsSub: 'Ingen matchende papirer fundet for denne søgning. Prøv færre filtre eller en anden formulering.',
     noResultsContact: 'Desværre har vi intet papir, der matcher din forespørgsel. Kontakt <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a> — vi hjælper gerne.',
+    filtersBlockedTitle: 'Ingen resultater med disse filtre',
+    filtersBlockedSub: 'Dine aktive filtre begrænser resultaterne for meget.',
+    filtersBlockedBtn: 'Nulstil filtre og søg igen',
     unknownProductTitle: 'Dette papir kender jeg ikke.',
     unknownProductSub: 'Din søgning matcher ikke noget Metapaper-produkt. Kontakt os direkte: <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a>',
     sampleBtn: '🎯 Bestil prøve',
