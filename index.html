@@ -1343,8 +1343,13 @@ function farbeMatches(p, f) {
 function applyHardFilters(papers) {
   let res = papers;
   if (activeFilters.anwendung) {
-    const uc = ANWENDUNG_UC_MAP[activeFilters.anwendung] || activeFilters.anwendung.toLowerCase();
-    res = res.filter(p => p.uc.includes(uc));
+    const anw = activeFilters.anwendung;
+    if (anw === 'Broschüre' || anw === 'Softcover') {
+      res = res.filter(p => p.uc.includes('softcover_inhalt') || p.uc.includes('softcover_umschlag') || p.uc.includes('magazin_inhalt') || p.uc.includes('broschure'));
+    } else {
+      const uc = ANWENDUNG_UC_MAP[anw] || anw.toLowerCase();
+      res = res.filter(p => p.uc.includes(uc));
+    }
   }
   if (activeFilters.druck.length)
     res = res.filter(p => activeFilters.druck.every(d => druckMatches(p, d)));
@@ -1512,7 +1517,7 @@ function scorePaper(paper, p) {
   if (p.warmweiss) {
     if (paper.c === 'schwarz') s -= 80;
     else if (paper.wt === 'warmwhite') s += 30;
-    else if (paper.wt === 'white_warmwhite') s += 20;
+    else if (paper.wt === 'white_warmwhite') s += 25;
     else if (paper.wt === 'white') s -= 20;
     else if (paper.wt === 'coldwhite' || paper.wt === 'white_coldwhite') s -= 25;
   }
@@ -1548,6 +1553,11 @@ function scorePaper(paper, p) {
   if (p.magazin && (paper.uc.includes('magazin_inhalt') || paper.uc.includes('magazin_cover'))) s += 20;
   if (p.kunstbuch && paper.uc.includes('kunstbuch_inhalt')) s += 20;
   if (p.buch && (paper.uc.includes('softcover_inhalt') || paper.uc.includes('hardcover_inhalt') || paper.uc.includes('kunstbuch_inhalt') || paper.uc.includes('magazin_inhalt'))) s += 20;
+  if (p.buch && !p.dick && !p.leicht && !p.minWeight && !p.maxWeight && p.weights.length === 0) {
+    if (paper.w >= 120 && paper.w <= 200) s += 15;
+    else if (paper.w > 250) s -= 10;
+    else if (paper.w < 90) s -= 10;
+  }
   if (p.einladung && paper.uc.includes('einladung')) s += 20;
   if (p.verpackung && paper.uc.includes('verpackung')) s += 20;
   if (p.nachhaltigkeitsbericht && paper.uc.includes('nachhaltigkeitsbericht')) s += 25;
