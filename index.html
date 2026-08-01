@@ -1420,6 +1420,7 @@ function parseQuery(query) {
   else if (/\brau(e[msrn]?)?\b|rough|ungestrichen|strukturiert|körnung|griffig/.test(q)) p.rau = true;
   if (/sehr.?glatt|extra.?glatt|hochglanz|satin/.test(q)) p.sehrGlatt = true;
   else if (/\bglatt(e[msrn]?)?\b|\bsmooth\b/.test(q)) p.glatt = true;
+  if (/gestrichen(e[msrn]?)?\b|coated/.test(q) && !/ungestrichen/.test(q)) p.gestrichen = true;
 
   if (/schwarz(e[msrn]?)?\b|black/.test(q)) p.schwarz = true;
   if (/warmwei[ß]|warm.?white|gelblich|ivory/.test(q)) p.warmweiss = true;
@@ -1440,6 +1441,7 @@ function parseQuery(query) {
   if (/fanzine|\bzine\b/.test(q)) p.fanzine = true;
   if (/\bmagazin\b/.test(q)) p.magazin = true;
   if (/kunstbuch|art.?book|fotobu/.test(q)) p.kunstbuch = true;
+  if (/\bbuch(projekt|inhalt|druck|block|seite)?\b/i.test(q) && !p.kunstbuch) p.buch = true;
   if (/einladung|\bkarte\b|invitation/.test(q)) p.einladung = true;
   if (/\bverpackung\b|packaging|pack/.test(q)) p.verpackung = true;
   if (/nachhaltigkeitsbericht/.test(q)) p.nachhaltigkeitsbericht = true;
@@ -1490,6 +1492,14 @@ function scorePaper(paper, p) {
     else if (paper.s === 'rau' || paper.s === 'extrarau') s -= 35;
     else s -= 10;
   }
+  if (p.gestrichen && !p.rau && !p.glatt && !p.sehrGlatt) {
+    if (paper.s === 'leicht gestrichen') s += 30;
+    else if (paper.s === 'glatt') s += 20;
+    else if (paper.s === 'sehr glatt' || paper.s === 'voll gestrichen') s += 15;
+    else if (paper.s === 'rau') s += 10;
+    else if (paper.s === 'extrarau') s += 5;
+    else if (paper.s === 'natur') s -= 10;
+  }
 
   // Color
   if (p.schwarz) { s += paper.c === 'schwarz' ? 45 : -35; }
@@ -1533,10 +1543,11 @@ function scorePaper(paper, p) {
 
   // Use case
   if (p.visitenkarte && paper.uc.includes('visitenkarte')) s += 20;
-  if (p.broschure && (paper.uc.includes('softcover_inhalt') || paper.uc.includes('magazin_inhalt'))) s += 20;
+  if (p.broschure && (paper.uc.includes('softcover_inhalt') || paper.uc.includes('magazin_inhalt') || paper.uc.includes('softcover_umschlag') || paper.uc.includes('broschure'))) s += 20;
   if (p.fanzine && paper.uc.includes('fanzine')) s += 20;
   if (p.magazin && (paper.uc.includes('magazin_inhalt') || paper.uc.includes('magazin_cover'))) s += 20;
   if (p.kunstbuch && paper.uc.includes('kunstbuch_inhalt')) s += 20;
+  if (p.buch && (paper.uc.includes('softcover_inhalt') || paper.uc.includes('hardcover_inhalt') || paper.uc.includes('kunstbuch_inhalt') || paper.uc.includes('magazin_inhalt'))) s += 20;
   if (p.einladung && paper.uc.includes('einladung')) s += 20;
   if (p.verpackung && paper.uc.includes('verpackung')) s += 20;
   if (p.nachhaltigkeitsbericht && paper.uc.includes('nachhaltigkeitsbericht')) s += 25;
@@ -1948,7 +1959,7 @@ function searchPapers(query) {
     !p.schwarz && !p.weiss && !p.warmweiss && !p.kaltweiss && !p.naturfarben &&
     !p.recycling && !p.recycling100 && !p.fsc && !p.blauEngel && !p.upcycling && !p.nachhaltig &&
     !p.visitenkarte && !p.broschure && !p.fanzine && !p.magazin && !p.kunstbuch && !p.einladung &&
-    !p.verpackung && !p.nachhaltigkeitsbericht && !p.flyer && !p.karte && !p.umschlag &&
+    !p.verpackung && !p.nachhaltigkeitsbericht && !p.flyer && !p.karte && !p.umschlag && !p.buch &&
     p.weights.length === 0 && !p.minWeight && !p.maxWeight && !p.dick && !p.leicht &&
     !activeFilters.oberflaeche.length;
   const conflictingSurfaces = (p.extrarau || p.rau) && (p.glatt || p.sehrGlatt);
@@ -1967,7 +1978,7 @@ function searchPapers(query) {
     p.extrarau || p.rau || p.glatt || p.sehrGlatt || p.schwarz || p.warmweiss || p.kaltweiss || p.naturfarben ||
     p.recycling || p.recycling100 || p.fsc || p.blauEngel || p.upcycling || p.nachhaltig ||
     p.visitenkarte || p.broschure || p.fanzine || p.magazin || p.kunstbuch || p.einladung || p.verpackung || p.nachhaltigkeitsbericht ||
-    p.transparent || p.siebdruck || p.uvlack || p.karton || p.voluminoes ||
+    p.transparent || p.siebdruck || p.uvlack || p.karton || p.voluminoes || p.gestrichen || p.buch ||
     p.weights.length > 0 || p.minWeight || scodixActive;
 
   // Unbekannte Produkt-Anfrage erkennen: kein Kontext erkannt + verbleibende Wörter nach Füllwörtern entfernen

@@ -532,12 +532,12 @@ async function markCodeFix(logId) {
   if (existing) {
     res = await fetch(`${SUPABASE_URL}/rest/v1/search_corrections?id=eq.${existing.id}`, {
       method: 'PATCH', headers: sbH({ 'Prefer': 'return=representation' }),
-      body: JSON.stringify({ status: 'code_fix', correct_papers: null, notes: 'Fix im Code' })
+      body: JSON.stringify({ status: 'code_fix', correct_papers: null, notes: 'Fix im Code', parsed_query: null, reviewed_at: new Date().toISOString() })
     });
   } else {
     res = await fetch(`${SUPABASE_URL}/rest/v1/search_corrections`, {
       method: 'POST', headers: sbH({ 'Prefer': 'return=representation' }),
-      body: JSON.stringify({ search_log_id: logId, status: 'code_fix', notes: 'Fix im Code' })
+      body: JSON.stringify({ search_log_id: logId, status: 'code_fix', notes: 'Fix im Code', parsed_query: allLogs.find(l => l.id === logId)?.parsed_query || null, reviewed_at: new Date().toISOString() })
     });
   }
   if (res.ok) {
