@@ -979,6 +979,7 @@ function mapRow(r) {
   const umschlag= isPos(r['Gibt es passende Briefumschlaege']);
   const transp  = isPos(r['Transparentpapier']);
   const karton  = isPos(r['Karton']);
+  const haft    = isPos(r['Haftpapier_Etikettenpapier']);
   const volHoch = isPos(r['sehr hohes Volumen (groesser / gleich 1,5)']) || isPos(r['hohes Volumen (von 1,1 bis 1,49)']);
   const guenstigFlag = isPos(r['guenstig']);
   const teuerFlag    = isPos(r['teuer']);
@@ -988,7 +989,7 @@ function mapRow(r) {
     n:    r['Brand_Identifier'] || '',
     w, s, c, wt, col,
     r: r_, rTop, hi, hiOk, o, ij, t, lp, lpTop, lp2, sc, scTop, sb, uvo, uvlack,
-    umschlag, transp, karton, volHoch,
+    umschlag, transp, karton, haft, volHoch,
     guenstigFlag, teuerFlag, desc,
     su, uc,
     bs:   isPos(r['Bestseller']),
@@ -1392,7 +1393,8 @@ function parseQuery(query) {
     visitenkarte: false, broschure: false, fanzine: false, magazin: false,
     kunstbuch: false, einladung: false, verpackung: false, nachhaltigkeitsbericht: false,
     flyer: false, karte: false, umschlag: false, siebdruck: false,
-    uvlack: false, transparent: false, karton: false, voluminoes: false, teuer: false
+    uvlack: false, transparent: false, karton: false, voluminoes: false, teuer: false,
+    haftpapier: false
   };
 
   // Weights: range first, then single
@@ -1479,6 +1481,8 @@ function parseQuery(query) {
   if (/\bkarton\b|board/.test(q)) p.karton = true;
   if (/voluminös|volumen|bulk|bauchig/.test(q)) p.voluminoes = true;
   if (/\bteuer\b|premium|exklusiv|hochwertig/.test(q)) p.teuer = true;
+  // Selbstklebendes Papier → immer Haftpapier
+  if (/selbstklebend|haftpapier|etikettenpapier|klebepapier|\bsticker\b|aufkleber|self.?adhes/i.test(q)) p.haftpapier = true;
 
   return p;
 }
@@ -1543,8 +1547,8 @@ function scorePaper(paper, p) {
       else if (paper.wt === 'warmwhite') s += 15;
       else if (paper.wt === 'white_coldwhite' || paper.wt === 'coldwhite') s -= 25;
     } else {
-      if (paper.wt === 'warmwhite') s += 30;
-      else if (paper.wt === 'white_warmwhite') s += 25;
+      if (paper.wt === 'warmwhite') s += 40;
+      else if (paper.wt === 'white_warmwhite') s += 10;
       else if (paper.wt === 'white') s -= 20;
       else if (paper.wt === 'coldwhite' || paper.wt === 'white_coldwhite') s -= 25;
     }
@@ -1634,6 +1638,7 @@ function scorePaper(paper, p) {
   if (p.karton) s += paper.karton ? 25 : -10;
   if (p.voluminoes) s += paper.volHoch ? 25 : 0;
   if (p.umschlag) s += paper.umschlag ? 30 : -5;
+  if (p.haftpapier) s += paper.haft ? 60 : -50;
 
   // Use cases
   if (p.flyer && paper.uc.includes('flyer')) s += 20;
