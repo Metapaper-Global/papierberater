@@ -1387,7 +1387,7 @@ function parseQuery(query) {
     riso: false, indigo: false, offset: false, letterpress: false, scodix: false, inkjet: false, toner: false,
     heissfolie: false,
     extrarau: false, rau: false, glatt: false, sehrGlatt: false,
-    schwarz: false, weiss: false, warmweiss: false, kaltweiss: false, naturfarben: false, blauton: false,
+    schwarz: false, farbig: false, weiss: false, warmweiss: false, kaltweiss: false, naturfarben: false, blauton: false,
     guenstig: false,
     recycling: false, recycling100: false, fsc: false, blauEngel: false, upcycling: false, nachhaltig: false,
     visitenkarte: false, broschure: false, fanzine: false, magazin: false,
@@ -1447,7 +1447,8 @@ function parseQuery(query) {
   else if (/\bglatt(e[msrn]?)?\b|\bsmooth\b/.test(q)) p.glatt = true;
   if (/gestrichen(e[msrn]?)?\b|coated/.test(q) && !/ungestrichen/.test(q)) p.gestrichen = true;
 
-  if (/schwarz(e[msrn]?)?\b|black/.test(q)) p.schwarz = true;
+  if (/schwarz(e[msrn]?)?\b|black/.test(q)) { p.schwarz = true; p.weiss = false; p.warmweiss = false; p.kaltweiss = false; }
+  if (/\bfarbig(e[msrn]?)?\b|bunt(e[msrn]?)?\b|coloriert|gefärbt|colored|coloured/.test(q)) { p.farbig = true; p.weiss = false; p.warmweiss = false; p.kaltweiss = false; }
   if (/white.?warmwhite|warmwhite.?white|weiß.?warmweiß|warmweiß.?weiß/i.test(q)) { p.warmweiss = true; p.weissWarmweiss = true; }
   else if (/warmwei[ß]|warm.?white|gelblich|ivory/.test(q)) p.warmweiss = true;
   if (/white.?coldwhite|coldwhite.?white|weiß.?kaltweiß|kaltweiß.?weiß/i.test(q)) { p.kaltweiss = true; p.weissKaltweiss = true; }
@@ -1993,12 +1994,23 @@ function searchPapers(query) {
     filtered = filtered.filter(x => x.w >= lo && x.w <= hi);
   }
 
-  // Dünn/Dick als harter Filter — kein Scoring, nur exakte Gewichtsklasse
-  if (p.leicht && !p.minWeight && !p.maxWeight && !activeFilters.gramm.length) {
+  // Farbig / Schwarz als harte Filter
+  if ((p.farbig || p.schwarz) && !activeFilters.farbe.length) {
+    if (p.farbig && p.schwarz) {
+      filtered = filtered.filter(x => x.col.farbig || x.c === 'schwarz');
+    } else if (p.farbig) {
+      filtered = filtered.filter(x => x.col.farbig);
+    } else if (p.schwarz) {
+      filtered = filtered.filter(x => x.c === 'schwarz');
+    }
+  }
+
+  // Dünn/Dick als harter Filter — greift immer, unabhängig von expliziter Grammatur
+  if (p.leicht && !activeFilters.gramm.length) {
     const maxW = /so dünn wie möglich|möglichst dünn/.test(query) ? 90 : 100;
     filtered = filtered.filter(x => x.w <= maxW);
   }
-  if (p.dick && !p.minWeight && !p.maxWeight && !activeFilters.gramm.length) {
+  if (p.dick && !activeFilters.gramm.length) {
     filtered = filtered.filter(x => x.w >= 200);
   }
 
