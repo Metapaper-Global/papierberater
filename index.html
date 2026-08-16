@@ -1079,7 +1079,7 @@ async function logSearch(query, parsedQuery, results) {
 // Wie stark stimmen zwei parsedQuery-Objekte überein (0–1)?
 function correctionOverlap(corrPQ, currentPQ) {
   const boolKeys = ['riso','indigo','offset','letterpress','scodix','inkjet','toner','heissfolie',
-    'extrarau','rau','glatt','sehrGlatt','schwarz','weiss','warmweiss','kaltweiss','naturfarben',
+    'extrarau','rau','glatt','sehrGlatt','schwarz','weiss','warmweiss','kaltweiss','naturfarben','blauton',
     'recycling','recycling100','fsc','blauEngel','upcycling','nachhaltig',
     'visitenkarte','broschure','fanzine','magazin','kunstbuch','einladung','verpackung','nachhaltigkeitsbericht',
     'dick','leicht','guenstig'];
@@ -1387,7 +1387,7 @@ function parseQuery(query) {
     riso: false, indigo: false, offset: false, letterpress: false, scodix: false, inkjet: false, toner: false,
     heissfolie: false,
     extrarau: false, rau: false, glatt: false, sehrGlatt: false,
-    schwarz: false, weiss: false, warmweiss: false, kaltweiss: false, naturfarben: false,
+    schwarz: false, weiss: false, warmweiss: false, kaltweiss: false, naturfarben: false, blauton: false,
     guenstig: false,
     recycling: false, recycling100: false, fsc: false, blauEngel: false, upcycling: false, nachhaltig: false,
     visitenkarte: false, broschure: false, fanzine: false, magazin: false,
@@ -1442,7 +1442,7 @@ function parseQuery(query) {
   if (/hei[sß]folie|folienpr[aä]g|hotfoil|heissfolie/.test(q)) p.heissfolie = true;
 
   if (/extrem.?rau|very.?rough/.test(q)) { p.extrarau = true; p.rau = true; }
-  else if (/\brau(e[msrn]?)?\b|rough|ungestrichen|strukturiert|körnung|griffig/.test(q)) p.rau = true;
+  else if (/\brau(e[msrn]?)?\b|rough|ungestrichen|unterstrichen|strukturiert|körnung|griffig/.test(q)) p.rau = true;
   if (/sehr.?glatt|extra.?glatt|hochglanz|satin/.test(q)) p.sehrGlatt = true;
   else if (/\bglatt(e[msrn]?)?\b|\bsmooth\b/.test(q)) p.glatt = true;
   if (/gestrichen(e[msrn]?)?\b|coated/.test(q) && !/ungestrichen/.test(q)) p.gestrichen = true;
@@ -1454,6 +1454,7 @@ function parseQuery(query) {
   else if (/kaltwei[ß]|cold.?white|kühl/.test(q)) p.kaltweiss = true;
   if (!p.warmweiss && !p.kaltweiss && /\bwhite\b|\bwei[ß]\b/.test(q)) p.weiss = true;
   if (/\bnatur\b|natural|beige|off.?white|naturfarb/.test(q)) p.naturfarben = true;
+  if (/blauton|blautön/i.test(q)) { p.blauton = true; p.weiss = false; p.warmweiss = false; p.kaltweiss = false; }
 
   if (/\brecycl/.test(q)) p.recycling = true;
   if (/100.{0,5}recycl|vollst.{0,8}recycl/.test(q)) p.recycling100 = true;
@@ -1571,9 +1572,13 @@ function scorePaper(paper, p) {
     else if (paper.wt === 'white') s -= 10;
     else if (paper.wt === 'coldwhite' || paper.wt === 'white_coldwhite') s -= 20;
   }
+  if (p.blauton) {
+    if (paper.c === 'schwarz') s -= 80;
+    else s += paper.col.blauton ? 45 : -35;
+  }
 
   // Default: kein Weißton / keine Färbung angegeben → White als Standard bevorzugen
-  if (!p.schwarz && !p.weiss && !p.warmweiss && !p.kaltweiss && !p.naturfarben) {
+  if (!p.schwarz && !p.weiss && !p.warmweiss && !p.kaltweiss && !p.naturfarben && !p.blauton) {
     if (paper.wt === 'white') s += 15;
     else if (paper.c === 'schwarz' || paper.col.farbig) s -= 15;
   }
@@ -2171,6 +2176,35 @@ function renderResults(data, query) {
   }
 
   if (!data.papers.length) {
+    // Fallback: wenn Oberfläche gesetzt → ohne Oberfläche suchen und verfügbare Oberflächen zeigen
+    if (activeFilters.oberflaeche.length > 0) {
+      const savedOberflaeche = [...activeFilters.oberflaeche];
+      activeFilters.oberflaeche = [];
+      const fallbackPapers = applyHardFilters(db);
+      activeFilters.oberflaeche = savedOberflaeche;
+      if (fallbackPapers.length > 0) {
+        const surfaceMap = {
+          'extrarau': 'extrem rau', 'rau': 'rau', 'natur': 'natur',
+          'glatt': 'glatt', 'sehr glatt': 'sehr glatt',
+          'leicht gestrichen': 'leicht gestrichen',
+          'voll gestrichen': 'voll gestrichen', 'gepraegt': 'geprägt'
+        };
+        const surfaces = [...new Set(fallbackPapers.map(p => p.s))].filter(Boolean)
+          .map(s => '<strong>' + (surfaceMap[s] || s) + '</strong>').join(', ');
+        const subMsg = currentLang === 'en'
+          ? 'We don\'t have a paper that matches all your criteria. But the following surfaces are available for your other search criteria: ' + surfaces + '.'
+          : currentLang === 'fr'
+          ? 'Nous n\'avons malheureusement pas de papier correspondant à tous vos critères. Mais les surfaces suivantes correspondent à vos autres critères : ' + surfaces + '.'
+          : currentLang === 'nl'
+          ? 'We hebben helaas geen papier dat aan al uw criteria voldoet. Maar de volgende oppervlakken passen bij uw andere zoekcriteria: ' + surfaces + '.'
+          : currentLang === 'dk'
+          ? 'Vi har desværre intet papir, der opfylder alle dine kriterier. Men følgende overflader passer til dine øvrige søgekriterier: ' + surfaces + '.'
+          : 'Wir haben leider kein Papier, das alle deine Kriterien erfüllt. Aber wir hätten die folgenden Papier-Oberflächen, die zu deinen anderen Suchkriterien passen: ' + surfaces + '.';
+        container.innerHTML = '<div class="no-results"><div class="no-results-title">' + T('surfaceFallbackTitle') + '</div><div class="no-results-sub">' + subMsg + '</div><button class="filter-reset-btn" onclick="clearFilter(\'oberflaeche\');runSearch();">' + T('surfaceFallbackBtn') + '</button></div>';
+        document.getElementById('resultsSection').style.display = 'block';
+        return;
+      }
+    }
     const hasActiveFilters = activeFilters.anwendung || activeFilters.druck.length || activeFilters.nachhaltig.length || activeFilters.gramm.length || activeFilters.oberflaeche.length || activeFilters.farbe.length;
     if (hasActiveFilters) {
       container.innerHTML = '<div class="no-results"><div class="no-results-title">' + T('filtersBlockedTitle') + '</div><div class="no-results-sub">' + T('filtersBlockedSub') + '</div><button class="filter-reset-btn" onclick="clearFiltersAndSearch()">' + T('filtersBlockedBtn') + '</button></div>';
@@ -2979,6 +3013,8 @@ const TEXTS = {
     liveDbBadge: 'Live Datenbank',
     refinedBadge: 'Verfeinert',
     analysisLabel: 'Analyse der Anfrage',
+    surfaceFallbackTitle: 'Kein Papier mit dieser Oberfläche gefunden',
+    surfaceFallbackBtn: 'Ohne Oberflächen-Filter suchen',
     noResultsTitle: 'Keine passenden Papiere gefunden',
     noResultsSub: 'Keine passenden Papiere für diese Anfrage gefunden. Versuche weniger Filter oder eine andere Formulierung.',
     noResultsContact: 'Leider gibt es zu deiner Anfrage kein passendes Papier. Bitte kontaktiere <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a> — wir helfen dir gerne weiter.',
@@ -3167,6 +3203,8 @@ const TEXTS = {
     liveDbBadge: 'Live database',
     refinedBadge: 'Refined',
     analysisLabel: 'Query analysis',
+    surfaceFallbackTitle: 'No paper found with this surface',
+    surfaceFallbackBtn: 'Search without surface filter',
     noResultsTitle: 'No matching papers found',
     noResultsSub: 'No matching papers found for this query. Try fewer filters or a different wording.',
     noResultsContact: 'Unfortunately we have no paper matching your request. Please contact <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a> — we\'re happy to help.',
@@ -3344,6 +3382,8 @@ const TEXTS = {
     liveDbBadge: 'Base en direct',
     refinedBadge: 'Affiné',
     analysisLabel: 'Analyse de la demande',
+    surfaceFallbackTitle: 'Aucun papier trouvé avec cette surface',
+    surfaceFallbackBtn: 'Rechercher sans filtre de surface',
     noResultsTitle: 'Aucun papier correspondant trouvé',
     noResultsSub: 'Aucun papier correspondant à cette demande. Essayez moins de filtres ou une autre formulation.',
     noResultsContact: 'Malheureusement, aucun papier ne correspond à votre demande. Contactez <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a> — nous sommes là pour vous aider.',
@@ -3521,6 +3561,8 @@ const TEXTS = {
     liveDbBadge: 'Live database',
     refinedBadge: 'Verfijnd',
     analysisLabel: 'Analyse van de zoekopdracht',
+    surfaceFallbackTitle: 'Geen papier gevonden met dit oppervlak',
+    surfaceFallbackBtn: 'Zoeken zonder oppervlaktefilter',
     noResultsTitle: 'Geen passende papieren gevonden',
     noResultsSub: 'Geen passende papieren gevonden voor deze zoekopdracht. Probeer minder filters of een andere omschrijving.',
     noResultsContact: 'Helaas is er geen papier dat overeenkomt met uw zoekopdracht. Neem contact op via <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a> — wij helpen u graag.',
@@ -3698,6 +3740,8 @@ const TEXTS = {
     liveDbBadge: 'Live database',
     refinedBadge: 'Forfinet',
     analysisLabel: 'Analyse af forespørgsel',
+    surfaceFallbackTitle: 'Intet papir fundet med denne overflade',
+    surfaceFallbackBtn: 'Søg uden overfladefilter',
     noResultsTitle: 'Ingen matchende papirer fundet',
     noResultsSub: 'Ingen matchende papirer fundet for denne søgning. Prøv færre filtre eller en anden formulering.',
     noResultsContact: 'Desværre har vi intet papir, der matcher din forespørgsel. Kontakt <a href="mailto:service@metapaper.io" style="color:var(--green);">service@metapaper.io</a> — vi hjælper gerne.',
