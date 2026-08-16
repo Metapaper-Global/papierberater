@@ -1425,7 +1425,7 @@ function parseQuery(query) {
   }
   if (p.leicht && !p.minWeight && !p.maxWeight && p.weights.length === 0) {
     if (/so dünn wie möglich|möglichst dünn/.test(q)) { p.minWeight = 40; p.maxWeight = 100; }
-    else { p.minWeight = 60; p.maxWeight = 130; }
+    else { p.minWeight = 60; p.maxWeight = 100; }
   }
   if (p.buch && !p.dick && !p.leicht && !p.minWeight && !p.maxWeight && p.weights.length === 0) {
     p.minWeight = 120; p.maxWeight = 200;
@@ -1610,9 +1610,11 @@ function scorePaper(paper, p) {
     else if (paper.w < 100) s -= 35;
   }
   if (p.leicht) {
-    if (paper.w <= 100) s += 25;
-    else if (paper.w <= 130) s += 12;
-    else if (paper.w > 200) s -= 25;
+    if (paper.w <= 90) s += 30;
+    else if (paper.w <= 120) s += 15;
+    else if (paper.w <= 150) s -= 15;
+    else if (paper.w <= 200) s -= 50;
+    else s -= 80;
   }
 
   // Weight
