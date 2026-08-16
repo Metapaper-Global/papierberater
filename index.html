@@ -1451,7 +1451,7 @@ function parseQuery(query) {
   if (/white.?warmwhite|warmwhite.?white|weiß.?warmweiß|warmweiß.?weiß/i.test(q)) { p.warmweiss = true; p.weissWarmweiss = true; }
   else if (/warmwei[ß]|warm.?white|gelblich|ivory/.test(q)) p.warmweiss = true;
   if (/white.?coldwhite|coldwhite.?white|weiß.?kaltweiß|kaltweiß.?weiß/i.test(q)) { p.kaltweiss = true; p.weissKaltweiss = true; }
-  else if (/kaltwei[ß]|cold.?white|kühl/.test(q)) p.kaltweiss = true;
+  else if (/kaltwei[ß]|cold.?white|kühl|strahl/.test(q)) p.kaltweiss = true;
   if (!p.warmweiss && !p.kaltweiss && /\bwhite\b|\bwei[ß]\b/.test(q)) p.weiss = true;
   if (/\bnatur\b|natural|beige|off.?white|naturfarb/.test(q)) p.naturfarben = true;
   if (/blauton|blautön/i.test(q)) { p.blauton = true; p.weiss = false; p.warmweiss = false; p.kaltweiss = false; }
