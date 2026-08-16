@@ -1603,19 +1603,8 @@ function scorePaper(paper, p) {
   if (p.nachhaltigkeitsbericht && paper.uc.includes('nachhaltigkeitsbericht')) s += 25;
 
   // Dick / Leicht (zusätzlich zum expliziten Gewicht)
-  if (p.dick) {
-    if (paper.w >= 300) s += 25;
-    else if (paper.w >= 200) s += 12;
-    else if (paper.w < 150) s -= 25;
-    else if (paper.w < 100) s -= 35;
-  }
-  if (p.leicht) {
-    if (paper.w <= 90) s += 30;
-    else if (paper.w <= 120) s += 15;
-    else if (paper.w <= 150) s -= 15;
-    else if (paper.w <= 200) s -= 50;
-    else s -= 80;
-  }
+  // dick wird als harter Filter angewendet, kein Scoring nötig
+  // leicht/dick werden als harte Filter angewendet, kein Scoring nötig
 
   // Weight
   if (p.weights.length > 0 || p.minWeight) {
@@ -2001,6 +1990,15 @@ function searchPapers(query) {
     const lo = p.minWeight || 0;
     const hi = p.maxWeight || 9999;
     filtered = filtered.filter(x => x.w >= lo && x.w <= hi);
+  }
+
+  // Dünn/Dick als harter Filter — kein Scoring, nur exakte Gewichtsklasse
+  if (p.leicht && !p.minWeight && !p.maxWeight && !activeFilters.gramm.length) {
+    const maxW = /so dünn wie möglich|möglichst dünn/.test(query) ? 90 : 100;
+    filtered = filtered.filter(x => x.w <= maxW);
+  }
+  if (p.dick && !p.minWeight && !p.maxWeight && !activeFilters.gramm.length) {
+    filtered = filtered.filter(x => x.w >= 200);
   }
 
   // Oberfläche als harter Vorfilter — nur wenn ausschliesslich nach einer Oberfläche gesucht wird
